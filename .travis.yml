@@ -21,3 +21,4 @@ before_script:
 
 after_success:
   - codecov
+  - mvn sonar:sonar -Dsonar.projectKey=javadev_underscore-java11 -Dsonar.organization=javadev-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
