@@ -715,12 +715,10 @@ public final class Xml {
             char ch = name.charAt(0);
             if (ch != ':') {
                 try {
-                    if (ch == '?' || createDocument().createElement("" + ch).getNodeName()
-                        .equals("" + ch)) {
-                        result.append(ch);
-                    } else {
-                        result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
+                    if (ch != '?') {
+                        createDocument().createElement("" + ch);
                     }
+                    result.append(ch);
                 } catch (Exception ex) {
                     result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
                 }
@@ -734,12 +732,8 @@ public final class Xml {
                     result.append(ch);
                 } else if (ch != ':') {
                     try {
-                        if (createDocument().createElement("a" + ch).getNodeName()
-                            .equals("a" + ch)) {
-                            result.append(ch);
-                        } else {
-                            result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
-                        }
+                        createDocument().createElement("a" + ch);
+                        result.append(ch);
                     } catch (Exception ex) {
                         result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
                     }
