@@ -713,15 +713,8 @@ public final class Xml {
             }
             final StringBuilder result = new StringBuilder();
             char ch = name.charAt(0);
-            if (ch != ':') {
-                try {
-                    if (ch != '?') {
-                        createDocument().createElement("" + ch);
-                    }
-                    result.append(ch);
-                } catch (Exception ex) {
-                    result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
-                }
+            if (com.sun.org.apache.xerces.internal.util.XMLChar.isNameStart(ch) && ch != ':' || ch == '?') {
+                result.append(ch);
             } else {
                 result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
             }
@@ -730,13 +723,8 @@ public final class Xml {
                 if (ch == ':' && ("xmlns".equals(name.substring(0, i))
                         || namespaces.contains(name.substring(0, i)))) {
                     result.append(ch);
-                } else if (ch != ':') {
-                    try {
-                        createDocument().createElement("a" + ch);
-                        result.append(ch);
-                    } catch (Exception ex) {
-                        result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
-                    }
+                } else if (com.sun.org.apache.xerces.internal.util.XMLChar.isName(ch) && ch != ':') {
+                    result.append(ch);
                 } else {
                     result.append("__").append(Base32.encode(Character.toString(ch))).append("__");
                 }
@@ -1358,18 +1346,6 @@ public final class Xml {
         builder.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
         builder.setEntityResolver(new MyEntityResolver());
         return builder.parse(new org.xml.sax.InputSource(new java.io.StringReader(xml)));
-    }
-
-    private static org.w3c.dom.Document createDocument()
-            throws java.io.IOException, javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException {
-        final javax.xml.parsers.DocumentBuilderFactory factory =
-                javax.xml.parsers.DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        final javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
-        builder.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-        builder.setEntityResolver(new MyEntityResolver());
-        return builder.newDocument();
     }
 
     public static Object fromXmlMakeArrays(final String xml) {
