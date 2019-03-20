@@ -1366,6 +1366,7 @@ public final class Xml {
             final javax.xml.parsers.DocumentBuilderFactory factory =
                     javax.xml.parsers.DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
+            factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
             final javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.newDocument();
         } catch (javax.xml.parsers.ParserConfigurationException ex) {
