@@ -3,11 +3,7 @@ dist: trusty
 
 jdk:
   - oraclejdk11
-  
-matrix:
-  include:
-    - jdk: openjdk11
-    - jdk: openjdk12
+  - oraclejdk12
 
 script:
   - mvn -B clean test jacoco:report
