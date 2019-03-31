@@ -91,14 +91,8 @@ _.functions(_);
 */
     @Test
     public void functions() {
-        class Test {
-            public void test() {
-            }
-            public void test$() {
-            }
-        }
-        List<String> result = U.functions(Test.class);
-        assertEquals(1, U.first(result, 1).size());
+        List<String> result = U.functions(U.class);
+        assertEquals(5, U.first(result, 5).size());
     }
 
 /*
@@ -252,6 +246,23 @@ _.isEqual('Curly', 'Curly')
         assertTrue(U.isEmpty((Map) null));
         assertTrue(U.isEmpty(new HashMap<String, String>()));
         assertFalse(U.isEmpty(new HashMap<String, String>() { { put("", ""); } }));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void isNotEmpty() {
+        assertFalse(U.isNotEmpty((List) null));
+        assertFalse(U.isNotEmpty(new ArrayList<String>()));
+        assertFalse(new U((List) null).isNotEmpty());
+        assertFalse(new U(new ArrayList<String>()).isNotEmpty());
+        assertFalse(U.chain((List) null).isNotEmpty());
+        assertFalse(U.chain(new ArrayList<String>()).isNotEmpty());
+        assertTrue(U.isNotEmpty(asList("")));
+        assertTrue(new U(asList("")).isNotEmpty());
+        assertTrue(U.chain(asList("")).isNotEmpty());
+        assertFalse(U.isNotEmpty((Map) null));
+        assertFalse(U.isNotEmpty(new HashMap<String, String>()));
+        assertTrue(U.isNotEmpty(new HashMap<String, String>() { { put("", ""); } }));
     }
 /*
 _.isObject({});
