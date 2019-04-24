@@ -91,14 +91,8 @@ _.functions(_);
 */
     @Test
     public void functions() {
-        class Test {
-            public void test() {
-            }
-            public void test$() {
-            }
-        }
-        List<String> result = U.functions(Test.class);
-        assertEquals(1, U.first(result, 1).size());
+        List<String> result = U.functions(U.class);
+        assertEquals(5, U.first(result, 5).size());
     }
 
 /*
@@ -387,7 +381,6 @@ _.chain([1,2,3,200])
 => [4, 40000]
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void tap() {
         final List<Map.Entry<String, Integer>> result = new ArrayList<Map.Entry<String, Integer>>();
         U.tap((new LinkedHashMap<String, Integer>() { { put("a", 1); put("b", 2); put("c", 3); } }).entrySet(),

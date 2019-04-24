@@ -217,6 +217,12 @@ _.map([1, 2, 3], function(num){ return num * 3; });
             }
         });
         assertEquals("[3, 6, 9]", resultObject.toString());
+        List<Integer> result1 = U.map(new int[] {1, 2, 3}, new Function<Integer, Integer>() {
+            public Integer apply(Integer item) {
+                return item * 3;
+            }
+        });
+        assertEquals("[3, 6, 9]", result1.toString());
     }
 
 /*
@@ -531,7 +537,6 @@ var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 => 2
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void find() {
         final Optional<Integer> result = U.find(asList(1, 2, 3, 4, 5, 6),
             new Predicate<Integer>() {
@@ -561,7 +566,6 @@ var even = _.findLast([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; })
 => 6
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void findLast() {
         final Optional<Integer> result = U.findLast(asList(1, 2, 3, 4, 5, 6),
             new Predicate<Integer>() {
@@ -614,13 +618,20 @@ var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 */
     @Test
     public void filter() {
-        final List<Integer> result = U.filter(asList(1, 2, 3, 4, 5, 6),
+        final List<Integer> result = U.filter(new ArrayDeque<Integer>(asList(1, 2, 3, 4, 5, 6)),
             new Predicate<Integer>() {
             public boolean test(Integer item) {
                 return item % 2 == 0;
             }
         });
         assertEquals("[2, 4, 6]", result.toString());
+        final List<Integer> resultList = U.filter(asList(1, 2, 3, 4, 5, 6),
+            new Predicate<Integer>() {
+            public boolean test(Integer item) {
+                return item % 2 == 0;
+            }
+        });
+        assertEquals("[2, 4, 6]", resultList.toString());
         final List<Integer> resultObject = new U<Integer>(asList(1, 2, 3, 4, 5, 6))
             .filter(new Predicate<Integer>() {
             public boolean test(Integer item) {
@@ -1016,11 +1027,10 @@ _.contains([1, 2, 3], 3);
 => true
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void contains() {
         final boolean result = U.contains(asList(1, 2, 3), 3);
         assertTrue(result);
-        final boolean resultObj = new U(asList(1, 2, 3)).contains(3);
+        final boolean resultObj = new U<Integer>(asList(1, 2, 3)).contains(3);
         assertTrue(resultObj);
         final boolean resultChain = U.chain(asList(1, 2, 3)).contains(3).item();
         assertTrue(resultChain);
@@ -1030,6 +1040,38 @@ _.contains([1, 2, 3], 3);
         assertFalse(result3);
         final boolean result4 = U.contains(asList(1, 2, null), null);
         assertTrue(result4);
+    }
+
+    @Test
+    public void containsAtLeast() {
+        final boolean result = U.containsAtLeast(asList(1, 2, 2), 2, 2);
+        assertTrue(result);
+        final boolean result2 = U.containsAtLeast(asList(1, 2, 2), 2, 3);
+        assertFalse(result2);
+        final boolean result3 = new U<Integer>(asList(1, 2, 2)).containsAtLeast(2, 2);
+        assertTrue(result3);
+        final boolean result4 = new U<Integer>(asList(1, 2, 2)).containsAtLeast(2, 3);
+        assertFalse(result4);
+        final boolean result5 = U.containsAtLeast(asList(null, null, 2), null, 2);
+        assertTrue(result5);
+        final boolean result6 = U.containsAtLeast(asList(null, null, 2), 2, 1);
+        assertTrue(result6);
+    }
+
+    @Test
+    public void containsAtMost() {
+        final boolean result = U.containsAtMost(asList(1, 2, 2), 2, 3);
+        assertTrue(result);
+        final boolean result2 = U.containsAtMost(asList(1, 2, 2), 2, 1);
+        assertFalse(result2);
+        final boolean result3 = new U<Integer>(asList(1, 2, 2)).containsAtMost(3, 2);
+        assertTrue(result3);
+        final boolean result4 = new U<Integer>(asList(1, 2, 2)).containsAtMost(2, 1);
+        assertFalse(result4);
+        final boolean result5 = U.containsAtMost(asList(null, null, 2), null, 2);
+        assertTrue(result5);
+        final boolean result6 = U.containsAtMost(asList(null, null, 2), 2, 1);
+        assertTrue(result6);
     }
 
 /*
@@ -1315,7 +1357,6 @@ _.max(numbers);
 => 1000
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void max() {
         final Integer result = U.max(asList(10, 5, 100, 2, 1000));
         assertEquals("1000", result.toString());
@@ -1369,7 +1410,6 @@ _.min(numbers);
 => 2
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void min() {
         final Integer result = U.min(asList(10, 5, 100, 2, 1000));
         assertEquals("2", result.toString());
@@ -1702,7 +1742,6 @@ _.sample([1, 2, 3, 4, 5, 6], 3);
 => [1, 6, 2]
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void sample() {
         final Integer result = U.sample(asList(1, 2, 3, 4, 5, 6));
         assertTrue(result >= 1 && result <= 6);
@@ -1744,6 +1783,14 @@ _.sample([1, 2, 3, 4, 5, 6], 3);
             add(Tuple.create("name1", "one"));
             add(Tuple.create("name2", "two"));
         } }).toString());
+    }
+
+    @Test
+    public void toCardinalityMap() {
+        assertEquals("{a=2, b=1, c=2}", U.toCardinalityMap(asList("a", "a", "b", "c", "c")).toString());
+        assertEquals("{}", U.toCardinalityMap(U.newArrayList()).toString());
+        assertEquals("{a=2, b=1, c=2}", new U<String>(asList("a", "a", "b", "c", "c")).toCardinalityMap().toString());
+        assertEquals("{}", new U<Object>(U.newArrayList()).toCardinalityMap().toString());
     }
 
 /*

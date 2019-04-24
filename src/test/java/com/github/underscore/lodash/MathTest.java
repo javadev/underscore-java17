@@ -40,6 +40,111 @@ import static org.junit.Assert.assertNull;
  */
 public class MathTest {
 
+    @Test
+    public void average() {
+        final Double result = U.average(asList((byte) 1, (byte) 2, (byte) 3));
+        assertEquals("2.0", result.toString());
+        final Double resultFunc = U.average(asList((byte) 1, (byte) 2, (byte) 3), new Function<Byte, Byte>() {
+            public Byte apply(final Byte item) {
+                return (byte) (item * 2);
+            }
+        });
+        assertEquals("4.0", resultFunc.toString());
+        final Double resultFunc2 = U.average(asList((Byte) null), new Function<Byte, Byte>() {
+            public Byte apply(final Byte item) {
+                return item;
+            }
+        });
+        assertNull(resultFunc2);
+        assertEquals("2.0", result.toString());
+        final Double result2 = U.average(asList((double) 1, (double) 2, (double) 3));
+        assertEquals("2.0", result2.toString());
+        final Double result3 = U.average(asList((float) 1, (float) 2, (float) 3));
+        assertEquals("2.0", result3.toString());
+        final Double result4 = U.average(asList((int) 1, (int) 2, (int) 3));
+        assertEquals("2.0", result4.toString());
+        final Double result5 = U.average(asList((long) 1, (long) 2, (long) 3));
+        assertEquals("2.0", result5.toString());
+        final Double result6 = U.average(asList((short) 1, (short) 2, (short) 3));
+        assertEquals("2.0", result6.toString());
+        final Double result7 = U.average(asList(BigDecimal.valueOf(1), BigDecimal.valueOf(2), BigDecimal.valueOf(3)));
+        assertEquals("2.0", result7.toString());
+        final Double result8 = U.average(asList(BigInteger.valueOf(1), BigInteger.valueOf(2), BigInteger.valueOf(3)));
+        assertEquals("2.0", result8.toString());
+        final Double result9 = U.average(asList((Integer) null));
+        assertNull(result9);
+        final Double result10 = U.average(asList(1, (Integer) null));
+        assertEquals("0.5", result10.toString());
+        final Double result11 = U.average(asList((double) 0.2, (double) 0.1, Math.PI));
+        assertEquals(Double.valueOf((0.2 + 0.1 + Math.PI) / 3).toString(), result11.toString());
+        final Double result12 = U.average(asList((double) 0, (double) 14, (double) 0.2));
+        assertEquals(Double.valueOf((0 + 14 + 0.2) / 3), result12);
+        final Double result13 = U.average(asList((int) -1, (int) -2, (int) -3));
+        assertEquals("-2.0", result13.toString());
+        final Double result14 = U.average(new Integer[] {1, 2, 3});
+        assertEquals("2.0", result14.toString());
+        final Double result15 = U.average(new Double[] {1.0, 2.0, 3.0});
+        assertEquals("2.0", result15.toString());
+        final Double result16 = U.average(new Float[] {(float) 1.0, (float) 2.0, (float) 3.0});
+        assertEquals("2.0", result16.toString());
+        final Double result17 = U.average(new Short[] {1, 2, 3});
+        assertEquals("2.0", result17.toString());
+        final Double result18 = U.average(new Long[] {(long) 1, (long) 2, (long) 3});
+        assertEquals("2.0", result18.toString());
+        final Double result19 = U.average(new BigInteger[] {BigInteger.valueOf(1), BigInteger.valueOf(2),
+                BigInteger.valueOf(3)});
+        assertEquals("2.0", result19.toString());
+        final Double result20 = U.average(new BigDecimal[] {BigDecimal.valueOf(1), BigDecimal.valueOf(2),
+                BigDecimal.valueOf(3)});
+        assertEquals("2.0", result20.toString());
+        final Double result21 = U.average(null, BigDecimal.valueOf(1));
+        assertNull(result21);
+        final Double result22 = U.average(BigDecimal.valueOf(1), null);
+        assertNull(result22);
+        final Double result23 = U.average(BigDecimal.valueOf(2), BigDecimal.valueOf(4));
+        assertEquals("3.0", result23.toString());
+        final Double result24 = U.average(BigInteger.valueOf(1), null);
+        assertNull(result24);
+        final Double result25 = U.average(null, BigInteger.valueOf(1));
+        assertNull(result25);
+        final Double result26 = U.average(BigInteger.valueOf(2), BigInteger.valueOf(4));
+        assertEquals("3.0", result26.toString());
+        final Double result27 = U.average((byte) 1, null);
+        assertNull(result27);
+        final Double result28 = U.average(null, (byte) 1);
+        assertNull(result28);
+        final Double result29 = U.average((byte) 2, (byte) 4);
+        assertEquals("3.0", result29.toString());
+        final Double result30 = U.average(Double.valueOf(2), null);
+        assertNull(result30);
+        final Double result31 = U.average(null, Double.valueOf(2));
+        assertNull(result31);
+        final Double result32 = U.average(Double.valueOf(2), Double.valueOf(4));
+        assertEquals("3.0", result32.toString());
+        final Double result33 = U.average(Float.valueOf(2), null);
+        assertNull(result33);
+        final Double result34 = U.average(null, Float.valueOf(2));
+        assertNull(result34);
+        final Double result35 = U.average(Float.valueOf(2), Float.valueOf(4));
+        assertEquals("3.0", result35.toString());
+        final Double result36 = U.average(Integer.valueOf(2), null);
+        assertNull(result36);
+        final Double result37 = U.average(null, Integer.valueOf(2));
+        assertNull(result37);
+        final Double result38 = U.average(Integer.valueOf(2), Integer.valueOf(4));
+        assertEquals("3.0", result38.toString());
+        final Double result39 = U.average(Long.valueOf(2), null);
+        assertNull(result39);
+        final Double result40 = U.average(null, Long.valueOf(2));
+        assertNull(result40);
+        final Double result41 = U.average(Long.valueOf(2), Long.valueOf(4));
+        assertEquals("3.0", result41.toString());
+        final Double result42 = U.average(Long.valueOf(2), Long.valueOf(4));
+        assertEquals("3.0", result41.toString());
+        final Double result43 = U.average(new Integer[] {(Integer) null});
+        assertNull(result43);
+    }
+
 /*
 _.sum([1, 2, 3]);
 => 6
@@ -76,7 +181,7 @@ _.sum([-1, -2, -3]);
         final BigInteger result8 = U.sum(asList(BigInteger.valueOf(1), BigInteger.valueOf(2), BigInteger.valueOf(3)));
         assertEquals("6", result8.toString());
         final Integer result9 = U.sum(asList((Integer) null));
-        assertEquals(null, result9);
+        assertNull(result9);
         final Integer result10 = U.sum(asList(1, (Integer) null));
         assertEquals("1", result10.toString());
         final Double result11 = U.sum(asList((double) 0.2, (double) 0.1, Math.PI));
@@ -87,6 +192,24 @@ _.sum([-1, -2, -3]);
         assertEquals("-6", result13.toString());
         final Integer resultChain = (Integer) U.chain(asList((int) 1, (int) 2, (int) 3)).sum().item();
         assertEquals("6", resultChain.toString());
+        final Integer result14 = U.sum(new Integer[] {1, 2, 3});
+        assertEquals("6", result14.toString());
+        final Double result15 = U.sum(new Double[] {1.0, 2.0, 3.0});
+        assertEquals("6.0", result15.toString());
+        final Float result16 = U.sum(new Float[] {(float) 1.0, (float) 2.0, (float) 3.0});
+        assertEquals("6.0", result16.toString());
+        final Short result17 = U.sum(new Short[] {1, 2, 3});
+        assertEquals("6", result17.toString());
+        final Long result18 = U.sum(new Long[] {(long) 1, (long) 2, (long) 3});
+        assertEquals("6", result18.toString());
+        final BigInteger result19 = U.sum(new BigInteger[] {BigInteger.valueOf(1), BigInteger.valueOf(2),
+                BigInteger.valueOf(3)});
+        assertEquals("6", result19.toString());
+        final BigDecimal result20 = U.sum(new BigDecimal[] {BigDecimal.valueOf(1), BigDecimal.valueOf(2),
+                BigDecimal.valueOf(3)});
+        assertEquals("6", result20.toString());
+        final Integer result21 = U.sum(new Integer[] {1, 2, null});
+        assertEquals("3", result21.toString());
         final Integer resultChainFunc = (Integer) U.chain(asList((int) 1, (int) 2, (int) 3)).sum(
             new Function<Integer, Integer>() {
             public Integer apply(final Integer item) {
@@ -121,6 +244,56 @@ _.sum([-1, -2, -3]);
             }
         }
         U.sum(asList(new MyNumber(), new MyNumber()));
+    }
+
+/*
+_.subtract(1, 2);
+=> -1
+_.subtract(1, 2, 3);
+=> -4
+_.subtract();
+=> null
+*/
+    @SuppressWarnings("unchecked")
+    @Test
+    public void subtract() {
+        assertEquals("-1", U.subtract((byte) 1, (byte) 2).toString());
+        assertEquals("-1", U.subtract((short) 1, (short) 2).toString());
+        assertEquals("-1", U.subtract((int) 1, (int) 2).toString());
+        assertEquals("-1", U.subtract((long) 1, (long) 2).toString());
+        assertEquals("-1.0", U.subtract((float) 1, (float) 2).toString());
+        assertEquals("-1.0", U.subtract((double) 1, (double) 2).toString());
+        assertEquals("-1", U.subtract(Byte.valueOf((byte) 1), Byte.valueOf((byte) 2)).toString());
+        assertEquals("-1", U.subtract(Short.valueOf((short) 1), Short.valueOf((short) 2)).toString());
+        assertEquals("-1", U.subtract(Integer.valueOf(1), Integer.valueOf(2)).toString());
+        assertEquals("-1", U.subtract(Long.valueOf(1), Long.valueOf(2)).toString());
+        assertEquals("-1.0", U.subtract(Float.valueOf(1), Float.valueOf(2)).toString());
+        assertEquals("-1.0", U.subtract(Double.valueOf(1), Double.valueOf(2)).toString());
+        assertEquals("-1", U.subtract(java.math.BigDecimal.valueOf(1), java.math.BigDecimal.valueOf(2)).toString());
+        assertEquals("-1", U.subtract(java.math.BigInteger.valueOf(1), java.math.BigInteger.valueOf(2)).toString());
+        assertEquals("-1", U.subtract((Number) 1, (Number) 2).toString());
+        assertEquals("-4", U.subtract((int) 1, (int) 2, (int) 3).toString());
+        assertEquals("1", U.subtract((int) 1).toString());
+        assertEquals(null, U.subtract());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void subtractError() {
+        class MyNumber extends Number {
+            public int intValue() {
+                return 0;
+            }
+            public long longValue() {
+                return 0;
+            }
+            public float floatValue() {
+                return 0;
+            }
+            public double doubleValue() {
+                return 0;
+            }
+        }
+        U.subtract(new MyNumber(), new MyNumber());
     }
 
 /*
@@ -178,7 +351,6 @@ _.median([0, 0, 1, 2, 3, 4]);
     }
 
     // http://stackoverflow.com/questions/27772432/is-there-a-underscore-js-lib-for-java
-    @SuppressWarnings("unchecked")
     @Test
     public void sumOfInt() {
 /*
@@ -244,7 +416,6 @@ System.out.println("Sum of letters in words starting with E... " + sum);
                    + " [orange, orange, orange]]", resultChain.toString());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void shortestPathAllKeys() {
         List<U.Status> statuses = U.shortestPathAllKeys(new String[] {"@.a.#", "###.#", "b.A.B"});

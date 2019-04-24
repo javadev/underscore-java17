@@ -331,7 +331,6 @@ public class U<T> extends com.github.underscore.U<T> {
             return new Chain<T>(U.uniq(value()));
         }
 
-        @SuppressWarnings("unchecked")
         public <F> Chain<T> uniq(final Function<T, F> func) {
             return new Chain<T>(U.newArrayList(U.uniq(value(), func)));
         }
@@ -361,19 +360,43 @@ public class U<T> extends com.github.underscore.U<T> {
         }
 
         public Chain<Integer> range(final int stop) {
-            return new Chain<Integer>(newIntegerList(U.range(stop)));
+            return new Chain<Integer>(U.range(stop));
         }
 
         public Chain<Integer> range(final int start, final int stop) {
-            return new Chain<Integer>(newIntegerList(U.range(start, stop)));
+            return new Chain<Integer>(U.range(start, stop));
         }
 
         public Chain<Integer> range(final int start, final int stop, final int step) {
-            return new Chain<Integer>(newIntegerList(U.range(start, stop, step)));
+            return new Chain<Integer>(U.range(start, stop, step));
         }
 
         public Chain<List<T>> chunk(final int size) {
-            return new Chain<List<T>>(U.chunk(value(), size));
+            return new Chain<List<T>>(U.chunk(value(), size, size));
+        }
+
+        public Chain<List<T>> chunk(final int size, final int step) {
+            return new Chain<List<T>>(U.chunk(value(), size, step));
+        }
+
+        public Chain<List<T>> chunkFill(final int size, final T fillValue) {
+            return new Chain<List<T>>(U.chunkFill(value(), size, size, fillValue));
+        }
+
+        public Chain<List<T>> chunkFill(final int size, final int step, final T fillValue) {
+            return new Chain<List<T>>(U.chunkFill(value(), size, step, fillValue));
+        }
+
+        public Chain<T> cycle(final int times) {
+            return new Chain<T>(U.cycle(value(), times));
+        }
+
+        public Chain<T> interpose(final T element) {
+            return new Chain<T>(U.interpose(value(), element));
+        }
+
+        public Chain<T> interposeByList(final Iterable<T> interIter) {
+            return new Chain<T>(U.interposeByList(value(), interIter));
         }
 
         @SuppressWarnings("unchecked")
@@ -658,7 +681,6 @@ public class U<T> extends com.github.underscore.U<T> {
             return new Chain<String>(U.fetch((String) item(), method, body).text());
         }
 
-        @SuppressWarnings("unchecked")
         public Chain<List<T>> createPermutationWithRepetition(final int permutationLength) {
             return new Chain<List<T>>(U.createPermutationWithRepetition((List<T>) value(), permutationLength));
         }
@@ -753,11 +775,18 @@ public class U<T> extends com.github.underscore.U<T> {
         return dropRightWhile(getIterable(), pred);
     }
 
-    public static List<Object> fill(final List<Object> list, Object value) {
-        for (int index = 0; index < list.size(); index += 1) {
-            list.set(index, value);
+    public static <T> List<T> fill(List<T> list, T item) {
+        for (int i = 0; i < size(list); i++) {
+            list.set(i, item);
         }
         return list;
+    }
+
+    public static <T> T[] fill(T[] array, T item) {
+        for (int i = 0; i < array.length; i++) {
+             array[i] = item;
+        }
+        return array;
     }
 
     @SuppressWarnings("unchecked")
@@ -920,6 +949,79 @@ public class U<T> extends com.github.underscore.U<T> {
         return at((List<T>) getIterable(), indexes);
     }
 
+    public static <T extends Number> Double average(final Iterable<T> iterable) {
+        T sum = sum(iterable);
+        if (sum == null) {
+            return null;
+        }
+        return sum.doubleValue() / size(iterable);
+    }
+
+    public static <E, F extends  Number> Double average(final Iterable<E> iterable, final Function<E, F> func) {
+        F sum = sum(iterable, func);
+        if (sum == null) {
+            return null;
+        }
+        return sum.doubleValue() / size(iterable);
+    }
+
+    public static <N extends Number> Double average(N[] array) {
+        N sum = sum(array);
+        if (sum == null) {
+            return null;
+        }
+        return sum.doubleValue() / array.length;
+    }
+
+    public static Double average(java.math.BigDecimal first, java.math.BigDecimal second) {
+        if (first == null || second == null) {
+            return null;
+        }
+        return sum(first, second).doubleValue() / 2;
+    }
+
+    public static Double average(java.math.BigInteger first, java.math.BigInteger second) {
+        if (first == null || second == null) {
+            return null;
+        }
+      return sum(first, second).doubleValue() / 2;
+    }
+
+    public static Double average(Byte first, Byte second) {
+        if (first == null || second == null) {
+            return null;
+        }
+        return sum(first, second).doubleValue() / 2;
+    }
+
+    public static Double average(Double first, Double second) {
+        if (first == null || second == null) {
+            return null;
+        }
+        return sum(first, second) / 2;
+    }
+
+    public static Double average(Float first, Float second) {
+        if (first == null || second == null) {
+            return null;
+        }
+        return sum(first, second).doubleValue() / 2;
+    }
+
+    public static Double average(Integer first, Integer second) {
+        if (first == null || second == null) {
+            return null;
+        }
+        return sum(first, second).doubleValue() / 2;
+    }
+
+    public static Double average(Long first, Long second) {
+        if (first == null || second == null) {
+            return null;
+        }
+        return sum(first, second).doubleValue() / 2;
+    }
+
     public static <T extends Number> T sum(final Iterable<T> iterable) {
         T result = null;
         for (final T item : iterable) {
@@ -932,6 +1034,14 @@ public class U<T> extends com.github.underscore.U<T> {
         F result = null;
         for (final E item : iterable) {
             result = add(result, func.apply(item));
+        }
+        return result;
+    }
+
+    public static <N extends Number> N sum(N[] array) {
+        N result = null;
+        for (final N item : array) {
+            result = add(result, item);
         }
         return result;
     }
@@ -1003,6 +1113,38 @@ public class U<T> extends com.github.underscore.U<T> {
 
     private static Short sum(Short first, Short second) {
         return (short) (first + second);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Number> T subtract(final T ... values) {
+        if (values.length == 0) {
+            return null;
+        }
+        T result = values[0];
+        for (int i = 1; i < values.length; i++) {
+            if (result instanceof java.math.BigDecimal) {
+                java.math.BigDecimal value = (java.math.BigDecimal) values[i];
+                result = add(result, (T) value.negate());
+            } else if (result instanceof java.math.BigInteger) {
+                java.math.BigInteger value = (java.math.BigInteger) values[i];
+                result = add(result, (T) value.negate());
+            } else if (result instanceof Byte) {
+                result = add(result, (T) Byte.valueOf((byte) (values[i].byteValue() * -1)));
+            } else if (result instanceof Double) {
+                result = add(result, (T) Double.valueOf(values[i].doubleValue() * -1));
+            } else if (result instanceof Float) {
+                result = add(result, (T) Float.valueOf(values[i].floatValue() * -1));
+            } else if (result instanceof Integer) {
+                result = add(result, (T) Integer.valueOf(values[i].intValue() * -1));
+            } else if (result instanceof Long) {
+                result = add(result, (T) Long.valueOf(values[i].longValue() * -1));
+            } else if (result instanceof Short) {
+                result = add(result, (T) Short.valueOf((short) (values[i].shortValue() * -1)));
+            } else {
+                throw new UnsupportedOperationException("Subtract only supports official subclasses of Number");
+            }
+        }
+        return result;
     }
 
     public static <T extends Number> double mean(final Iterable<T> iterable) {
@@ -1585,6 +1727,37 @@ public class U<T> extends com.github.underscore.U<T> {
         }
     }
 
+    public static List<String> explode(final String input) {
+        List<String> result = newArrayList();
+        if (isNull(input)) {
+            return result;
+        }
+        for (char character : input.toCharArray()) {
+            result.add(String.valueOf(character));
+        }
+        return result;
+    }
+
+    public static String implode(final String[] input) {
+        StringBuilder builder = new StringBuilder();
+        for (String character : input) {
+            if (nonNull(character)) {
+                builder.append(character);
+            }
+        }
+        return builder.toString();
+    }
+
+    public static String implode(final Iterable<String> input) {
+        StringBuilder builder = new StringBuilder();
+        for (String character: input) {
+            if (nonNull(character)) {
+                builder.append(character);
+            }
+        }
+        return builder.toString();
+    }
+
     public String camelCase() {
         return camelCase(getString().get());
     }
@@ -1846,22 +2019,18 @@ public class U<T> extends com.github.underscore.U<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public List<List<T>> createPermutationWithRepetition(final int permutationLength) {
         return createPermutationWithRepetition((List<T>) value(), permutationLength);
     }
 
-    @SuppressWarnings("unchecked")
     protected static <T> List<T> newArrayList() {
         return com.github.underscore.U.newArrayList();
     }
 
-    @SuppressWarnings("unchecked")
     protected static <T> List<T> newArrayList(final Iterable<T> iterable) {
         return com.github.underscore.U.newArrayList(iterable);
     }
 
-    @SuppressWarnings("unchecked")
     protected static <T> Set<T> newLinkedHashSet() {
         return com.github.underscore.U.newLinkedHashSet();
     }
@@ -1942,7 +2111,6 @@ public class U<T> extends com.github.underscore.U<T> {
         return Xml.fromXml(getString().get());
     }
 
-    @SuppressWarnings("unchecked")
     public static String jsonToXml(String json, Xml.XmlStringBuilder.Step identStep) {
         Object result = Json.fromJson(json);
         if (result instanceof Map) {
@@ -1955,7 +2123,6 @@ public class U<T> extends com.github.underscore.U<T> {
         return jsonToXml(json, Xml.XmlStringBuilder.Step.TWO_SPACES);
     }
 
-    @SuppressWarnings("unchecked")
     public static String xmlToJson(String xml, Json.JsonStringBuilder.Step identStep) {
         Object result = Xml.fromXml(xml);
         if (result instanceof Map) {

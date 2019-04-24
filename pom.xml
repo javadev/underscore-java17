@@ -118,6 +118,7 @@
         <configuration>
           <excludes>
             <exclude>**/U$BaseHttpSslSocketFactory*.class</exclude>
+            <exclude>**/Xml$Document.class</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -142,6 +143,7 @@
         <configuration>
           <excludes>
             <exclude>**/U$BaseHttpSslSocketFactory*.class</exclude>
+            <exclude>**/Xml$Document.class</exclude>
           </excludes>
         </configuration>
       </plugin>

@@ -151,13 +151,15 @@ _.concat([1, 2], [3, 4]);
     @SuppressWarnings("unchecked")
     public void concat() {
         assertEquals(asList(1, 2, 3, 4), asList(U.concat(new Integer[] {1, 2}, new Integer[] {3, 4})));
+        assertEquals(asList(1.0, 2.0), asList(U.concat(new Double[] {1.0, 2.0})));
         assertEquals(asList(1, 2, 3, 4), U.concat(asList(1, 2), asList(3, 4)));
-        assertEquals(asList(1, 2, 3, 4), new U(asList(1, 2)).concatWith(asList(3, 4)));
+        assertEquals(asList("a", "b"), U.concat(asList("a", "b")));
+        assertEquals(asList(1, 2, 3, 4), new U<Integer>(asList(1, 2)).concatWith(asList(3, 4)));
         assertEquals("[1, 2, 3, 4]", U.chain(asList(1, 2)).concat(asList(3, 4)).value().toString());
         assertEquals("[1, 2, 3, 4, 5, 6]", U.chain(asList(1, 2)).concat(asList(3, 4), asList(5, 6)).value().toString());
         assertEquals(asList(1, 2, 3, 4), asList(U.concat(new Integer[] {1, 2}, new Integer[] {3}, new Integer[] {4})));
         assertEquals(asList(1, 2, 3, 4), U.concat(asList(1, 2), asList(3), asList(4)));
-        assertEquals(asList(1, 2, 3, 4), new U(asList(1, 2)).concatWith(asList(3), asList(4)));
+        assertEquals(asList(1, 2, 3, 4), new U<Integer>(asList(1, 2)).concatWith(asList(3), asList(4)));
     }
 
 /*
@@ -192,6 +194,57 @@ arr.slice(-3, -1) // [3, 4]
     }
 
 /*
+_.splitAt([1, 2, 3, 4, 5], 2);
+=> [[1, 2], [3, 4, 5]]
+_.splitAt([1, 2, 3, 4, 5], 0);
+=> [[], [1, 2, 3, 4, 5]]
+_.splitAt([1, 2, 3, 4, 5], 20000);
+=> [[1, 2, 3, 4, 5], []]
+_.splitAt([1, 2, 3, 4, 5], -1000);
+=> [[], [1, 2, 3, 4, 5]]
+_.splitAt([], 0);
+=> [[], []]
+*/
+    @Test
+    public void splitAt() {
+        assertEquals("[[0, 1], [2, 3, 4]]", U.splitAt(U.range(5), 2).toString());
+        assertEquals("[[], [0, 1, 2, 3, 4]]", U.splitAt(U.range(5), 0).toString());
+        assertEquals("[[0, 1, 2, 3, 4], []]", U.splitAt(U.range(5), 20000).toString());
+        assertEquals("[[], [0, 1, 2, 3, 4]]", U.splitAt(U.range(5), -1000).toString());
+        assertEquals("[[], []]", U.splitAt(U.newIntegerList(), 0).toString());
+        assertEquals("[[0, 1], [2, 3, 4]]", new U<Integer>(U.range(5)).splitAt(2).toString());
+        assertEquals("[[0, 1], [2, 3, 4]]", U.chain(U.range(5)).splitAt(2).value().toString());
+        assertEquals("[[a, b], [c, d, e]]", U.splitAt(asList('a', 'b', 'c', 'd', 'e'), 2).toString());
+        assertEquals("[[ant, bird], [camel, dog, elephant]]", U.splitAt(asList("ant", "bird", "camel", "dog", "elephant"), 2).toString());
+        assertEquals("[[0.1, 0.2], [0.3, 0.4, 0.5]]", U.splitAt(asList(0.1, 0.2, 0.3, 0.4, 0.5), 2).toString());
+        final Integer[] array = {0, 1, 2, 3, 4};
+        assertEquals("[[0, 1], [2, 3, 4]]", U.splitAt(array, 2).toString());
+    }
+
+/*
+_.takeSkipping([1, 2, 3, 4, 5], 2);
+=> [0, 2, 4]
+_.takeSkipping([1, 2, 3, 4, 5], 100000);
+=> [0]
+_.takeSkipping([1, 2, 3, 4, 5], -100);
+=> []
+*/
+    @Test
+    public void takeSkipping() {
+        assertEquals("[0, 2, 4]", U.takeSkipping(U.range(5), 2).toString());
+        assertEquals("[0]", U.takeSkipping(U.range(5), 100000).toString());
+        assertEquals("[]", U.takeSkipping(U.range(5), -100).toString());
+        assertEquals("[]", U.takeSkipping(U.range(5), 0).toString());
+        assertEquals("[0, 2, 4]", new U<Integer>(U.range(5)).takeSkipping(2).toString());
+        assertEquals("[0, 2, 4]", U.chain(U.range(5)).takeSkipping(2).value().toString());
+        assertEquals("[a, c, e]", U.takeSkipping(asList('a', 'b', 'c', 'd', 'e'), 2).toString());
+        assertEquals("[ant, camel, elephant]", U.takeSkipping(asList("ant", "bird", "camel", "dog", "elephant"), 2).toString());
+        assertEquals("[0.1, 0.3, 0.5]", U.takeSkipping(asList(0.1, 0.2, 0.3, 0.4, 0.5), 2).toString());
+        final Integer[] array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        assertEquals("[0, 3, 6, 9]", U.takeSkipping(array, 3).toString());
+    }
+
+/*
 var arr = [ 1, 2, 3 ]
 _.copyOf(arr) // => [1, 2, 3]
 */
@@ -210,7 +263,6 @@ var arr = [ 1, 2, 3 ]
 _.elementAt(arr, 1) // => 2
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void elementAt() {
         assertEquals(2, U.<Integer>elementAt(asList(1, 2, 3), 1).intValue());
         assertEquals(2, new U<Integer>(asList(1, 2, 3)).elementAt(1).intValue());
@@ -221,7 +273,6 @@ var arr = [ 1, 2, 3 ]
 _.get(arr, 1) // => 2
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void get() {
         assertEquals(2, U.<Integer>get(asList(1, 2, 3), 1).intValue());
         assertEquals(2, new U<Integer>(asList(1, 2, 3)).get(1).intValue());
@@ -232,7 +283,6 @@ var arr = [ 1, 2, 3 ]
 _.set(arr, 1, 100) // => 2
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void set() {
         Tuple<Integer, List<Integer>> result = U.<Integer>set(asList(1, 2, 3), 1, 100);
         assertEquals(2, result.fst().intValue());
@@ -257,7 +307,6 @@ _.elementAtOrElse(arr, 1, 0) // => 2
 _.elementAtOrElse(arr, 3, 0) // => 0
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void elementAtOrElse() {
         assertEquals(2, U.<Integer>elementAtOrElse(asList(1, 2, 3), 1, 0).intValue());
         assertEquals(2, new U<Integer>(asList(1, 2, 3)).elementAtOrElse(1, 0).intValue());
@@ -271,7 +320,6 @@ _.elementAtOrNull(arr, 1) // => 2
 _.elementAtOrNull(arr, 3) // => null
 */
     @Test
-    @SuppressWarnings("unchecked")
     public void elementAtOrNull() {
         assertEquals(2, U.<Integer>elementAtOrNull(asList(1, 2, 3), 1).intValue());
         assertEquals(2, new U<Integer>(asList(1, 2, 3)).elementAtOrNull(1).intValue());
@@ -293,7 +341,6 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void findLastWithCustomIterable() {
         final int[] array = new int[] {1, 2, 3, 4, 5, 6};
         Iterable<Integer> iterable = new Iterable<Integer>() {
@@ -362,6 +409,7 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
     public void optional() {
         assertTrue(Optional.absent().equals(Optional.absent()));
         assertTrue(Optional.of(1).equals(Optional.of(1)));
@@ -452,6 +500,12 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
+    public void nonNull() {
+        assertFalse(U.nonNull(null));
+        assertTrue(U.nonNull(""));
+    }
+
+    @Test
     public void defaultTo() {
         assertNull(U.defaultTo(null, null));
     }
@@ -523,7 +577,6 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void stackoverflow() {
         // http://stackoverflow.com/questions/109383/how-to-sort-a-mapkey-value-on-the-values-in-java?rq=1
         assertEquals("{D=67.3, B=67.4, C=67.4, A=99.5}", U.chain((new LinkedHashMap<String, Double>() { {
@@ -539,7 +592,6 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void stackoverflow2() {
         // http://stackoverflow.com/questions/12229577/java-hashmap-sorting-string-integer-how-to-sort-it?lq=1
         assertEquals("{a=5, f=5, c=4, e=3, b=2, d=2}", U.chain((new LinkedHashMap<String, Integer>() { {
@@ -557,7 +609,6 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void stackoverflow3() {
 // http://stackoverflow.com/questions/11647889/sorting-the-mapkey-value-in-descending-order-based-on-the-value?lq=1
         assertEquals("{C=50, A=34, B=25}", U.chain((new LinkedHashMap<String, Integer>() { {
@@ -607,7 +658,6 @@ _.elementAtOrNull(arr, 3) // => null
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void jobtest() {
         String[] strings = {
             "Sound boy proceed to blast into the galaxy",
