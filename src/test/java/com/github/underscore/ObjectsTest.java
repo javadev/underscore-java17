@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2018 Valentyn Kolesnikov
+ * Copyright 2015-2019 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -91,14 +91,8 @@ _.functions(_);
 */
     @Test
     public void functions() {
-        class Test {
-            public void test() {
-            }
-            public void test$() {
-            }
-        }
-        List<String> result = U.functions(Test.class);
-        assertEquals(1, U.first(result, 1).size());
+        List<String> result = U.functions(U.class);
+        assertEquals(5, U.first(result, 5).size());
     }
 
 /*

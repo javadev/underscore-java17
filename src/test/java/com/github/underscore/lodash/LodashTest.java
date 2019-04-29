@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2016-2018 Valentyn Kolesnikov
+ * Copyright 2015-2019 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -755,6 +755,11 @@ _.get({"a":[{"b":{"c":"d"}}]}, "a[0].b.c");
         U.chain(new Integer[] {0}).distinct();
         U.chain(new Integer[] {0}).distinctBy(new Function<Integer, Integer>() {
             public Integer apply(Integer value) { return value; } });
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void chain2() {
         U.chain(new String[] {""}).union();
         U.chain(new String[] {""}).intersection();
         U.chain(new String[] {""}).difference();
