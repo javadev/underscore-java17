@@ -33,7 +33,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.home.openjdk11>../../programs/jdk-10</java.home.openjdk11>
+    <java.home.openjdk11>../../programs/jdk-10.0.2</java.home.openjdk11>
   </properties>
 
   <ciManagement>
