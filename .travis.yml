@@ -2,7 +2,8 @@ language: java
 dist: trusty
 
 jdk:
-  - oraclejdk11
+  - openjdk11
+  - openjdk12
 
 script:
   - mvn -B clean test jacoco:report
