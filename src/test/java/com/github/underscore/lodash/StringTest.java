@@ -1751,6 +1751,7 @@ _.repeat('abc', 0);
                 + "  <phone>(011) 123-4567</phone>\n"
                 + "</address>";
         assertEquals("{\n"
+                + "  \"!DOCTYPE\": \"address [\\n]\",\n"
                 + "  \"address\": {\n"
                 + "    \"name\": \"Tanmay Patil\",\n"
                 + "    \"company\": \"TutorialsPoint\",\n"
@@ -2174,6 +2175,14 @@ _.repeat('abc', 0);
             + "}";
         assertEquals(json2, U.toJson((Map<String, Object>) U.fromXml(xml2)));
         assertEquals(xml2, U.toXml((Map<String, Object>) U.fromJson(json2)));
+        final String xml3 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<a>\n  <?b?>\n</a>";
+        final String json3 = "{\n"
+            + "  \"a\": {\n"
+            + "    \"?b\": \"\"\n"
+            + "  }\n"
+            + "}";
+        assertEquals(json3, U.toJson((Map<String, Object>) U.fromXml(xml3)));
+        assertEquals(xml3, U.toXml((Map<String, Object>) U.fromJson(json3)));
     }
 
     @SuppressWarnings("unchecked")
@@ -2181,6 +2190,7 @@ _.repeat('abc', 0);
     public void toJsonFromXml25() {
         final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE address SYSTEM \"address.dtd\"><a></a>";
         final String json = "{\n"
+            + "  \"!DOCTYPE\": \"address SYSTEM \\\"address.dtd\\\"\",\n"
             + "  \"a\": {\n"
             + "  }\n"
             + "}";
@@ -2228,6 +2238,27 @@ _.repeat('abc', 0);
                 + "  \"#omit-xml-declaration\": \"yes\"\n"
                 + "}";
         assertEquals(json, U.toJson((Map<String, Object>) U.fromXml(xml, Xml.FromType.FOR_FORMAT)));
+        assertEquals(xml, U.toXml((Map<String, Object>) U.fromJson(json)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void toJsonFromXml28() {
+        final String xml = "<!DOCTYPE module PUBLIC\n"
+            + "\"-//Puppy Crawl//DTD Check Configuration 1.3//EN\"\n"
+            + "\"http://www.puppycrawl.com/dtds/configuration_1_3.dtd\">\n"
+            + "<module name=\"Checker\"/>";
+        final String json = "{\n"
+            + "  \"!DOCTYPE\": \"module PUBLIC\\n\\\"-//Puppy Crawl//DTD Check Configuration 1.3//EN\\\"\\n"
+            + "\\\"http://www.puppycrawl.com/dtds/configuration_1_3.dtd\\\"\",\n"
+            + "  \"module\": {\n"
+            + "    \"-name\": \"Checker\",\n"
+            + "    \"-self-closing\": \"true\"\n"
+            + "  },\n"
+            + "  \"#omit-xml-declaration\": \"yes\"\n"
+            + "}";
+        assertEquals("", Xml.getDoctypeValue("<!DOCTYPE module PUBLIC"));
+        assertEquals(json, U.toJson((Map<String, Object>) U.fromXml(xml)));
         assertEquals(xml, U.toXml((Map<String, Object>) U.fromJson(json)));
     }
 

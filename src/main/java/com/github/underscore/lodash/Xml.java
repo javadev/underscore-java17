@@ -55,6 +55,8 @@ public final class Xml {
     private static final String EMPTY_ARRAY = "-empty-array";
     private static final String QUOT = "&quot;";
     private static final String XML_HEADER = "<?xml ";
+    private static final String DOCTYPE_TEXT = "!DOCTYPE";
+    private static final String DOCTYPE_HEADER = "<" + DOCTYPE_TEXT + " ";
     private static final java.nio.charset.Charset UTF_8 = java.nio.charset.Charset.forName("UTF-8");
     private static final java.util.regex.Pattern ATTRS = java.util.regex.Pattern.compile(
         "((?:(?!\\s|=).)*)\\s*?=\\s*?[\"']?((?:(?<=\")(?:(?<=\\\\)\"|[^\"])*|(?<=')"
@@ -610,7 +612,12 @@ public final class Xml {
             } else if (value instanceof String) {
                 if (((String) value).isEmpty()) {
                     builder.append("<" + XmlValue.escapeName(name, namespaces)
-                        + (addArray ? ARRAY_TRUE : "") + " string=\"true\"/>");
+                        + (addArray ? ARRAY_TRUE : ""));
+                    if (name.startsWith("?")) {
+                        builder.append("?>");
+                    } else {
+                        builder.append(" string=\"true\"/>");
+                    }
                 } else {
                     builder.append("<" + XmlValue.escapeName(name, namespaces)
                         + (addArray ? ARRAY_TRUE : "") + (name.startsWith("?") ? " " : ">"));
@@ -898,17 +905,25 @@ public final class Xml {
     }
 
     private static void checkLocalMap(final XmlStringBuilder builder, final Map localMap) {
-        if (localMap == null || localMap.size() != 1
-            || XmlValue.getMapKey(localMap).startsWith("-")
-            || XmlValue.getMapValue(localMap) instanceof List) {
-            if ("root".equals(XmlValue.getMapKey(localMap))) {
-                writeArray((List) XmlValue.getMapValue(localMap), builder);
+        final Map localMap2;
+        if (localMap != null && localMap.containsKey(DOCTYPE_TEXT)) {
+            localMap2 = (Map) U.clone(localMap);
+            localMap2.remove(DOCTYPE_TEXT);
+            builder.append(DOCTYPE_HEADER).append(String.valueOf(localMap.get(DOCTYPE_TEXT))).append(">").newLine();
+        } else {
+            localMap2 = localMap;
+        }
+        if (localMap2 == null || localMap2.size() != 1
+            || XmlValue.getMapKey(localMap2).startsWith("-")
+            || XmlValue.getMapValue(localMap2) instanceof List) {
+            if ("root".equals(XmlValue.getMapKey(localMap2))) {
+                writeArray((List) XmlValue.getMapValue(localMap2), builder);
             } else {
-                XmlObject.writeXml(localMap, getRootName(localMap), builder, false,
+                XmlObject.writeXml(localMap2, getRootName(localMap2), builder, false,
                     U.<String>newLinkedHashSet(), false);
             }
         } else {
-            XmlObject.writeXml(localMap, null, builder, false, U.<String>newLinkedHashSet(), false);
+            XmlObject.writeXml(localMap2, null, builder, false, U.<String>newLinkedHashSet(), false);
         }
     }
 
@@ -1028,11 +1043,15 @@ public final class Xml {
                 value = currentNode.getTextContent();
             }
             if (TEXT.equals(name) && node.getChildNodes().getLength() > 1
-                && String.valueOf(value).trim().isEmpty()
-                || currentNode.getNodeType() == org.w3c.dom.Node.DOCUMENT_TYPE_NODE) {
+                && String.valueOf(value).trim().isEmpty()) {
                 continue;
             }
-            addNodeValue(map, name, value, elementMapper, nodeMapper, uniqueIds, namespaces, fromType);
+            if (currentNode.getNodeType() == org.w3c.dom.Node.DOCUMENT_TYPE_NODE) {
+                addNodeValue(map, DOCTYPE_TEXT, getDoctypeValue(source), elementMapper,
+                    nodeMapper, uniqueIds, namespaces, fromType);
+            } else {
+                addNodeValue(map, name, value, elementMapper, nodeMapper, uniqueIds, namespaces, fromType);
+            }
         }
         return checkNumberAndBoolean(map, node.getNodeName());
     }
@@ -1337,6 +1356,23 @@ public final class Xml {
             }
         }
         return result;
+    }
+
+    protected static String getDoctypeValue(final String xml) {
+        int startIndex = xml.indexOf(DOCTYPE_HEADER) + DOCTYPE_HEADER.length();
+        char charToFind = '>';
+        int endIndexPlus = 0;
+        for (int endIndex = startIndex; endIndex < xml.length(); endIndex += 1) {
+           if (xml.charAt(endIndex) == '[') {
+               charToFind = ']';
+               endIndexPlus = 1;
+               continue;
+           }
+           if (xml.charAt(endIndex) == charToFind) {
+               return xml.substring(startIndex, endIndex + endIndexPlus);
+           }
+        }
+        return "";
     }
 
     private static class MyEntityResolver implements org.xml.sax.EntityResolver {
