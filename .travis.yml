@@ -4,6 +4,7 @@ dist: trusty
 jdk:
   - openjdk11
   - openjdk12
+  - openjdk13
 
 script:
   - mvn -B clean test jacoco:report
