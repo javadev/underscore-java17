@@ -1,6 +1,7 @@
 package com.github.underscore;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class Optional<T> {
@@ -59,6 +60,16 @@ public final class Optional<T> {
 
     public boolean isPresent() {
         return !absent;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Optional<T> filter(Predicate<? super T> predicate) {
+        U.checkNotNull(predicate);
+        if (isPresent()) {
+            return predicate.test(arg) ? this : Optional.<T>absent();
+        } else {
+            return this;
+        }
     }
 
     public <F> Optional<F> map(Function<? super T, F> mapper) {

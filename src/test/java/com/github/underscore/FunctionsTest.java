@@ -162,7 +162,7 @@ _.delay(function(){ equal(counter, 1, 'incr was debounced'); }, 96);
                 return null;
             }
         }, 60);
-        await().atMost(120, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
+        await().atMost(160, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 return true;
             }
