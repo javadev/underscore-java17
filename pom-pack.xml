@@ -5,7 +5,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore11</artifactId>
   <packaging>jar</packaging>
-  <version>1.5</version>
+  <version>1.6</version>
   <name>java 11 port of Underscore.js</name>
   <description>The java 11 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
@@ -100,6 +100,7 @@
                   <option>-keep public class com.github.underscore.lodash.*$ParseException { *; }</option>
                   <option>-keep public class com.github.underscore.lodash.*$FetchResponse { *; }</option>
                   <option>-keep public class com.github.underscore.lodash.*$LRUCache { *; }</option>
+                  <option>-keep public class com.github.underscore.lodash.*$Mode { *; }</option>
                   <option>-keep public class com.github.underscore.lodash.Json$JsonStringBuilder$Step { *; }</option>
                   <option>-keep public class com.github.underscore.lodash.Xml$XmlStringBuilder$Step { *; }</option>
                   <option>-keepclassmembers class * { *** newArrayList(); *** newLinkedHashSet(); *** newHashSet(java.lang.Iterable); *** newLinkedHashMap(); }</option>
