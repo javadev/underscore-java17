@@ -51,6 +51,8 @@ public class U<T> extends com.github.underscore.U<T> {
     private static String lower = "[a-z\\xdf-\\xf6\\xf8-\\xff]+";
     private static java.util.regex.Pattern reWords = java.util.regex.Pattern.compile(
         upper + "+(?=" + upper + lower + ")|" + upper + "?" + lower + "|" + upper + "+|[0-9]+");
+    private static final Set<Character> NUMBER_CHARS = new HashSet<Character>(
+        Arrays.asList('.', 'e', 'E', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
 
     static {
         String[] deburredLetters = new String[] {
@@ -79,6 +81,10 @@ public class U<T> extends com.github.underscore.U<T> {
             DEBURRED_LETTERS.put(deburredLetters[index], deburredLetters[index + 1]);
         }
         DEFAULT_HEADER_FIELDS.put("Content-Type", Arrays.asList("application/json", "charset=utf-8"));
+    }
+
+    public enum Mode {
+        REPLACE_SELF_CLOSING_WITH_NULL;
     }
 
     public U(final Iterable<T> iterable) {
@@ -2028,16 +2034,21 @@ public class U<T> extends com.github.underscore.U<T> {
         return jsonToXml(json, Xml.XmlStringBuilder.Step.TWO_SPACES);
     }
 
-    public static String xmlToJson(String xml, Json.JsonStringBuilder.Step identStep) {
+    public static String xmlToJson(String xml, Json.JsonStringBuilder.Step identStep, Mode mode) {
         Object result = Xml.fromXml(xml);
         if (result instanceof Map) {
-            return Json.toJson((Map) result, identStep);
+            return Json.toJson(mode == Mode.REPLACE_SELF_CLOSING_WITH_NULL ?
+                replaceSelfCloseWithNull((Map) result) : (Map) result, identStep);
         }
         return Json.toJson((List) result, identStep);
     }
 
     public static String xmlToJson(String xml) {
-        return xmlToJson(xml, Json.JsonStringBuilder.Step.TWO_SPACES);
+        return xmlToJson(xml, Json.JsonStringBuilder.Step.TWO_SPACES, null);
+    }
+
+    public static String xmlToJson(String xml, Mode mode) {
+        return xmlToJson(xml, Json.JsonStringBuilder.Step.TWO_SPACES, mode);
     }
 
     public static String formatJson(String json, Json.JsonStringBuilder.Step identStep) {
@@ -2055,4 +2066,85 @@ public class U<T> extends com.github.underscore.U<T> {
     public static String formatXml(String xml) {
         return Xml.formatXml(xml);
     }
+
+    public static Map<String, Object> removeMinusesAndConvertNumbers(Map<String, Object> inMap) {
+        return replaceKeys(inMap);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> replaceKeys(Map<String, Object> map) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (String key : map.keySet()) {
+            final String newKey;
+            if (key.startsWith("-")) {
+                newKey = key.substring(1);
+            } else {
+                newKey = key;
+            }
+            if (!key.equals("-self-closing") && !key.equals("#omit-xml-declaration")) {
+                outMap.put(newKey, makeObject(map.get(key)));
+            }
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeObject(Object value) {
+        final Object result;
+        if (value instanceof List) {
+            List<Map<String, Object>> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(replaceKeys((Map<String, Object>) item));
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = replaceKeys((Map<String, Object>) value);
+        } else {
+            String stringValue = String.valueOf(value);
+            boolean onlyNumbers = true;
+            for (char ch : stringValue.toCharArray()) {
+                if (!NUMBER_CHARS.contains(ch)) {
+                    onlyNumbers = false;
+                    break;
+                }
+            }
+            result = onlyNumbers ? Xml.stringToNumber(stringValue) : value;
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    static Map<String, Object> replaceSelfCloseWithNull(Map map) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) it.next();
+            if ("-self-closing".equals(entry.getKey()) && "true".equals(entry.getValue())) {
+                if (map.size() == 1) {
+                    outMap = null;
+                    break;
+                }
+                continue;
+            }
+            outMap.put(String.valueOf(entry.getKey()), makeObjectSelfClose(entry.getValue()));
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeObjectSelfClose(Object value) {
+        final Object result;
+        if (value instanceof List) {
+            List<Object> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(replaceSelfCloseWithNull((Map) item));
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = replaceSelfCloseWithNull((Map) value);
+        } else {
+            result = value;
+        }
+        return result;
+    }
+
 }
