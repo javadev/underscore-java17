@@ -432,7 +432,32 @@ _.get({"a":[{"b":{"c":"d"}}]}, "a[0].b.c");
     @Test
     public void get() {
         assertEquals("d", U.<String>get(
-            (Map<String, Object>) U.fromJson("{\"a\":[{\"b\":{\"c\":\"d\"}}]}"), "a[0].b.c").toString());
+                (Map<String, Object>) U.fromJson("{\"a\":[{\"b\":{\"c\":\"d\"}}]}"), "a[0].b.c"));
+    }
+
+/*
+_.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
+// → "{a=[{b={c=e}}]}"
+*/
+    @SuppressWarnings("unchecked")
+    @Test
+    public void set() {
+        assertEquals("d", U.<String>set(
+            (Map<String, Object>) U.fromJson("{\"a\":[{\"b\":{\"c\":\"d\"}}]}"), "a[0].b.c", "e").toString());
+        assertEquals("{b={c=d}}", U.set(
+            (Map<String, Object>) U.fromJson("{\"a\":[{\"b\":{\"c\":\"d\"}}]}"), "a[0]", "e").toString());
+        Map<String, Object> map = U.newLinkedHashMap();
+        Map<String, Object> map2 = U.newLinkedHashMap();
+        Map<String, Object> map3 = U.newLinkedHashMap();
+        map.put("a", map2);
+        map2.put("#item", map3);
+        map3.put("b", "c");
+        assertEquals("c", U.<String>set(map, "a.b", "b").toString());
+        assertNull(U.<String>set((Map<String, Object>) null, "a", "b"));
+        assertNull(U.<String>set(U.<String, Object>newLinkedHashMap(), "a.b", "b"));
+        Map<String, Object> map4 = U.newLinkedHashMap();
+        map4.put("a", "b");
+        assertNull(U.<String>set(map4, "a.b", "b"));
     }
 
     @Test
@@ -615,9 +640,14 @@ _.get({"a":[{"b":{"c":"d"}}]}, "a[0].b.c");
                 + "  \"#omit-xml-declaration\": \"yes\"\n"
                 + "}",
             U.xmlToJson("<a><b/><b/></a>", U.Mode.REPLACE_SELF_CLOSING_WITH_NULL));
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = U.newLinkedHashMap();
         map.put("-self-closing", "false");
         U.replaceSelfCloseWithNull(map);
+        Map<String, Object> map2 = U.newLinkedHashMap();
+        List<Object> list = U.newArrayList();
+        list.add(U.newArrayList());
+        map2.put("list", list);
+        U.replaceSelfCloseWithNull(map2);
     }
 
     @Test
@@ -685,6 +715,12 @@ _.get({"a":[{"b":{"c":"d"}}]}, "a[0].b.c");
         Map<String, Object> result4 = U.removeMinusesAndConvertNumbers(
             (Map<String, Object>) U.fromXml("<a><b c=\"1\"/></a>"));
         assertEquals("{a={b={c=1}}}", result4.toString());
+        Map<String, Object> map = U.newLinkedHashMap();
+        List<Object> list = U.newArrayList();
+        list.add(U.newArrayList());
+        map.put("list", list);
+        Map<String, Object> result5 = U.removeMinusesAndConvertNumbers(map);
+        assertEquals("{list=[[]]}", result5.toString());
     }
 
     @SuppressWarnings("unchecked")

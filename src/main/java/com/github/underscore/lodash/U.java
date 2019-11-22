@@ -51,8 +51,6 @@ public class U<T> extends com.github.underscore.U<T> {
     private static String lower = "[a-z\\xdf-\\xf6\\xf8-\\xff]+";
     private static java.util.regex.Pattern reWords = java.util.regex.Pattern.compile(
         upper + "+(?=" + upper + lower + ")|" + upper + "?" + lower + "|" + upper + "+|[0-9]+");
-    private static final Set<Character> NUMBER_CHARS = new HashSet<Character>(
-        Arrays.asList('.', 'e', 'E', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
 
     static {
         String[] deburredLetters = new String[] {
@@ -1496,12 +1494,15 @@ public class U<T> extends com.github.underscore.U<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T baseGet(final Map<String, Object> object, final String path) {
+    private static <T> T baseGetAndSet(final Map<String, Object> object, final String path,
+        final Optional<Object> value) {
         final List<String> paths = stringToPath(path);
         int index = 0;
         final int length = paths.size();
 
         Object localObject = object;
+        Object savedLocalObject = null;
+        String savedPath = null;
         while (localObject != null && index < length) {
             if (localObject instanceof Map) {
                 Map.Entry mapEntry = getMapEntry((Map) localObject);
@@ -1509,8 +1510,12 @@ public class U<T> extends com.github.underscore.U<T> {
                     localObject = mapEntry.getValue();
                     continue;
                 }
+                savedLocalObject = localObject;
+                savedPath = paths.get(index);
                 localObject = ((Map) localObject).get(paths.get(index));
             } else if (localObject instanceof List) {
+                savedLocalObject = localObject;
+                savedPath = paths.get(index);
                 localObject = ((List) localObject).get(Integer.parseInt(paths.get(index)));
             } else {
                 break;
@@ -1518,6 +1523,13 @@ public class U<T> extends com.github.underscore.U<T> {
             index += 1;
         }
         if (index > 0 && index == length) {
+            if (value.isPresent()) {
+                if (savedLocalObject instanceof Map) {
+                    ((Map) savedLocalObject).put(savedPath, value.get());
+                } else {
+                    ((List) savedLocalObject).set(Integer.parseInt(savedPath), value.get());
+                }
+            }
             return (T) localObject;
         }
         return null;
@@ -1528,7 +1540,11 @@ public class U<T> extends com.github.underscore.U<T> {
     }
 
     public static <T> T get(final Map<String, Object> object, final String path) {
-        return baseGet(object, path);
+        return baseGetAndSet(object, path, Optional.absent());
+    }
+
+    public static <T> T set(final Map<String, Object> object, final String path, Object value) {
+        return baseGetAndSet(object, path, Optional.of(value));
     }
 
     public static class FetchResponse {
@@ -2092,23 +2108,16 @@ public class U<T> extends com.github.underscore.U<T> {
     private static Object makeObject(Object value) {
         final Object result;
         if (value instanceof List) {
-            List<Map<String, Object>> values = newArrayList();
+            List<Object> values = newArrayList();
             for (Object item : (List) value) {
-                values.add(replaceKeys((Map<String, Object>) item));
+                values.add(item instanceof Map ? replaceKeys((Map<String, Object>) item) : item);
             }
             result = values;
         } else if (value instanceof Map) {
             result = replaceKeys((Map<String, Object>) value);
         } else {
             String stringValue = String.valueOf(value);
-            boolean onlyNumbers = true;
-            for (char ch : stringValue.toCharArray()) {
-                if (!NUMBER_CHARS.contains(ch)) {
-                    onlyNumbers = false;
-                    break;
-                }
-            }
-            result = onlyNumbers ? Xml.stringToNumber(stringValue) : value;
+            result = stringValue.matches("^-?\\d*([.eE])?\\d+$") ? Xml.stringToNumber(stringValue) : value;
         }
         return result;
     }
@@ -2136,7 +2145,7 @@ public class U<T> extends com.github.underscore.U<T> {
         if (value instanceof List) {
             List<Object> values = newArrayList();
             for (Object item : (List) value) {
-                values.add(replaceSelfCloseWithNull((Map) item));
+                values.add(item instanceof Map ? replaceSelfCloseWithNull((Map) item) : item);
             }
             result = values;
         } else if (value instanceof Map) {
