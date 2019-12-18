@@ -3123,6 +3123,32 @@ _.repeat('abc', 0);
         U.fromXml(stringXml);
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void fromXmlMap() {
+        String stringXml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "\n<root empty-array=\"true\"></root>";
+        assertEquals("{value=[]}", U.fromXmlMap(stringXml).toString());
+        String stringXml2 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "\n<root></root>";
+        assertEquals("{}", U.fromXmlMap(stringXml2).toString());
+        String stringXml3 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "\n<root></root>";
+        assertEquals("{}", U.fromXmlMap(stringXml3, Xml.FromType.FOR_CONVERT).toString());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void fromJsonMap() {
+        String stringJson = "[]";
+        assertEquals("{value=[]}", U.fromJsonMap(stringJson).toString());
+        String stringJson2 = "{}";
+        assertEquals("{}", U.fromJsonMap(stringJson2).toString());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testDecodeParseXmlErr13() {
         U.fromXml("[\"abc\u0010\"]");
@@ -3628,7 +3654,7 @@ _.repeat('abc', 0);
     }
 
     @Test
-    public void main() throws Exception {
+    public void main() {
         U.main(new String[] {});
         new U<String>(new ArrayList<String>());
         new U<String>("");

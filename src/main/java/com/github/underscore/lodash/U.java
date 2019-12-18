@@ -1994,6 +1994,23 @@ public class U<T> extends com.github.underscore.U<T> {
         return Xml.fromXml(xml);
     }
 
+    public static Map<String, Object> fromXmlMap(final String xml) {
+        return fromXmlMap(xml, Xml.FromType.FOR_CONVERT);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> fromXmlMap(final String xml, final Xml.FromType fromType) {
+        final Object object = Xml.fromXml(xml, fromType);
+        final Map<String, Object> result;
+        if (object instanceof Map) {
+            result = (Map<String, Object>) object;
+        } else {
+            result = newLinkedHashMap();
+            result.put("value", object);
+        }
+        return result;
+    }
+
     public static Object fromXml(final String xml, final Xml.FromType fromType) {
         return Xml.fromXml(xml, fromType);
     }
@@ -2028,6 +2045,19 @@ public class U<T> extends com.github.underscore.U<T> {
 
     public Object fromJson() {
         return Json.fromJson(getString().get());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> fromJsonMap(final String string) {
+        final Object object = Json.fromJson(string);
+        final Map<String, Object> result;
+        if (object instanceof Map) {
+            result = (Map<String, Object>) object;
+        } else {
+            result = newLinkedHashMap();
+            result.put("value", object);
+        }
+        return result;
     }
 
     public String toXml() {
@@ -2086,15 +2116,15 @@ public class U<T> extends com.github.underscore.U<T> {
     @SuppressWarnings("unchecked")
     public static Map<String, Object> removeMinusesAndConvertNumbers(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
-        for (String key : map.keySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             final String newKey;
-            if (key.startsWith("-")) {
-                newKey = key.substring(1);
+            if (entry.getKey().startsWith("-")) {
+                newKey = entry.getKey().substring(1);
             } else {
-                newKey = key;
+                newKey = entry.getKey();
             }
-            if (!key.equals("-self-closing") && !key.equals("#omit-xml-declaration")) {
-                outMap.put(newKey, makeObject(map.get(key)));
+            if (!entry.getKey().equals("-self-closing") && !entry.getKey().equals("#omit-xml-declaration")) {
+                outMap.put(newKey, makeObject(entry.getValue()));
             }
         }
         return outMap;
@@ -2113,9 +2143,40 @@ public class U<T> extends com.github.underscore.U<T> {
             result = removeMinusesAndConvertNumbers((Map<String, Object>) value);
         } else {
             String stringValue = String.valueOf(value);
-            result = stringValue.matches("^-?\\d*([.eE])?\\d+$") ? Xml.stringToNumber(stringValue) : value;
+            result = isJsonNumber(stringValue) ? Xml.stringToNumber(stringValue) : value;
         }
         return result;
+    }
+
+    public static boolean isJsonNumber(final String string) {
+        boolean eFound = false;
+        boolean periodValid = true;
+        boolean pmValid = true;
+        boolean numberEncountered = false;
+        for (char ch : string.toCharArray()) {
+            if (pmValid) {
+                pmValid = false;
+                if (ch == '-') {
+                    continue;
+                }
+            }
+            if (!eFound && (ch == 'e' || ch == 'E')) {
+                eFound = true;
+                periodValid = false;
+                pmValid = true;
+                numberEncountered = false;
+                continue;
+            }
+            if (periodValid && ch == '.') {
+                periodValid = false;
+                continue;
+            }
+            if (ch < '0' || ch > '9') {
+                return false;
+            }
+            numberEncountered = true;
+        }
+        return numberEncountered;
     }
 
     @SuppressWarnings("unchecked")
