@@ -1205,11 +1205,11 @@ public class U<T> extends com.github.underscore.U<T> {
     }
 
     public static String capitalize(final String string) {
-        return upperFirst(baseToString(string).toLowerCase());
+        return upperFirst(baseToString(string));
     }
 
     public static String uncapitalize(final String string) {
-        return lowerFirst(baseToString(string).toLowerCase());
+        return lowerFirst(baseToString(string));
     }
 
     private static String baseToString(String value) {
@@ -1545,6 +1545,34 @@ public class U<T> extends com.github.underscore.U<T> {
 
     public static <T> T set(final Map<String, Object> object, final String path, Object value) {
         return baseGetAndSet(object, path, Optional.of(value));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> remove(final Map<String, Object> map, final String key) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (!entry.getKey().equals(key)) {
+                outMap.put(entry.getKey(), makeObjectForRemove(entry.getValue(), key));
+            }
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeObjectForRemove(Object value, final String key) {
+        final Object result;
+        if (value instanceof List) {
+            List<Object> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(item instanceof Map ? remove((Map<String, Object>) item, key) : item);
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = remove((Map<String, Object>) value, key);
+        } else {
+            result = value;
+        }
+        return result;
     }
 
     public static class FetchResponse {
@@ -1990,8 +2018,9 @@ public class U<T> extends com.github.underscore.U<T> {
         return Json.toJsonJavaString((Collection) getIterable());
     }
 
-    public static Object fromXml(final String xml) {
-        return Xml.fromXml(xml);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromXml(final String xml) {
+        return (T) Xml.fromXml(xml);
     }
 
     public static Map<String, Object> fromXmlMap(final String xml) {
@@ -2011,24 +2040,29 @@ public class U<T> extends com.github.underscore.U<T> {
         return result;
     }
 
-    public static Object fromXml(final String xml, final Xml.FromType fromType) {
-        return Xml.fromXml(xml, fromType);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromXml(final String xml, final Xml.FromType fromType) {
+        return (T) Xml.fromXml(xml, fromType);
     }
 
-    public static Object fromXmlMakeArrays(final String xml) {
-        return Xml.fromXmlMakeArrays(xml);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromXmlMakeArrays(final String xml) {
+        return (T) Xml.fromXmlMakeArrays(xml);
     }
 
-    public static Object fromXmlWithoutNamespaces(final String xml) {
-        return Xml.fromXmlWithoutNamespaces(xml);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromXmlWithoutNamespaces(final String xml) {
+        return (T) Xml.fromXmlWithoutNamespaces(xml);
     }
 
-    public static Object fromXmlWithoutAttributes(final String xml) {
-        return Xml.fromXmlWithoutAttributes(xml);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromXmlWithoutAttributes(final String xml) {
+        return (T) Xml.fromXmlWithoutAttributes(xml);
     }
 
-    public static Object fromXmlWithoutNamespacesAndAttributes(final String xml) {
-        return Xml.fromXmlWithoutNamespacesAndAttributes(xml);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromXmlWithoutNamespacesAndAttributes(final String xml) {
+        return (T) Xml.fromXmlWithoutNamespacesAndAttributes(xml);
     }
 
     public static String toXml(Collection collection) {
@@ -2039,8 +2073,9 @@ public class U<T> extends com.github.underscore.U<T> {
         return Xml.toXml(map);
     }
 
-    public static Object fromJson(String string) {
-        return Json.fromJson(string);
+    @SuppressWarnings("unchecked")
+    public static <T> T fromJson(String string) {
+        return (T) Json.fromJson(string);
     }
 
     public Object fromJson() {
