@@ -60,7 +60,7 @@ U.chain(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 
     // 4, 3
     .forEach(System.out::println);
     // 4, 3
-    
+
 U.formatXml("<a><b>data</b></a>");
     // <a>
     //    <b>data</b>
@@ -72,6 +72,20 @@ U.formatJson("{\"a\":{\"b\":\"data\"}}");
     //      "b": "data"
     //    }
     // }
+
+U.xmlToJson("<a><b>data</b></a>");
+    // {
+    //   "a": {
+    //     "b": "data"
+    //   },
+    //   "#omit-xml-declaration": "yes"
+    // }
+
+U.jsonToXml("{\"a\":{\"b\":\"data\"}}");
+    // <?xml version="1.0" encoding="UTF-8"?>
+    // <a>
+    //   <b>data</b>
+    // </a>
 ```
 
 In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.
