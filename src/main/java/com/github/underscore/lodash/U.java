@@ -268,6 +268,10 @@ public class U<T> extends com.github.underscore.U<T> {
             return new Chain<Map<F, Integer>>(U.countBy(value(), func));
         }
 
+        public Chain<Map<T, Integer>> countBy() {
+            return new Chain<Map<T, Integer>>(U.countBy(value()));
+        }
+
         public Chain<T> shuffle() {
             return new Chain<T>(U.shuffle(value()));
         }
@@ -1190,8 +1194,8 @@ public class U<T> extends com.github.underscore.U<T> {
         return createCompounder(new Function3<String, String, Integer, String>() {
             public String apply(final String result, final String word, final Integer index) {
                 final String localWord = word.toLowerCase(Locale.getDefault());
-                return result + (index > 0 ? word.substring(0, 1).toUpperCase(Locale.getDefault())
-                    + word.substring(1) : localWord);
+                return result + (index > 0 ? localWord.substring(0, 1).toUpperCase(Locale.getDefault())
+                    + localWord.substring(1) : localWord);
             }
         }).apply(string);
     }
@@ -2115,6 +2119,7 @@ public class U<T> extends com.github.underscore.U<T> {
         return jsonToXml(json, Xml.XmlStringBuilder.Step.TWO_SPACES);
     }
 
+    @SuppressWarnings("unchecked")
     public static String xmlToJson(String xml, Json.JsonStringBuilder.Step identStep, Mode mode) {
         Object result = Xml.fromXml(xml);
         if (result instanceof Map) {
@@ -2148,7 +2153,6 @@ public class U<T> extends com.github.underscore.U<T> {
         return Xml.formatXml(xml);
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> removeMinusesAndConvertNumbers(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -2175,7 +2179,7 @@ public class U<T> extends com.github.underscore.U<T> {
             }
             result = values;
         } else if (value instanceof Map) {
-            result = removeMinusesAndConvertNumbers((Map<String, Object>) value);
+            result = removeMinusesAndConvertNumbers((Map) value);
         } else {
             String stringValue = String.valueOf(value);
             result = isJsonNumber(stringValue) ? Xml.stringToNumber(stringValue) : value;
@@ -2214,11 +2218,9 @@ public class U<T> extends com.github.underscore.U<T> {
         return numberEncountered;
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> replaceSelfClosingWithNull(Map map) {
+    public static Map<String, Object> replaceSelfClosingWithNull(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
-        for (Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) it.next();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             if ("-self-closing".equals(entry.getKey()) && "true".equals(entry.getValue())) {
                 if (map.size() == 1) {
                     outMap = null;
@@ -2248,4 +2250,59 @@ public class U<T> extends com.github.underscore.U<T> {
         return result;
     }
 
+    public static Builder objectBuilder() {
+        return new U.Builder();
+    }
+
+    public static class Builder {
+        private final Map<String, Object> data;
+        public Builder() {
+            data = newLinkedHashMap();
+        }
+
+        public Builder add(final String key, final Object value) {
+            data.put(key, value);
+            return this;
+        }
+
+        public Builder add(final Object value) {
+            data.put(String.valueOf(data.size()), value);
+            return this;
+        }
+
+        public Builder set(final String path, final Object value) {
+            U.set(data, path, value);
+            return this;
+        }
+
+        public Builder add(final Builder builder) {
+            data.putAll(builder.data);
+            return this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public Map<String, Object> build() {
+            return (Map<String, Object>) ((LinkedHashMap) data).clone();
+        }
+
+        public String toXml() {
+            return Xml.toXml(data);
+        }
+
+        public static Builder fromXml(final String xml) {
+            final Builder builder = new Builder();
+            builder.data.putAll(fromXmlMap(xml));
+            return builder;
+        }
+
+        public String toJson() {
+            return Xml.toXml(data);
+        }
+
+        public static Builder fromJson(final String json) {
+            final Builder builder = new Builder();
+            builder.data.putAll(fromJsonMap(json));
+            return builder;
+        }
+    }
 }

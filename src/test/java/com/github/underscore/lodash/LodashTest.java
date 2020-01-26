@@ -754,6 +754,18 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         assertEquals("{list=[[]]}", result10.toString());
     }
 
+    @Test
+    public void objectBuilder() {
+        U.Builder builder = U.objectBuilder().add("1", "2").add("2");
+        builder.add(builder);
+        builder.toJson();
+        U.Builder.fromJson("{}");
+        builder.toXml();
+        U.Builder.fromXml("<a/>");
+        builder.set("1", "3");
+        assertEquals("{1=3}", builder.build().toString());
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void main() {
@@ -843,6 +855,7 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         U.chain(new Integer[] {0}).indexBy("");
         U.chain(new Integer[] {0}).countBy(new Function<Integer, Integer>() {
             public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).countBy();
         U.chain(new Integer[] {0}).shuffle();
         U.chain(new Integer[] {0}).sample();
         U.chain(new Integer[] {0}).sample(1);
@@ -1016,5 +1029,11 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         + "[{\"alert\":\"true\",\"value\":\"100%\"}],\"hdd\":[{\"alert\":\"false\",\"value\":\"80%\"}]}";
 
         assertEquals("[memory, cpu, hdd]", U.keys((Map<String, Object>) U.fromJson(json)).toString());
+    }
+
+    @Test
+    public void sqlru2() {
+        // https://www.sql.ru/forum/1321326/kolichestvo-naydennyh-slov-v-stroke
+        assertEquals(2, U.countBy(U.words("Маша ищет Мишу а Миша ищет Машу")).get("ищет").intValue());
     }
 }

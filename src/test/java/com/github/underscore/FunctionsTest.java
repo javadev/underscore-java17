@@ -116,7 +116,7 @@ _.delay(function(){ equal(counter, 1, 'incr was throttled'); }, 96);
 */
 
     @Test
-    public void throttle() throws Exception {
+    public void throttle() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Void> incr = new Supplier<Void>() { public Void get() {
             counter[0]++; return null; } };
@@ -131,7 +131,7 @@ _.delay(function(){ equal(counter, 1, 'incr was throttled'); }, 96);
             }
         }, 60);
         await().atMost(180, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 throttleIncr.get();
                 return true;
             }
@@ -148,7 +148,7 @@ _.delay(function(){ equal(counter, 1, 'incr was debounced'); }, 96);
 */
 
     @Test
-    public void debounce() throws Exception {
+    public void debounce() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Void> incr = new Supplier<Void>() { public Void get() {
             counter[0]++; return null; } };
@@ -162,8 +162,8 @@ _.delay(function(){ equal(counter, 1, 'incr was debounced'); }, 96);
                 return null;
             }
         }, 60);
-        await().atMost(160, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+        await().atMost(120, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
+            public Boolean call() {
                 return true;
             }
         });
@@ -174,7 +174,7 @@ _.defer(function(){ alert('deferred'); });
 // Returns from the function before the alert runs.
 */
     @Test
-    public void defer() throws Exception {
+    public void defer() {
         final Integer[] counter = new Integer[] {0};
         U.defer(new Supplier<Void>() { public Void get() {
             try {
@@ -185,9 +185,12 @@ _.defer(function(){ alert('deferred'); });
             counter[0]++; return null; } });
         assertEquals("incr was debounced", 0, counter[0].intValue());
         await().atLeast(60, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 assertEquals("incr was debounced", 1, counter[0].intValue());
                 return true;
+            }
+        });
+        U.defer(new Runnable() { public void run() {
             }
         });
     }
@@ -199,7 +202,7 @@ initialize();
 // Application is only created once.
 */
     @Test
-    public void once() throws Exception {
+    public void once() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Integer> incr = new Supplier<Integer>() { public Integer get() {
             counter[0]++; return counter[0]; } };
@@ -207,7 +210,7 @@ initialize();
         onceIncr.get();
         onceIncr.get();
         await().atLeast(60, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 assertEquals("incr was called only once", 1, counter[0].intValue());
                 assertEquals("stores a memo to the last value", 1, onceIncr.get().intValue());
                 return true;
@@ -348,13 +351,13 @@ _.map(stooges, _.iteratee('age'));
     }
 
     @Test
-    public void setTimeout() throws Exception {
+    public void setTimeout() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Void> incr = new Supplier<Void>() { public Void get() {
             counter[0]++; return null; } };
         U.setTimeout(incr, 0);
         await().atLeast(40, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 assertEquals(1, counter[0].intValue());
                 return true;
             }
@@ -362,7 +365,7 @@ _.map(stooges, _.iteratee('age'));
     }
 
     @Test
-    public void clearTimeout() throws Exception {
+    public void clearTimeout() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Void> incr = new Supplier<Void>() { public Void get() {
             counter[0]++; return null; } };
@@ -370,7 +373,7 @@ _.map(stooges, _.iteratee('age'));
         U.clearTimeout(future);
         U.clearTimeout(null);
         await().atLeast(40, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 assertEquals(0, counter[0].intValue());
                 return true;
             }
@@ -378,7 +381,7 @@ _.map(stooges, _.iteratee('age'));
     }
 
     @Test
-    public void setInterval() throws Exception {
+    public void setInterval() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Void> incr = new Supplier<Void>() { public Void get() {
             if (counter[0] < 4) {
@@ -387,7 +390,7 @@ _.map(stooges, _.iteratee('age'));
             return null; } };
         U.setInterval(incr, 10);
         await().atLeast(45, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 assertTrue("Counter is not in range [0, 4] " + counter[0],
                     asList(0, 4).contains(counter[0]));
                 return true;
@@ -396,7 +399,7 @@ _.map(stooges, _.iteratee('age'));
     }
 
     @Test
-    public void clearInterval() throws Exception {
+    public void clearInterval() {
         final Integer[] counter = new Integer[] {0};
         Supplier<Void> incr = new Supplier<Void>() { public Void get() {
             counter[0]++; return null; } };
@@ -404,7 +407,7 @@ _.map(stooges, _.iteratee('age'));
         U.clearInterval(future);
         U.clearInterval(null);
         await().atLeast(40, TimeUnit.MILLISECONDS).until(new Callable<Boolean>() {
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 assertEquals(0, counter[0].intValue());
                 return true;
             }

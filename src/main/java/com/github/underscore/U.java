@@ -56,7 +56,7 @@ public class U<T> {
     private static final String S_Q = "\\s*\\Q";
     private static final String E_S = "\\E\\s*";
     private static final java.util.regex.Pattern FORMAT_PATTERN =
-        java.util.regex.Pattern.compile("\\{\\s*(\\d*)\\s*}");
+        java.util.regex.Pattern.compile("\\{\\s*(\\d*)\\s*\\}");
     private static final Map<Character, String> ESCAPES = new HashMap<Character, String>();
     private final Iterable<T> iterable;
     private final Optional<String> string;
@@ -1028,9 +1028,26 @@ public class U<T> {
         return retVal;
     }
 
+    public static <K> Map<K, Integer> countBy(final Iterable<K> iterable) {
+        final Map<K, Integer> retVal = newLinkedHashMap();
+        for (K key : iterable) {
+            if (retVal.containsKey(key)) {
+                retVal.put(key, 1 + retVal.get(key));
+            } else {
+                retVal.put(key, 1);
+            }
+        }
+        return retVal;
+    }
+
     @SuppressWarnings("unchecked")
     public <K, E> Map<K, Integer> countBy(Function<E, K> func) {
         return countBy((Iterable<E>) iterable, func);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <K> Map<K, Integer> countBy() {
+        return countBy((Iterable<K>) iterable);
     }
 
     /*
@@ -2035,6 +2052,16 @@ public class U<T> {
         return delay(function, 0);
     }
 
+    public static java.util.concurrent.ScheduledFuture<Void> defer(final Runnable runnable) {
+        return delay(new Supplier<Void>() {
+            @Override
+            public Void get() {
+                runnable.run();
+                return null;
+            }
+        }, 0);
+    }
+
     public static <T> Supplier<T> throttle(final Supplier<T> function, final int waitMilliseconds) {
         class ThrottleFunction implements Supplier<T> {
             private final Supplier<T> localFunction;
@@ -2546,9 +2573,9 @@ public class U<T> {
     /*
      * Documented, #times
      */
-    public static <E> void times(final int count, final Supplier<E> function) {
+    public static void times(final int count, final Runnable runnable) {
         for (int index = 0; index < count; index += 1) {
-            function.get();
+            runnable.run();
         }
     }
 
@@ -2881,6 +2908,10 @@ public class U<T> {
 
         public <F> Chain<Map<F, Integer>> countBy(final Function<T, F> func) {
             return new Chain<Map<F, Integer>>(U.countBy(list, func));
+        }
+
+        public Chain<Map<T, Integer>> countBy() {
+            return new Chain<Map<T, Integer>>(U.countBy(list));
         }
 
         public Chain<T> shuffle() {
