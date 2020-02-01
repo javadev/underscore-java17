@@ -763,7 +763,28 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         builder.toXml();
         U.Builder.fromXml("<a/>");
         builder.set("1", "3");
+        builder.toString();
         assertEquals("{1=3}", builder.build().toString());
+        Map<String, Object> value = U.objectBuilder()
+            .add("firstName", "John")
+            .add("lastName", "Smith")
+            .add("age", 25)
+            .add("address", U.objectBuilder()
+                .add("streetAddress", "21 2nd Street")
+                .add("city", "New York")
+                .add("state", "NY")
+                .add("postalCode", "10021"))
+            .add("phoneNumber", U.objectBuilder()
+                .add(U.objectBuilder()
+                    .add("type", "home")
+                    .add("number", "212 555-1234"))
+                .add(U.objectBuilder()
+                    .add("type", "fax")
+                    .add("number", "646 555-4567")))
+            .build();
+        assertEquals("{firstName=John, lastName=Smith, age=25, address={streetAddress=21 2nd Street, "
+            + "city=New York, state=NY, postalCode=10021}, phoneNumber={0={type=home, number=212 555-1234}, "
+            + "1={type=fax, number=646 555-4567}}}", value.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -1019,6 +1040,46 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
                 + "LASR={-type=int, #text=1}, LAST={-type=int, #text=22}, "
                 + "Gelch={-type=int, #text=2}, Gelco={-type=int, #text=26}}",
                 U.fromXml(xml).toString());
+    }
+
+    @Test
+    public void stackoverflow5() {
+        // https://stackoverflow.com/questions/59429211/
+        // convert-xml-to-json-and-vice-versa-and-also-how-to-identify-rest-endpoint-while
+        String xmlData = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\""
+        + " xmlns:urn=\"urn:ahc.com:dms:wsdls:organization\">\n"
+        + "   <soapenv:Header/>\n"
+        + "   <soapenv:Body>\n"
+        + "      <urn:getRoles>\n"
+        + "         <getRolesRequest>\n"
+        + "            <Type>ABC</Type>\n"
+        + "         </getRolesRequest>\n"
+        + "      </urn:getRoles>\n"
+        + "   </soapenv:Body>\n"
+        + "</soapenv:Envelope>";
+        Map<String, Object> jsonData = U.<Map<String, Object>>get(
+            U.<Map<String, Object>>fromXmlWithoutNamespaces(xmlData), "Envelope.Body.getRoles");
+        assertEquals("{getRolesRequest={Type=ABC}}", jsonData.toString());
+    }
+
+    @Test
+    public void stackoverflow6() {
+        // https://stackoverflow.com/questions/59585708/getting-null-pointer-while-reading-the-fileds-from-json-to-pojo
+        String jsonData = "{\n"
+        + "    \"TEST\": {\n"
+        + "        \"NAME\": \"PART_TRAN\",\n"
+        + "        \"VERSION\": \"9.0\",\n"
+        + "        \"ID\": \"----\",\n"
+        + "        \"SEGMENT\": {\n"
+        + "            \"TYPE\": \"R\",\n"
+        + "            \"CLIENT_ID\": \"----\",\n"
+        + "            \"UN_NUM\": \"UN\"\n"
+        + "        }"
+        + "    }"
+        + "}";
+        Map<String, Object> jsonObject = U.fromJsonMap(jsonData);
+        assertEquals("R", U.<String>get(jsonObject, "TEST.SEGMENT.TYPE"));
+        assertEquals("UN", U.<String>get(jsonObject, "TEST.SEGMENT.UN_NUM"));
     }
 
     @SuppressWarnings("unchecked")

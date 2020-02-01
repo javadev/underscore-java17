@@ -2276,7 +2276,7 @@ public class U<T> extends com.github.underscore.U<T> {
         }
 
         public Builder add(final Builder builder) {
-            data.putAll(builder.data);
+            data.put(String.valueOf(data.size()), builder.build());
             return this;
         }
 
@@ -2303,6 +2303,11 @@ public class U<T> extends com.github.underscore.U<T> {
             final Builder builder = new Builder();
             builder.data.putAll(fromJsonMap(json));
             return builder;
+        }
+
+        @Override
+        public String toString() {
+            return data.toString();
         }
     }
 }
