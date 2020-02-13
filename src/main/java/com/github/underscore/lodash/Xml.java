@@ -84,18 +84,26 @@ public final class Xml {
             }
         }
 
+        public enum ToType {
+            FOR_CONVERT,
+            FOR_FORMAT
+        }
+
         protected final StringBuilder builder;
         private final Step identStep;
+        private final ToType toType;
         private int ident;
 
         public XmlStringBuilder() {
             builder = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n");
             identStep = Step.TWO_SPACES;
+            toType = ToType.FOR_CONVERT;
             ident = 2;
         }
 
-        public XmlStringBuilder(StringBuilder builder, Step identStep, int ident) {
+        public XmlStringBuilder(StringBuilder builder, ToType toType, Step identStep, int ident) {
             this.builder = builder;
+            this.toType = toType;
             this.identStep = identStep;
             this.ident = ident;
         }
@@ -137,17 +145,22 @@ public final class Xml {
             return identStep;
         }
 
+        public ToType getToType() {
+            return toType;
+        }
+
         public String toString() {
             return builder.toString() + "\n</root>";
         }
     }
 
     public static class XmlStringBuilderWithoutRoot extends XmlStringBuilder {
-        public XmlStringBuilderWithoutRoot(XmlStringBuilder.Step identStep, String encoding,
+        public XmlStringBuilderWithoutRoot(XmlStringBuilder.ToType toType,
+                XmlStringBuilder.Step identStep, String encoding,
             String standalone) {
             super(new StringBuilder("<?xml version=\"1.0\" encoding=\""
                 + XmlValue.escape(encoding).replace("\"", QUOT) + "\"" + standalone + "?>"
-                + (identStep == Step.COMPACT ? "" : "\n")), identStep, 0);
+                + (identStep == Step.COMPACT ? "" : "\n")), toType, identStep, 0);
         }
 
         public String toString() {
@@ -156,8 +169,9 @@ public final class Xml {
     }
 
     public static class XmlStringBuilderWithoutHeader extends XmlStringBuilder {
-        public XmlStringBuilderWithoutHeader(XmlStringBuilder.Step identStep, int ident) {
-            super(new StringBuilder(), identStep, ident);
+        public XmlStringBuilderWithoutHeader(XmlStringBuilder.ToType toType,
+                XmlStringBuilder.Step identStep, int ident) {
+            super(new StringBuilder(), toType, identStep, ident);
         }
 
         public String toString() {
@@ -166,8 +180,8 @@ public final class Xml {
     }
 
     public static class XmlStringBuilderText extends XmlStringBuilderWithoutHeader {
-        public XmlStringBuilderText(XmlStringBuilder.Step identStep, int ident) {
-            super(identStep, ident);
+        public XmlStringBuilderText(XmlStringBuilder.ToType toType, XmlStringBuilder.Step identStep, int ident) {
+            super(toType, identStep, ident);
         }
     }
 
@@ -206,16 +220,30 @@ public final class Xml {
         private static void writeXml(Collection collection, XmlStringBuilder builder, String name,
             final boolean parentTextFound, Set<String> namespaces) {
             boolean localParentTextFound = parentTextFound;
+            boolean allValuesNotObject = !collection.isEmpty();
+            for (final Object value : collection) {
+                if (value instanceof Map || value instanceof List) {
+                    allValuesNotObject = false;
+                    break;
+                }
+            }
             final List entries = U.newArrayList(collection);
-            for (int index = 0; index < entries.size(); index += 1) {
-                final Object value = entries.get(index);
-                final boolean addNewLine = index < entries.size() - 1
-                    && !XmlValue.getMapKey(XmlValue.getMapValue(entries.get(index + 1))).startsWith(TEXT);
-                if (value == null) {
-                    builder.fillSpaces()
-                        .append("<" + (name == null ? ELEMENT_TEXT : XmlValue.escapeName(name, namespaces))
-                            + (collection.size() == 1 ? ARRAY_TRUE : "") + NULL_TRUE);
-                } else {
+            if (allValuesNotObject && builder.getToType() == XmlStringBuilder.ToType.FOR_CONVERT) {
+                builder.fillSpaces()
+                    .append("<" + (name == null ? ELEMENT_TEXT : XmlValue.escapeName(name, namespaces)))
+                    .append(">").incIdent().newLine();
+                for (int index = 0; index < entries.size(); index += 1) {
+                    final Object value = entries.get(index);
+                    XmlValue.writeXml(value, ELEMENT_TEXT, builder, false, namespaces, collection.size() == 1);
+                    builder.newLine();
+                }
+                builder.decIdent().fillSpaces().append("</"
+                    + (name == null ? ELEMENT_TEXT : XmlValue.escapeName(name, namespaces))).append(">");
+            } else {
+                for (int index = 0; index < entries.size(); index += 1) {
+                    final Object value = entries.get(index);
+                    final boolean addNewLine = index < entries.size() - 1
+                        && !XmlValue.getMapKey(XmlValue.getMapValue(entries.get(index + 1))).startsWith(TEXT);
                     if (value instanceof Map && ((Map) value).size() == 1
                         && XmlValue.getMapKey(value).equals("#item")
                         && XmlValue.getMapValue(value) instanceof Map) {
@@ -230,9 +258,9 @@ public final class Xml {
                             namespaces, collection.size() == 1 || value instanceof Collection);
                     }
                     localParentTextFound = false;
-                }
-                if (addNewLine) {
-                    builder.newLine();
+                    if (addNewLine) {
+                        builder.newLine();
+                    }
                 }
             }
         }
@@ -402,6 +430,7 @@ public final class Xml {
 
             final List<XmlStringBuilder> elems = U.newArrayList();
             final List<String> attrs = U.newArrayList();
+            final XmlStringBuilder.ToType toType = builder.getToType();
             final XmlStringBuilder.Step identStep = builder.getIdentStep();
             final int ident = builder.getIdent() + (name == null ? 0 : builder.getIdentStep().getIdent());
             final List<Map.Entry> entries = U.newArrayList(map.entrySet());
@@ -415,11 +444,12 @@ public final class Xml {
                     attrs.add(" " + XmlValue.escapeName(String.valueOf(entry.getKey()).substring(1), namespaces)
                         + "=\"" + XmlValue.escape(String.valueOf(entry.getValue())).replace("\"", QUOT) + "\"");
                 } else if (String.valueOf(entry.getKey()).startsWith(TEXT)) {
-                    addText(entry, elems, identStep, ident, attrKeys, attrs);
+                    addText(entry, elems, toType, identStep, ident, attrKeys, attrs);
                 } else {
                     boolean localParentTextFound = !elems.isEmpty()
                             && elems.get(elems.size() - 1) instanceof XmlStringBuilderText || parentTextFound;
-                    processElements(entry, identStep, ident, addNewLine, elems, namespaces, localParentTextFound);
+                    processElements(entry, toType, identStep, ident, addNewLine,
+                            elems, namespaces, localParentTextFound);
                 }
             }
             if (addArray && !attrKeys.contains(ARRAY)) {
@@ -481,26 +511,27 @@ public final class Xml {
             }
         }
 
-        private static void processElements(final Map.Entry entry, final XmlStringBuilder.Step identStep,
+        private static void processElements(final Map.Entry entry, final XmlStringBuilder.ToType toType,
+                final XmlStringBuilder.Step identStep,
                 final int ident, final boolean addNewLine, final List<XmlStringBuilder> elems,
                 final Set<String> namespaces, final boolean parentTextFound) {
             if (String.valueOf(entry.getKey()).startsWith(COMMENT)) {
-                addComment(entry, identStep, ident, parentTextFound, addNewLine, elems);
+                addComment(entry, toType, identStep, ident, parentTextFound, addNewLine, elems);
             } else if (String.valueOf(entry.getKey()).startsWith(CDATA)) {
-                addCdata(entry, identStep, ident, addNewLine, elems);
+                addCdata(entry, toType, identStep, ident, addNewLine, elems);
             } else if (entry.getValue() instanceof List && !((List) entry.getValue()).isEmpty()) {
-                addElements(identStep, ident, entry, namespaces, elems, addNewLine);
+                addElements(toType, identStep, ident, entry, namespaces, elems, addNewLine);
             } else {
-                addElement(identStep, ident, entry, namespaces, elems, addNewLine);
+                addElement(toType, identStep, ident, entry, namespaces, elems, addNewLine);
             }
         }
 
         private static void addText(final Map.Entry entry, final List<XmlStringBuilder> elems,
-                final XmlStringBuilder.Step identStep, final int ident, final Set<String> attrKeys,
-                final List<String> attrs) {
+                final XmlStringBuilder.ToType toType, final XmlStringBuilder.Step identStep,
+                final int ident, final Set<String> attrKeys, final List<String> attrs) {
             if (entry.getValue() instanceof List) {
                 for (Object value : (List) entry.getValue()) {
-                    elems.add(new XmlStringBuilderText(identStep, ident).append(
+                    elems.add(new XmlStringBuilderText(toType, identStep, ident).append(
                         XmlValue.escape(String.valueOf(value))));
                 }
             } else {
@@ -515,15 +546,16 @@ public final class Xml {
                     attrs.add(" string=\"true\"");
                     return;
                 }
-                elems.add(new XmlStringBuilderText(identStep, ident).append(
+                elems.add(new XmlStringBuilderText(toType, identStep, ident).append(
                         XmlValue.escape(String.valueOf(entry.getValue()))));
             }
         }
 
-        private static void addElements(final XmlStringBuilder.Step identStep, final int ident, Map.Entry entry,
+        private static void addElements(final XmlStringBuilder.ToType toType,
+                final XmlStringBuilder.Step identStep, final int ident, Map.Entry entry,
                 Set<String> namespaces, final List<XmlStringBuilder> elems, final boolean addNewLine) {
             boolean parentTextFound = !elems.isEmpty() && elems.get(elems.size() - 1) instanceof XmlStringBuilderText;
-            final XmlStringBuilder localBuilder = new XmlStringBuilderWithoutHeader(identStep, ident);
+            final XmlStringBuilder localBuilder = new XmlStringBuilderWithoutHeader(toType, identStep, ident);
             XmlArray.writeXml((List) entry.getValue(), localBuilder,
                     String.valueOf(entry.getKey()), parentTextFound, namespaces);
             if (addNewLine) {
@@ -532,10 +564,11 @@ public final class Xml {
             elems.add(localBuilder);
         }
 
-        private static void addElement(final XmlStringBuilder.Step identStep, final int ident, Map.Entry entry,
-                Set<String> namespaces, final List<XmlStringBuilder> elems, final boolean addNewLine) {
+        private static void addElement(final XmlStringBuilder.ToType toType, final XmlStringBuilder.Step identStep,
+                final int ident, Map.Entry entry, Set<String> namespaces, final List<XmlStringBuilder> elems,
+                final boolean addNewLine) {
             boolean parentTextFound = !elems.isEmpty() && elems.get(elems.size() - 1) instanceof XmlStringBuilderText;
-            XmlStringBuilder localBuilder = new XmlStringBuilderWithoutHeader(identStep, ident);
+            XmlStringBuilder localBuilder = new XmlStringBuilderWithoutHeader(toType, identStep, ident);
             XmlValue.writeXml(entry.getValue(), String.valueOf(entry.getKey()),
                     localBuilder, parentTextFound, namespaces, false);
             if (addNewLine) {
@@ -544,22 +577,24 @@ public final class Xml {
             elems.add(localBuilder);
         }
 
-        private static void addComment(Map.Entry entry, XmlStringBuilder.Step identStep, int ident,
+        private static void addComment(Map.Entry entry, XmlStringBuilder.ToType toType,
+                XmlStringBuilder.Step identStep, int ident,
                 boolean parentTextFound, boolean addNewLine, List<XmlStringBuilder> elems) {
             if (entry.getValue() instanceof List) {
                 for (Iterator iterator = ((List) entry.getValue()).iterator(); iterator.hasNext(); ) {
-                    elems.add(addCommentValue(identStep, ident, String.valueOf(iterator.next()), parentTextFound,
-                            iterator.hasNext() || addNewLine));
+                    elems.add(addCommentValue(toType, identStep, ident, String.valueOf(iterator.next()),
+                            parentTextFound, iterator.hasNext() || addNewLine));
                 }
             } else {
-                elems.add(addCommentValue(identStep, ident, String.valueOf(entry.getValue()), parentTextFound,
+                elems.add(addCommentValue(toType, identStep, ident, String.valueOf(entry.getValue()), parentTextFound,
                         addNewLine));
             }
         }
 
-        private static XmlStringBuilder addCommentValue(XmlStringBuilder.Step identStep, int ident, String value,
+        private static XmlStringBuilder addCommentValue(XmlStringBuilder.ToType toType,
+                XmlStringBuilder.Step identStep, int ident, String value,
                 boolean parentTextFound, boolean addNewLine) {
-            XmlStringBuilder localBuilder = new XmlStringBuilderWithoutHeader(identStep, ident);
+            XmlStringBuilder localBuilder = new XmlStringBuilderWithoutHeader(toType, identStep, ident);
             if (!parentTextFound) {
                 localBuilder.fillSpaces();
             }
@@ -570,21 +605,21 @@ public final class Xml {
             return localBuilder;
         }
 
-        private static void addCdata(Map.Entry entry, XmlStringBuilder.Step identStep, int ident,
-                boolean addNewLine, List<XmlStringBuilder> elems) {
+        private static void addCdata(Map.Entry entry, XmlStringBuilder.ToType toType,
+                XmlStringBuilder.Step identStep, int ident, boolean addNewLine, List<XmlStringBuilder> elems) {
             if (entry.getValue() instanceof List) {
                 for (Iterator iterator = ((List) entry.getValue()).iterator(); iterator.hasNext(); ) {
-                    elems.add(addCdataValue(identStep, ident, String.valueOf(iterator.next()),
+                    elems.add(addCdataValue(toType, identStep, ident, String.valueOf(iterator.next()),
                             iterator.hasNext() || addNewLine));
                 }
             } else {
-                elems.add(addCdataValue(identStep, ident, String.valueOf(entry.getValue()), addNewLine));
+                elems.add(addCdataValue(toType, identStep, ident, String.valueOf(entry.getValue()), addNewLine));
             }
         }
 
-        private static XmlStringBuilder addCdataValue(XmlStringBuilder.Step identStep, int ident, String value,
-                boolean addNewLine) {
-            XmlStringBuilder localBuilder = new XmlStringBuilderText(identStep, ident);
+        private static XmlStringBuilder addCdataValue(XmlStringBuilder.ToType toType,
+                XmlStringBuilder.Step identStep, int ident, String value, boolean addNewLine) {
+            XmlStringBuilder localBuilder = new XmlStringBuilderText(toType, identStep, ident);
             localBuilder.append("<![CDATA[").append(value).append("]]>");
             if (addNewLine) {
                 localBuilder.newLine();
@@ -608,7 +643,7 @@ public final class Xml {
                 builder.fillSpaces();
             }
             if (value == null) {
-                builder.append("<" + XmlValue.escapeName(name, namespaces) + NULL_TRUE);
+                builder.append("<" + XmlValue.escapeName(name, namespaces) + (addArray ? ARRAY_TRUE : "") + NULL_TRUE);
             } else if (value instanceof String) {
                 if (((String) value).isEmpty()) {
                     builder.append("<" + XmlValue.escapeName(name, namespaces)
@@ -872,7 +907,8 @@ public final class Xml {
     }
 
     public static String toXml(Collection collection, XmlStringBuilder.Step identStep) {
-        final XmlStringBuilder builder = new XmlStringBuilderWithoutRoot(identStep, UTF_8.name(), "");
+        final XmlStringBuilder builder = new XmlStringBuilderWithoutRoot(
+                XmlStringBuilder.ToType.FOR_CONVERT, identStep, UTF_8.name(), "");
         writeArray(collection, builder);
         return builder.toString();
     }
@@ -882,22 +918,26 @@ public final class Xml {
     }
 
     public static String toXml(Map map, XmlStringBuilder.Step identStep) {
+        return toXml(map, XmlStringBuilder.ToType.FOR_CONVERT, identStep);
+    }
+
+    public static String toXml(Map map, XmlStringBuilder.ToType toType, XmlStringBuilder.Step identStep) {
         final XmlStringBuilder builder;
         final Map localMap;
         if (map != null && map.containsKey(ENCODING)) {
             localMap = (Map) U.clone(map);
-            builder = checkStandalone(String.valueOf(localMap.remove(ENCODING)), identStep, localMap);
+            builder = checkStandalone(String.valueOf(localMap.remove(ENCODING)), toType, identStep, localMap);
         } else if (map != null && map.containsKey(STANDALONE)) {
             localMap = (Map) U.clone(map);
-            builder = new XmlStringBuilderWithoutRoot(identStep, UTF_8.name(),
+            builder = new XmlStringBuilderWithoutRoot(toType, identStep, UTF_8.name(),
                 " standalone=\"" + (YES.equals(map.get(STANDALONE)) ? YES : "no") + "\"");
             localMap.remove(STANDALONE);
         } else if (map != null && map.containsKey(OMITXMLDECLARATION)) {
             localMap = (Map) U.clone(map);
-            builder = new XmlStringBuilderWithoutHeader(identStep, 0);
+            builder = new XmlStringBuilderWithoutHeader(toType, identStep, 0);
             localMap.remove(OMITXMLDECLARATION);
         } else {
-            builder = new XmlStringBuilderWithoutRoot(identStep, UTF_8.name(), "");
+            builder = new XmlStringBuilderWithoutRoot(toType, identStep, UTF_8.name(), "");
             localMap = map;
         }
         checkLocalMap(builder, localMap);
@@ -943,15 +983,15 @@ public final class Xml {
         builder.append("</root>");
     }
 
-    private static XmlStringBuilder checkStandalone(String encoding, XmlStringBuilder.Step identStep,
-        final Map localMap) {
+    private static XmlStringBuilder checkStandalone(String encoding, XmlStringBuilder.ToType toType,
+            XmlStringBuilder.Step identStep, final Map localMap) {
         final XmlStringBuilder builder;
         if (localMap.containsKey(STANDALONE)) {
-            builder = new XmlStringBuilderWithoutRoot(identStep, encoding,
+            builder = new XmlStringBuilderWithoutRoot(toType, identStep, encoding,
                 " standalone=\"" + (YES.equals(localMap.get(STANDALONE)) ? YES : "no") + "\"");
             localMap.remove(STANDALONE);
         } else {
-            builder = new XmlStringBuilderWithoutRoot(identStep, encoding, "");
+            builder = new XmlStringBuilderWithoutRoot(toType, identStep, encoding, "");
         }
         return builder;
     }
@@ -978,7 +1018,7 @@ public final class Xml {
     }
 
     public static String toXml(Map map) {
-        return toXml(map, XmlStringBuilder.Step.TWO_SPACES);
+        return toXml(map, XmlStringBuilder.ToType.FOR_CONVERT, XmlStringBuilder.Step.TWO_SPACES);
     }
 
     @SuppressWarnings("unchecked")
@@ -1087,6 +1127,7 @@ public final class Xml {
         if (map.containsKey(ARRAY) && TRUE.equals(map.get(ARRAY))) {
             final Map<String, Object> localMap4 = (Map) ((LinkedHashMap) localMap).clone();
             localMap4.remove(ARRAY);
+            localMap4.remove(SELF_CLOSING);
             object = name.equals(XmlValue.getMapKey(localMap4))
                 ? U.newArrayList(Collections.singletonList(getValue(XmlValue.getMapValue(localMap4),
                     FromType.FOR_CONVERT)))
@@ -1508,7 +1549,7 @@ public final class Xml {
 
     public static String formatXml(String xml, XmlStringBuilder.Step identStep) {
         Object result = fromXml(xml, FromType.FOR_FORMAT);
-        return toXml((Map) result, identStep);
+        return toXml((Map) result, XmlStringBuilder.ToType.FOR_FORMAT, identStep);
     }
 
     public static String formatXml(String xml) {
