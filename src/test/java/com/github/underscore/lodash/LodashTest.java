@@ -704,12 +704,15 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
                 Xml.XmlStringBuilder.Step.COMPACT));
         assertEquals("<a>\n\t<b></b>\n\t<b></b>\n</a>",
             U.formatXml("<a>\n  <b></b>\n  <b></b>\n</a>", Xml.XmlStringBuilder.Step.TABS));
+        assertEquals("<a number=\"true\">1.00</a>", U.formatXml("<a number=\"true\">1.00</a>"));
+        assertEquals("<a number=\"true\">2.01</a>", U.formatXml("<a number=\"true\">2.01</a>"));
     }
 
     @Test
     public void formatJson() {
         assertEquals("{\n   \"a\": {\n   }\n}", U.formatJson("{\n  \"a\": {\n  }\n}"));
         assertEquals("[\n]", U.formatJson("[]"));
+        assertEquals("[\n   1.00\n]", U.formatJson("[1.00]"));
         assertEquals("{\n    \"a\": {\n    }\n}",
             U.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.FOUR_SPACES));
         assertEquals("{\"a\":{}}",
@@ -774,7 +777,7 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
                 .add("city", "New York")
                 .add("state", "NY")
                 .add("postalCode", "10021"))
-            .add("phoneNumber", U.objectBuilder()
+            .add("phoneNumber", U.arrayBuilder()
                 .add(U.objectBuilder()
                     .add("type", "home")
                     .add("number", "212 555-1234"))
@@ -783,8 +786,42 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
                     .add("number", "646 555-4567")))
             .build();
         assertEquals("{firstName=John, lastName=Smith, age=25, address={streetAddress=21 2nd Street, "
-            + "city=New York, state=NY, postalCode=10021}, phoneNumber={0={type=home, number=212 555-1234}, "
-            + "1={type=fax, number=646 555-4567}}}", value.toString());
+            + "city=New York, state=NY, postalCode=10021}, phoneNumber=[{type=home, number=212 555-1234}, "
+            + "{type=fax, number=646 555-4567}]}", value.toString());
+    }
+
+    @Test
+    public void arrayBuilder() {
+        U.ArrayBuilder builder = U.arrayBuilder().add("1").add("2");
+        builder.add(builder);
+        builder.toJson();
+        U.ArrayBuilder.fromJson("[]");
+        builder.toXml();
+        U.ArrayBuilder.fromXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><root empty-array=\"true\"></root>");
+        builder.set(1, "3");
+        builder.toString();
+        assertEquals("[1, 3, 1, 2]", builder.build().toString());
+        Map<String, Object> value = U.objectBuilder()
+            .add("firstName", "John")
+            .add("lastName", "Smith")
+            .add("age", 25)
+            .add("address", U.arrayBuilder()
+                .add(U.objectBuilder()
+                    .add("streetAddress", "21 2nd Street")
+                    .add("city", "New York")
+                    .add("state", "NY")
+                    .add("postalCode", "10021")))
+            .add("phoneNumber", U.arrayBuilder()
+                .add(U.objectBuilder()
+                    .add("type", "home")
+                    .add("number", "212 555-1234"))
+                .add(U.objectBuilder()
+                    .add("type", "fax")
+                    .add("number", "646 555-4567")))
+            .build();
+        assertEquals("{firstName=John, lastName=Smith, age=25, address=[{streetAddress=21 2nd Street, "
+            + "city=New York, state=NY, postalCode=10021}], phoneNumber=[{type=home, number=212 555-1234}, "
+            + "{type=fax, number=646 555-4567}]}", value.toString());
     }
 
     @SuppressWarnings("unchecked")

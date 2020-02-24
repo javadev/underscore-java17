@@ -65,6 +65,7 @@ _.camelCase('__foo_bar__');
         assertEquals("fooBar", U.chain("Foo Bar").camelCase().item());
         assertEquals("fooBar", U.camelCase("--foo-bar"));
         assertEquals("fooBar", U.camelCase("__foo_bar__"));
+        assertEquals("ThisIsAnExampleString", U.upperFirst(U.camelCase("THIS_IS_AN_EXAMPLE_STRING")));
         assertEquals("", U.camelCase(null));
         assertEquals("a", U.camelCase("\u00c0"));
     }
@@ -2260,6 +2261,18 @@ _.repeat('abc', 0);
         assertEquals("", Xml.getDoctypeValue("<!DOCTYPE module PUBLIC"));
         assertEquals(json, U.toJson((Map<String, Object>) U.fromXml(xml)));
         assertEquals(xml, U.toXml((Map<String, Object>) U.fromJson(json)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void toJsonFromXml29() {
+        final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<root>\n"
+            + "  <element array=\"true\" null=\"true\"/>\n"
+            + "</root>";
+        final String json = "[\n  null\n]";
+        assertEquals(json, U.toJson((List<Object>) U.fromXml(xml)));
+        assertEquals(xml, U.toXml((List<Object>) U.fromJson(json)));
     }
 
     @SuppressWarnings("unchecked")
