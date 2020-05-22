@@ -923,7 +923,7 @@ public final class Xml {
                     U.<String>newLinkedHashSet(), false);
             }
         } else {
-            XmlObject.writeXml(localMap2, null, builder, false, U.<String>newLinkedHashSet(), false);
+            XmlObject.writeXml(localMap2, getRootName(localMap2), builder, false, U.<String>newLinkedHashSet(), false);
         }
     }
 
@@ -966,6 +966,7 @@ public final class Xml {
                 if (String.valueOf(entry.getKey()).startsWith("-")) {
                     foundAttrs += 1;
                 } else if (!String.valueOf(entry.getKey()).startsWith(COMMENT)
+                        && !String.valueOf(entry.getKey()).startsWith(CDATA)
                         && !String.valueOf(entry.getKey()).startsWith("?")) {
                     if (entry.getValue() instanceof List && ((List) entry.getValue()).size() > 1) {
                         foundListElements += 1;
@@ -1396,6 +1397,8 @@ public final class Xml {
             factory.setNamespaceAware(true);
             try {
                 factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             } catch (javax.xml.parsers.ParserConfigurationException ignored) {
                 // ignored
             }
@@ -1412,6 +1415,8 @@ public final class Xml {
                 factory.setNamespaceAware(true);
                 try {
                     factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    factory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                 } catch (javax.xml.parsers.ParserConfigurationException ignored) {
                     // ignored
                 }
