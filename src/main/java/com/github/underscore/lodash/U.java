@@ -1613,6 +1613,72 @@ public class U<T> extends com.github.underscore.U<T> {
         return result;
     }
 
+    public static Map<String, Object> setValue(final Map<String, Object> map, final String key,
+        final Object newValue) {
+        return setValue(map, key, new BiFunction<String, Object, Object>() {
+            public Object apply(String key, Object value) { return newValue; } });
+    }
+
+    public static Map<String, Object> setValue(final Map<String, Object> map, final String key,
+        final BiFunction<String, Object, Object> newValue) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getKey().equals(key)) {
+                outMap.put(key, makeObjectForSetValue(newValue.apply(key, entry.getValue()), key, newValue));
+            } else {
+                outMap.put(entry.getKey(), makeObjectForSetValue(entry.getValue(), key, newValue));
+            }
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeObjectForSetValue(Object value, final String key,
+        final BiFunction<String, Object, Object> newValue) {
+        final Object result;
+        if (value instanceof List) {
+            List<Object> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(item instanceof Map ? setValue((Map<String, Object>) item, key, newValue) : item);
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = setValue((Map<String, Object>) value, key, newValue);
+        } else {
+            result = value;
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> update(final Map<String, Object> map1, final Map<String, Object> map2) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (String key : map2.keySet()) {
+            Object value2 = map2.get(key);
+            if (map1.containsKey(key)) {
+                Object value1 = map1.get(key);
+                if (value1 instanceof Map && value2 instanceof Map) {
+                    outMap.put(key, update((Map<String, Object>) value1, (Map<String, Object>) value2));
+                } else if (value1 instanceof List && value2 instanceof List) {
+                    outMap.put(key, merge((List<Object>) value1, (List<Object>) value2));
+                } else {
+                    outMap.put(key, value2);
+                }
+            } else {
+                outMap.put(key, value2);
+            }
+        }
+        return outMap;
+    }
+
+    public static List<Object> merge(List<Object> list1, List<Object> list2) {
+        List<Object> outList1 = newArrayList(list1);
+        List<Object> outList2 = newArrayList(list2);
+        outList2.removeAll(list1);
+        outList1.addAll(outList2);
+        return outList1;
+    }
+
     public static class FetchResponse {
         private final boolean ok;
         private final int status;
@@ -2187,6 +2253,14 @@ public class U<T> extends com.github.underscore.U<T> {
         return Xml.formatXml(xml);
     }
 
+    public static String changeXmlEncoding(String xml, Xml.XmlStringBuilder.Step identStep, String encoding) {
+        return Xml.changeXmlEncoding(xml, identStep, encoding);
+    }
+
+    public static String changeXmlEncoding(String xml, String encoding) {
+        return Xml.changeXmlEncoding(xml, encoding);
+    }
+
     public static Map<String, Object> removeMinusesAndConvertNumbers(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -2265,6 +2339,21 @@ public class U<T> extends com.github.underscore.U<T> {
             outMap.put(String.valueOf(entry.getKey()), makeObjectSelfClose(entry.getValue()));
         }
         return outMap;
+    }
+
+    public static long gcd(long value1, long value2) {
+        if (value1 == 0) {
+            return value2;
+        }
+        return gcd(value2 % value1, value1);
+    }
+
+    public static long findGcd(long ... array) {
+        long result = array[0];
+        for (int index = 1; index < array.length; index += 1) {
+            result = gcd(array[index], result);
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
