@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Underscore-java11 is a java 11 port of Underscore.js.
+ * Underscore-java8 is a java 8 port of Underscore.js.
  *
  * @author Valentyn Kolesnikov
  */
@@ -136,15 +136,16 @@ public class U<T> {
             final String escape = TEMPLATE_SETTINGS.get(ESCAPE);
             String result = template;
             for (final Map.Entry<K, V> element : value.entrySet()) {
+                final String value1 = String.valueOf(element.getValue()).replace("\\", "\\\\");
                 result = java.util.regex.Pattern.compile(interpolate.replace(ALL_SYMBOLS,
                     S_Q + element.getKey()
-                    + E_S)).matcher(result).replaceAll(String.valueOf(element.getValue()));
+                    + E_S)).matcher(result).replaceAll(value1);
                 result = java.util.regex.Pattern.compile(escape.replace(ALL_SYMBOLS,
                     S_Q + element.getKey()
-                    + E_S)).matcher(result).replaceAll(escape(String.valueOf(element.getValue())));
+                    + E_S)).matcher(result).replaceAll(escape(value1));
                 result = java.util.regex.Pattern.compile(evaluate.replace(ALL_SYMBOLS,
                     S_Q + element.getKey()
-                    + E_S)).matcher(result).replaceAll(String.valueOf(element.getValue()));
+                    + E_S)).matcher(result).replaceAll(value1);
             }
             return result;
         }
@@ -3748,8 +3749,113 @@ public class U<T> {
         };
     }
 
+    public static int minimumDays(int rows, int columns, List<List<Integer>> grid) {
+        Queue<int[]> queue = new LinkedList<int[]>();
+        int cnt = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (grid.get(i).get(j) == 1) {
+                    queue.offer(new int[] {i, j});
+                    cnt++;
+                }
+            }
+        }
+        return getInteger(rows, columns, grid, queue, cnt);
+    }
+
+    private static int getInteger(int rows, int columns, List<List<Integer>> grid, Queue<int[]> queue, int cnt) {
+        int target = rows * columns;
+        int res = 0;
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            if (cnt == target) {
+                return res;
+            }
+            for (int i = 0; i < size; i++) {
+                int[] cur = queue.poll();
+                for (int[] dir : dirs) {
+                    int ni = cur[0] + dir[0];
+                    int nj = cur[1] + dir[1];
+                    if (ni >= 0 && ni < rows && nj >= 0 && nj < columns && grid.get(ni).get(nj) == 0) {
+                        cnt++;
+                        queue.offer(new int[] {ni, nj});
+                        grid.get(ni).set(nj, 1);
+                    }
+                }
+            }
+            res++;
+        }
+        return -1;
+    }
+
+    public static List<String> topNCompetitors(int numCompetitors, int topNCompetitors, List<String> competitors,
+        int numReviews, List<String> reviews) {
+        if (U.isNull(reviews) || reviews.isEmpty() || U.isNull(competitors) || competitors.isEmpty()
+            || numReviews < 1 || numCompetitors < 1) {
+            return new ArrayList<String>();
+        }
+
+        List<String> topNCompetitorsList = new ArrayList<String>(topNCompetitors);
+
+        Set<String> competitorsSet = new HashSet<String>(competitors);
+        Map<String, Integer> topCompetitorsMap = new HashMap<String, Integer>();
+        List<Map.Entry<String, Integer>> list = getEntries(reviews, competitorsSet, topCompetitorsMap);
+
+        for (Map.Entry<String, Integer> item : list) {
+            if (topNCompetitorsList.size() < topNCompetitors) {
+                topNCompetitorsList.add(item.getKey());
+            } else {
+                break;
+            }
+        }
+
+        return topNCompetitorsList;
+    }
+
+    private static List<Map.Entry<String, Integer>> getEntries(List<String> reviews, Set<String> competitorsSet,
+        Map<String, Integer> topCompetitorsMap) {
+        // clean the reviews first: lowercase, remove special characters and split by spaces.
+        for (String review : reviews) {
+            String[] reviewArray = review.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "").split(" ");
+            Set<String> tempCompetitorSet = new HashSet<String>();
+
+            for (String text : reviewArray) {
+                if (competitorsSet.contains(text) && !tempCompetitorSet.contains(text)) {
+                    tempCompetitorSet.add(text);
+                    if (topCompetitorsMap.containsKey(text)) {
+                        topCompetitorsMap.put(text, topCompetitorsMap.get(text) + 1);
+                    } else {
+                        topCompetitorsMap.put(text, 1);
+                    }
+                }
+            }
+        }
+
+        return getEntries(topCompetitorsMap);
+    }
+
+    private static List<Map.Entry<String, Integer>> getEntries(Map<String, Integer> topCompetitorsMap) {
+        List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(topCompetitorsMap.entrySet());
+        Collections.sort(list, new ValueThenKeyComparator<String, Integer>());
+        return list;
+    }
+
+    public static class ValueThenKeyComparator<K extends Comparable<? super K>,
+            V extends Comparable<? super V>> implements Comparator<Map.Entry<K, V>> {
+
+        public int compare(Map.Entry<K, V> a, Map.Entry<K, V> b) {
+            int cmp1 = b.getValue().compareTo(a.getValue());
+            if (cmp1 != 0) {
+                return cmp1;
+            } else {
+                return a.getKey().compareTo(b.getKey());
+            }
+        }
+    }
+
     public static void main(String ... args) {
-        final String message = "Underscore-java11 is a java 11 port of Underscore.js.\n\n"
+        final String message = "Underscore-java8 is a java 8 port of Underscore.js.\n\n"
             + "In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.\n\n"
             + "For docs, license, tests, and downloads, see: http://javadev.github.io/underscore-java";
         System.out.println(message);
