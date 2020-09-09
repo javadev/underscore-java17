@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Underscore-java8 is a java 8 port of Underscore.js.
+ * Underscore-java11 is a java 11 port of Underscore.js.
  *
  * @author Valentyn Kolesnikov
  */
@@ -3855,7 +3855,7 @@ public class U<T> {
     }
 
     public static void main(String ... args) {
-        final String message = "Underscore-java8 is a java 8 port of Underscore.js.\n\n"
+        final String message = "Underscore-java11 is a java 11 port of Underscore.js.\n\n"
             + "In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.\n\n"
             + "For docs, license, tests, and downloads, see: http://javadev.github.io/underscore-java";
         System.out.println(message);
