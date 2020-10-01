@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -624,6 +624,11 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
                 + "}",
             U.xmlToJson("<a/>", U.Mode.REPLACE_SELF_CLOSING_WITH_NULL));
         assertEquals("{\n"
+                + "  \"a\": \"\",\n"
+                + "  \"#omit-xml-declaration\": \"yes\"\n"
+                + "}",
+            U.xmlToJson("<a/>", U.Mode.REPLACE_SELF_CLOSING_WITH_EMPTY));
+        assertEquals("{\n"
                 + "  \"a\": {\n"
                 + "    \"-b\": \"c\"\n"
                 + "  },\n"
@@ -906,6 +911,7 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         new U(new ArrayList<String>());
         new U("");
         new U(asList()).chain();
+        new U(asList()).of();
         new Json();
         new Xml();
         U.chain(new ArrayList<String>());
@@ -913,6 +919,12 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         U.chain(new HashSet<String>());
         U.chain(new String[] {});
         U.chain("");
+        U.of(new ArrayList<String>());
+        U.of(new ArrayList<String>(), 1);
+        U.of(new HashSet<String>());
+        U.of(new String[] {});
+        U.of(new int[] {});
+        U.of("");
     }
 
     @SuppressWarnings("unchecked")

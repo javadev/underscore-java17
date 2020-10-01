@@ -77,6 +77,7 @@ var youngest = _.chain(stooges)
             })
             .first().item();
         assertEquals("moe is 21", youngest);
+        U.of(stooges);
     }
 
     @Test
@@ -101,6 +102,7 @@ var youngest = _.chain(stooges)
             })
             .first().item();
         assertEquals("moe is 21", youngest);
+        U.of(stooges);
     }
 
     @Test
@@ -126,6 +128,7 @@ var youngest = _.chain(stooges)
             })
             .first().item().toString();
         assertEquals("moe is 21", youngest);
+        new U(stooges).of();
     }
 
     @Test
@@ -151,6 +154,7 @@ var youngest = _.chain(stooges)
             .first().item();
         assertEquals("moe is 21", youngest);
         assertEquals("[1, 2, 3]", U.chain(new int[] {1, 2, 3}).toString());
+        assertEquals("[1, 2, 3]", U.of(new int[] {1, 2, 3}).toString());
     }
 
 /*
@@ -328,6 +332,7 @@ _.chain(doctors)
             })
             .value().toString();
         assertEquals("[{doctorNumber=#9, playedBy=Christopher Eccleston, yearsPlayed=1}]", result);
+        U.chain(doctors).toList();
     }
 
 /*
@@ -409,6 +414,7 @@ var sum = _(words)
               }
           }, 0).item();
         assertEquals(34, sum);
+        U.of(words);
     }
 
     @Test
