@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -2458,6 +2458,11 @@ public class U<T> extends com.github.underscore.U<T> {
         }
 
         public Builder add(final String key, final ArrayBuilder builder) {
+            data.put(key, builder.build());
+            return this;
+        }
+
+        public Builder add(final String key, final Builder builder) {
             data.put(key, builder.build());
             return this;
         }
