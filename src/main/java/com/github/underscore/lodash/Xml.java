@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,14 @@
  */
 package com.github.underscore.lodash;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -61,7 +68,7 @@ public final class Xml {
     private static final java.util.regex.Pattern ATTRS = java.util.regex.Pattern.compile(
         "((?:(?!\\s|=).)*)\\s*?=\\s*?[\"']?((?:(?<=\")(?:(?<=\\\\)\"|[^\"])*|(?<=')"
         + "(?:(?<=\\\\)'|[^'])*)|(?:(?!\"|')(?:(?!\\/>|>|\\s).)+))");
-    private static final Map<String, String> XML_UNESCAPE = new HashMap<String, String>();
+    private static final Map<String, String> XML_UNESCAPE = new HashMap<>();
     private static final org.w3c.dom.Document DOCUMENT = Document.createDocument();
 
     static {
@@ -1308,16 +1315,10 @@ public final class Xml {
         }
         try {
             org.w3c.dom.Document document = Document.createDocument(xml);
-            final Object result = createMap(document, new BiFunction<Object, Set<String>, String>() {
-                public String apply(Object object, Set<String> namespaces) {
-                    return String.valueOf(object);
-                }
-            }, new Function<Object, Object>() {
-                public Object apply(Object object) {
-                    return object;
-                }
-            }, Collections.<String, Object>emptyMap(), new int[] {1, 1, 1}, xml, new int[] {0},
-            U.<String>newLinkedHashSet(), fromType);
+            final Object result = createMap(document, (object, namespaces)
+                -> String.valueOf(object), object -> object,
+                Collections.<String, Object>emptyMap(), new int[] {1, 1, 1}, xml, new int[] {0},
+                U.<String>newLinkedHashSet(), fromType);
             if (checkResult(xml, document, result, fromType)) {
                 return ((Map.Entry) ((Map) result).entrySet().iterator().next()).getValue();
             }
@@ -1427,15 +1428,10 @@ public final class Xml {
     public static Object fromXmlMakeArrays(final String xml) {
         try {
             org.w3c.dom.Document document = Document.createDocument(xml);
-            final Object result = createMap(document, new BiFunction<Object, Set<String>, String>() {
-                public String apply(Object object, Set<String> namespaces) {
-                    return String.valueOf(object);
-                }
-            }, new Function<Object, Object>() {
-                public Object apply(Object object) {
-                    return object instanceof List ? object : U.newArrayList(Collections.singletonList(object));
-                }
-            }, Collections.<String, Object>emptyMap(), new int[] {1, 1, 1}, xml, new int[] {0},
+            final Object result = createMap(document, (object, namespaces)
+                -> String.valueOf(object), object -> object instanceof List
+                    ? object : U.newArrayList(Collections.singletonList(object)),
+                        Collections.<String, Object>emptyMap(), new int[] {1, 1, 1}, xml, new int[] {0},
             U.<String>newLinkedHashSet(), FromType.FOR_CONVERT);
             if (checkResult(xml, document, result, FromType.FOR_CONVERT)) {
                 return ((Map.Entry) ((Map) result).entrySet().iterator().next()).getValue();
@@ -1450,11 +1446,8 @@ public final class Xml {
         final BiFunction<Object, Set<String>, String> elementMapper) {
         try {
             org.w3c.dom.Document document = Document.createDocument(xml);
-            final Object result = createMap(document, elementMapper, new Function<Object, Object>() {
-                public Object apply(Object object) {
-                    return object;
-                }
-            }, Collections.<String, Object>emptyMap(), new int[]{1, 1, 1}, xml, new int[]{0},
+            final Object result = createMap(document, elementMapper, object
+                -> object, Collections.<String, Object>emptyMap(), new int[]{1, 1, 1}, xml, new int[]{0},
                 U.<String>newLinkedHashSet(), FromType.FOR_CONVERT);
             if (checkResult(xml, document, result, FromType.FOR_CONVERT)) {
                 return ((Map.Entry) ((Map) result).entrySet().iterator().next()).getValue();
@@ -1466,48 +1459,41 @@ public final class Xml {
     }
 
     public static Object fromXmlWithoutNamespaces(final String xml) {
-        return fromXmlWithElementMapper(xml, new BiFunction<Object, Set<String>, String>() {
-                public String apply(Object object, Set<String> namespaces) {
-                    final String localString = String.valueOf(object);
-                    final String result;
-                    if (localString.startsWith("-") && namespaces.contains(localString
-                            .substring(1, Math.max(1, localString.indexOf(':'))))) {
-                        result = "-" + localString.substring(Math.max(0, localString.indexOf(':') + 1));
-                    } else if (namespaces.contains(localString
-                            .substring(0, Math.max(0, localString.indexOf(':'))))) {
-                        result = localString.substring(Math.max(0, localString.indexOf(':') + 1));
-                    } else {
-                        result = String.valueOf(object);
-                    }
-                    return result;
-                }
-            });
+        return fromXmlWithElementMapper(xml, (object, namespaces) -> {
+            final String localString = String.valueOf(object);
+            final String result;
+            if (localString.startsWith("-") && namespaces.contains(localString
+                    .substring(1, Math.max(1, localString.indexOf(':'))))) {
+                result = "-" + localString.substring(Math.max(0, localString.indexOf(':') + 1));
+            } else if (namespaces.contains(localString
+                    .substring(0, Math.max(0, localString.indexOf(':'))))) {
+                result = localString.substring(Math.max(0, localString.indexOf(':') + 1));
+            } else {
+                result = String.valueOf(object);
+            }
+            return result;
+        });
     }
 
     public static Object fromXmlWithoutAttributes(final String xml) {
-        return fromXmlWithElementMapper(xml, new BiFunction<Object, Set<String>, String>() {
-                public String apply(Object object, Set<String> namespaces) {
-                    return String.valueOf(object).startsWith("-") ? null : String.valueOf(object);
-                }
-            });
+        return fromXmlWithElementMapper(xml, (object, namespaces)
+            -> String.valueOf(object).startsWith("-") ? null : String.valueOf(object));
     }
 
     public static Object fromXmlWithoutNamespacesAndAttributes(final String xml) {
-        return fromXmlWithElementMapper(xml, new BiFunction<Object, Set<String>, String>() {
-                public String apply(Object object, Set<String> namespaces) {
-                    final String localString = String.valueOf(object);
-                    final String result;
-                    if (localString.startsWith("-")) {
-                        result = null;
-                    } else if (namespaces.contains(localString
-                            .substring(0, Math.max(0, localString.indexOf(':'))))) {
-                        result = localString.substring(Math.max(0, localString.indexOf(':') + 1));
-                    } else {
-                        result = String.valueOf(object);
-                    }
-                    return result;
-                }
-            });
+        return fromXmlWithElementMapper(xml, (object, namespaces) -> {
+            final String localString = String.valueOf(object);
+            final String result;
+            if (localString.startsWith("-")) {
+                result = null;
+            } else if (namespaces.contains(localString
+                    .substring(0, Math.max(0, localString.indexOf(':'))))) {
+                result = localString.substring(Math.max(0, localString.indexOf(':') + 1));
+            } else {
+                result = String.valueOf(object);
+            }
+            return result;
+        });
     }
 
     public static String formatXml(String xml, XmlStringBuilder.Step identStep) {

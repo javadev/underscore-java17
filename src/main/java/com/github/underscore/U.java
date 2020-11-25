@@ -25,7 +25,27 @@ package com.github.underscore;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.BinaryOperator;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -42,7 +62,7 @@ import java.util.function.UnaryOperator;
  */
 public class U<T> {
     private static final Map<String, Function<String, String>> FUNCTIONS = newLinkedHashMap();
-    private static final Map<String, String> TEMPLATE_SETTINGS = new HashMap<String, String>();
+    private static final Map<String, String> TEMPLATE_SETTINGS = new HashMap<>();
     private static final int MIN_PASSWORD_LENGTH_8 = 8;
     private static final long CAPACITY_SIZE_5 = 5L;
     private static final long CAPACITY_COEFF_2 = 2L;
@@ -57,7 +77,7 @@ public class U<T> {
     private static final String E_S = "\\E\\s*";
     private static final java.util.regex.Pattern FORMAT_PATTERN =
         java.util.regex.Pattern.compile("\\{\\s*(\\d*)\\s*\\}");
-    private static final Map<Character, String> ESCAPES = new HashMap<Character, String>();
+    private static final Map<Character, String> ESCAPES = new HashMap<>();
     private final Iterable<T> iterable;
     private final Optional<String> string;
 
@@ -156,8 +176,8 @@ public class U<T> {
             final String interpolate = TEMPLATE_SETTINGS.get(INTERPOLATE);
             final String escape = TEMPLATE_SETTINGS.get(ESCAPE);
             String result = template;
-            final List<String> notFound = new ArrayList<String>();
-            final List<String> valueKeys = new ArrayList<String>();
+            final List<String> notFound = new ArrayList<>();
+            final List<String> valueKeys = new ArrayList<>();
             for (final Map.Entry<K, V> element : value.entrySet()) {
                 final String key = "" + element.getKey();
                 java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(interpolate.replace(ALL_SYMBOLS,
@@ -177,7 +197,7 @@ public class U<T> {
                 }
                 valueKeys.add(key);
             }
-            final List<String> templateVars = new ArrayList<String>();
+            final List<String> templateVars = new ArrayList<>();
             java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(interpolate).matcher(result);
             while (matcher.find()) {
                 templateVars.add(matcher.group(1).trim());
@@ -230,11 +250,7 @@ public class U<T> {
     }
 
     public static <K, V> Function<Map<K, V>, V> iteratee(final K key) {
-        return new Function<Map<K, V>, V>() {
-            public V apply(Map<K, V> item) {
-                return item.get(key);
-            }
-        };
+        return item -> item.get(key);
     }
 
     /*
@@ -544,39 +560,19 @@ public class U<T> {
      * Documented, #reject
      */
     public static <E> List<E> reject(final List<E> list, final Predicate<E> pred) {
-        return filter(list, new Predicate<E>() {
-            @Override
-            public boolean test(E input) {
-                return !pred.test(input);
-            }
-        });
+        return filter(list, input -> !pred.test(input));
     }
 
     public List<T> reject(final Predicate<T> pred) {
-        return filter(new Predicate<T>() {
-            @Override
-            public boolean test(T input) {
-                return !pred.test(input);
-            }
-        });
+        return filter(input -> !pred.test(input));
     }
 
     public static <E> List<E> rejectIndexed(final List<E> list, final PredicateIndexed<E> pred) {
-        return filterIndexed(list, new PredicateIndexed<E>() {
-            @Override
-            public boolean test(int index, E input) {
-                return !pred.test(index, input);
-            }
-        });
+        return filterIndexed(list, (index, input) -> !pred.test(index, input));
     }
 
     public static <E> Set<E> reject(final Set<E> set, final Predicate<E> pred) {
-        return filter(set, new Predicate<E>() {
-            @Override
-            public boolean test(E input) {
-                return !pred.test(input);
-            }
-        });
+        return filter(set, input -> !pred.test(input));
     }
 
     public static <E> List<E> filterFalse(final List<E> list, final Predicate<E> pred) {
@@ -649,12 +645,7 @@ public class U<T> {
     }
 
     public static <E> boolean contains(final Iterable<E> iterable, final E elem) {
-        return some(iterable, new Predicate<E>() {
-            @Override
-            public boolean test(E e) {
-                return elem == null ? e == null : elem.equals(e);
-            }
-        });
+        return some(iterable, e -> Objects.equals(elem, e));
     }
 
     public boolean contains(final T elem) {
@@ -662,12 +653,7 @@ public class U<T> {
     }
 
     public static <E> boolean containsWith(final Iterable<E> iterable, final E elem) {
-        return some(iterable, new Predicate<E>() {
-            @Override
-            public boolean test(E e) {
-                return elem == null ? e == null : String.valueOf(e).contains(String.valueOf(elem));
-            }
-        });
+        return some(iterable, e -> elem == null ? e == null : String.valueOf(e).contains(String.valueOf(elem)));
     }
 
     public boolean containsWith(final T elem) {
@@ -690,7 +676,7 @@ public class U<T> {
     public static <E> boolean containsAtLeast(final Iterable<E> iterable, final E value, final int count) {
         int foundItems = 0;
         for (E element : iterable) {
-            if (element == null ? value == null : element.equals(value)) {
+            if (Objects.equals(element, value)) {
                 foundItems += 1;
             }
             if (foundItems >= count) {
@@ -703,7 +689,7 @@ public class U<T> {
     public static <E> boolean containsAtMost(final Iterable<E> iterable, final E value, final int count) {
         int foundItems = size(iterable);
         for (E element : iterable) {
-            if (!(element == null ? value == null : element.equals(value))) {
+            if (!(Objects.equals(element, value))) {
                 foundItems -= 1;
             }
             if (foundItems <= count) {
@@ -727,11 +713,7 @@ public class U<T> {
     public static <E> List<E> invoke(final Iterable<E> iterable, final String methodName,
                                   final List<Object> args) {
         final List<E> result = newArrayList();
-        final List<Class<?>> argTypes = map(args, new Function<Object, Class<?>>() {
-            public Class<?> apply(Object input) {
-                return input.getClass();
-            }
-        });
+        final List<Class<?>> argTypes = map(args, Object::getClass);
         try {
             final Method method = iterable.iterator().next().getClass().getMethod(methodName, argTypes.toArray(
                     new Class[0]));
@@ -767,17 +749,14 @@ public class U<T> {
         if (list.isEmpty()) {
             return Collections.emptyList();
         }
-        return map(list, new Function<E, Object>() {
-            @Override
-            public Object apply(E elem) {
+        return map(list, elem -> {
+            try {
+                return elem.getClass().getField(propertyName).get(elem);
+            } catch (Exception e) {
                 try {
-                    return elem.getClass().getField(propertyName).get(elem);
-                } catch (Exception e) {
-                    try {
-                        return elem.getClass().getMethod(propertyName).invoke(elem);
-                    } catch (Exception ex) {
-                        throw new IllegalArgumentException(ex);
-                    }
+                    return elem.getClass().getMethod(propertyName).invoke(elem);
+                } catch (Exception ex) {
+                    throw new IllegalArgumentException(ex);
                 }
             }
         });
@@ -791,17 +770,14 @@ public class U<T> {
         if (set.isEmpty()) {
             return Collections.emptySet();
         }
-        return map(set, new Function<E, Object>() {
-            @Override
-            public Object apply(E elem) {
+        return map(set, elem -> {
+            try {
+                return elem.getClass().getField(propertyName).get(elem);
+            } catch (Exception e) {
                 try {
-                    return elem.getClass().getField(propertyName).get(elem);
-                } catch (Exception e) {
-                    try {
-                        return elem.getClass().getMethod(propertyName).invoke(elem);
-                    } catch (Exception ex) {
-                        throw new IllegalArgumentException(ex);
-                    }
+                    return elem.getClass().getMethod(propertyName).invoke(elem);
+                } catch (Exception ex) {
+                    throw new IllegalArgumentException(ex);
                 }
             }
         });
@@ -812,7 +788,7 @@ public class U<T> {
      */
     public static <T, E> List<E> where(final List<E> list,
                                     final List<Tuple<String, T>> properties) {
-        return filter(list, new WherePredicate<E, T>(properties));
+        return filter(list, new WherePredicate<>(properties));
 
     }
 
@@ -822,7 +798,7 @@ public class U<T> {
 
     public static <T, E> Set<E> where(final Set<E> set,
                                    final List<Tuple<String, T>> properties) {
-        return filter(set, new WherePredicate<E, T>(properties));
+        return filter(set, new WherePredicate<>(properties));
     }
 
     /*
@@ -830,7 +806,7 @@ public class U<T> {
      */
     public static <T, E> Optional<E> findWhere(final Iterable<E> iterable,
                                   final List<Tuple<String, T>> properties) {
-        return find(iterable, new WherePredicate<E, T>(properties));
+        return find(iterable, new WherePredicate<>(properties));
     }
 
     public <E> Optional<T> findWhere(final List<Tuple<String, E>> properties) {
@@ -851,12 +827,7 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <E, F extends Comparable> E max(final Collection<E> collection, final Function<E, F> func) {
-        return Collections.max(collection, new Comparator<E>() {
-            @Override
-            public int compare(E o1, E o2) {
-                return func.apply(o1).compareTo(func.apply(o2));
-            }
-        });
+        return Collections.max(collection, (o1, o2) -> func.apply(o1).compareTo(func.apply(o2)));
     }
 
     @SuppressWarnings("unchecked")
@@ -878,12 +849,7 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <E, F extends Comparable> E min(final Collection<E> collection, final Function<E, F> func) {
-        return Collections.min(collection, new Comparator<E>() {
-            @Override
-            public int compare(E o1, E o2) {
-                return func.apply(o1).compareTo(func.apply(o2));
-            }
-        });
+        return Collections.min(collection, (o1, o2) -> func.apply(o1).compareTo(func.apply(o2)));
     }
 
     @SuppressWarnings("unchecked")
@@ -943,12 +909,7 @@ public class U<T> {
     public static <E, T extends Comparable<? super T>> List<E> sortBy(final Iterable<E> iterable,
         final Function<E, T> func) {
         final List<E> sortedList = newArrayList(iterable);
-        Collections.sort(sortedList, new Comparator<E>() {
-            @Override
-            public int compare(E o1, E o2) {
-                return func.apply(o1).compareTo(func.apply(o2));
-            }
-        });
+        Collections.sort(sortedList, (o1, o2) -> func.apply(o1).compareTo(func.apply(o2)));
         return sortedList;
     }
 
@@ -960,12 +921,7 @@ public class U<T> {
     public static <K, V extends Comparable<? super V>> List<Map<K, V>> sortBy(final Iterable<Map<K, V>> iterable,
         final K key) {
         final List<Map<K, V>> sortedList = newArrayList(iterable);
-        Collections.sort(sortedList, new Comparator<Map<K, V>>() {
-            @Override
-            public int compare(Map<K, V> o1, Map<K, V> o2) {
-                return o1.get(key).compareTo(o2.get(key));
-            }
-        });
+        Collections.sort(sortedList, (o1, o2) -> o1.get(key).compareTo(o2.get(key)));
         return sortedList;
     }
 
@@ -1009,14 +965,11 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <K, E> Map<K, List<E>> indexBy(final Iterable<E> iterable, final String property) {
-        return groupBy(iterable, new Function<E, K>() {
-            @Override
-            public K apply(E elem) {
-                try {
-                    return (K) elem.getClass().getField(property).get(elem);
-                } catch (Exception e) {
-                    return null;
-                }
+        return groupBy(iterable, elem -> {
+            try {
+                return (K) elem.getClass().getField(property).get(elem);
+            } catch (Exception e) {
+                return null;
             }
         });
     }
@@ -1422,13 +1375,8 @@ public class U<T> {
      * Documented, #compact
      */
     public static <E> List<E> compact(final List<E> list) {
-        return filter(list, new Predicate<E>() {
-            @Override
-            public boolean test(E arg) {
-                return !String.valueOf(arg).equals("null") && !String.valueOf(arg).equals("0")
-                    && !String.valueOf(arg).equals("false") && !String.valueOf(arg).equals("");
-            }
-        });
+        return filter(list, arg -> !String.valueOf(arg).equals("null") && !String.valueOf(arg).equals("0")
+            && !String.valueOf(arg).equals("false") && !String.valueOf(arg).equals(""));
     }
 
     @SuppressWarnings("unchecked")
@@ -1437,12 +1385,7 @@ public class U<T> {
     }
 
     public static <E> List<E> compact(final List<E> list, final E falsyValue) {
-        return filter(list, new Predicate<E>() {
-            @Override
-            public boolean test(E arg) {
-                return !(arg == null ? falsyValue == null : arg.equals(falsyValue));
-            }
-        });
+        return filter(list, arg -> !(Objects.equals(arg, falsyValue)));
     }
 
     @SuppressWarnings("unchecked")
@@ -1498,12 +1441,7 @@ public class U<T> {
     @SuppressWarnings("unchecked")
     public static <E> List<E> without(final List<E> list, E ... values) {
         final List<E> valuesList = Arrays.asList(values);
-        return filter(list, new Predicate<E>() {
-            @Override
-            public boolean test(E elem) {
-                return !contains(valuesList, elem);
-            }
-        });
+        return filter(list, elem -> !contains(valuesList, elem));
     }
 
     @SuppressWarnings("unchecked")
@@ -1596,7 +1534,7 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <E> List<E> intersection(final List<E> list, final List<E> ... lists) {
-        final Deque<List<E>> stack = new ArrayDeque<List<E>>();
+        final Deque<List<E>> stack = new ArrayDeque<>();
         stack.push(list);
         for (List<E> es : lists) {
             stack.push(intersection(stack.peek(), es));
@@ -1611,7 +1549,7 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <E> E[] intersection(final E[] ... arrays) {
-        final Deque<List<E>> stack = new ArrayDeque<List<E>>();
+        final Deque<List<E>> stack = new ArrayDeque<>();
         stack.push(Arrays.asList(arrays[0]));
         for (int index = 1; index < arrays.length; index += 1) {
             stack.push(intersection(stack.peek(), Arrays.asList(arrays[index])));
@@ -1634,7 +1572,7 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <E> List<E> difference(final List<E> list, final List<E> ... lists) {
-        final Deque<List<E>> stack = new ArrayDeque<List<E>>();
+        final Deque<List<E>> stack = new ArrayDeque<>();
         stack.push(list);
         for (List<E> es : lists) {
             stack.push(difference(stack.peek(), es));
@@ -1649,7 +1587,7 @@ public class U<T> {
 
     @SuppressWarnings("unchecked")
     public static <E> E[] difference(final E[] ... arrays) {
-        final Deque<List<E>> stack = new ArrayDeque<List<E>>();
+        final Deque<List<E>> stack = new ArrayDeque<>();
         stack.push(Arrays.asList(arrays[0]));
         for (int index = 1; index < arrays.length; index += 1) {
             stack.push(difference(stack.peek(), Arrays.asList(arrays[index])));
@@ -1663,18 +1601,15 @@ public class U<T> {
     @SuppressWarnings("unchecked")
     public static <T> List<List<T>> zip(final List<T> ... lists) {
         final List<List<T>> zipped = newArrayList();
-        each(Arrays.asList(lists), new Consumer<List<T>>() {
-            @Override
-            public void accept(final List<T> list) {
-                int index = 0;
-                for (T elem : list) {
-                    final List<T> nTuple = index >= zipped.size() ? U.<T>newArrayList() : zipped.get(index);
-                    if (index >= zipped.size()) {
-                        zipped.add(nTuple);
-                    }
-                    index += 1;
-                    nTuple.add(elem);
+        each(Arrays.asList(lists), list -> {
+            int index = 0;
+            for (T elem : list) {
+                final List<T> nTuple = index >= zipped.size() ? U.<T>newArrayList() : zipped.get(index);
+                if (index >= zipped.size()) {
+                    zipped.add(nTuple);
                 }
+                index += 1;
+                nTuple.add(elem);
             }
         });
         return zipped;
@@ -1740,7 +1675,7 @@ public class U<T> {
         int begin = 0;
         int end = size(iterable) - 1;
         int numberOfNullValues = 0;
-        List<E> list = new ArrayList<E>();
+        List<E> list = new ArrayList<>();
         for (E item : iterable) {
             if (item == null) {
                 numberOfNullValues++;
@@ -1896,7 +1831,7 @@ public class U<T> {
         }
         int index = 0;
         int length = size(iterable);
-        final List<List<T>> result = new ArrayList<List<T>>(size == 0 ? size : (length / size) + 1);
+        final List<List<T>> result = new ArrayList<>(size == 0 ? size : (length / size) + 1);
         while (index < length) {
             result.add(newArrayList(iterable).subList(index, Math.min(length, index + size)));
             index += step;
@@ -2025,12 +1960,7 @@ public class U<T> {
      * Documented, #bind
      */
     public static <T, F> Function<F, T> bind(final Function<F, T> function) {
-        return new Function<F, T>() {
-            @Override
-            public T apply(F arg) {
-                return function.apply(arg);
-            }
-        };
+        return function::apply;
     }
 
     /*
@@ -2053,11 +1983,7 @@ public class U<T> {
         final java.util.concurrent.ScheduledExecutorService scheduler =
             java.util.concurrent.Executors.newSingleThreadScheduledExecutor();
         final java.util.concurrent.ScheduledFuture<T> future = scheduler.schedule(
-            new java.util.concurrent.Callable<T>() {
-                public T call() {
-                    return function.get();
-                }
-            }, delayMilliseconds, java.util.concurrent.TimeUnit.MILLISECONDS);
+                function::get, delayMilliseconds, java.util.concurrent.TimeUnit.MILLISECONDS);
         scheduler.shutdown();
         return future;
     }
@@ -2067,12 +1993,9 @@ public class U<T> {
     }
 
     public static java.util.concurrent.ScheduledFuture<Void> defer(final Runnable runnable) {
-        return delay(new Supplier<Void>() {
-            @Override
-            public Void get() {
-                runnable.run();
-                return null;
-            }
+        return delay(() -> {
+            runnable.run();
+            return null;
         }, 0);
     }
 
@@ -2160,19 +2083,11 @@ public class U<T> {
      */
     public static <T> Function<Void, T> wrap(final Function<T, T> function,
         final Function<Function<T, T>, T> wrapper) {
-        return new Function<Void, T>() {
-            public T apply(final Void arg) {
-                return wrapper.apply(function);
-            }
-        };
+        return arg -> wrapper.apply(function);
     }
 
     public static <E> Predicate<E> negate(final Predicate<E> pred) {
-        return new Predicate<E>() {
-            public boolean test(final E item) {
-                return !pred.test(item);
-            }
-        };
+        return item -> !pred.test(item);
     }
 
     /*
@@ -2180,14 +2095,12 @@ public class U<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> Function<T, T> compose(final Function<T, T> ... func) {
-        return new Function<T, T>() {
-            public T apply(final T arg) {
-                T result = arg;
-                for (int index = func.length - 1; index >= 0; index -= 1) {
-                    result = func[index].apply(result);
-                }
-                return result;
+        return arg -> {
+            T result = arg;
+            for (int index = func.length - 1; index >= 0; index -= 1) {
+                result = func[index].apply(result);
             }
+            return result;
         };
     }
 
@@ -2272,36 +2185,22 @@ public class U<T> {
     }
 
     public static <K, V> List<Tuple<K, V>> mapObject(final Map<K, V> object, final Function<? super V, V> func) {
-        return map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<K, V>>() {
-            @Override
-            public Tuple<K, V> apply(Map.Entry<K, V> entry) {
-                return Tuple.create(entry.getKey(), func.apply(entry.getValue()));
-            }
-        });
+        return map(newArrayList(object.entrySet()), entry
+            -> Tuple.create(entry.getKey(), func.apply(entry.getValue())));
     }
 
     /*
      * Documented, #pairs
      */
     public static <K, V> List<Tuple<K, V>> pairs(final Map<K, V> object) {
-        return map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<K, V>>() {
-            @Override
-            public Tuple<K, V> apply(Map.Entry<K, V> entry) {
-                return Tuple.create(entry.getKey(), entry.getValue());
-            }
-        });
+        return map(newArrayList(object.entrySet()), entry -> Tuple.create(entry.getKey(), entry.getValue()));
     }
 
     /*
      * Documented, #invert
      */
     public static <K, V> List<Tuple<V, K>> invert(final Map<K, V> object) {
-        return map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<V, K>>() {
-            @Override
-            public Tuple<V, K> apply(Map.Entry<K, V> entry) {
-                return Tuple.create(entry.getValue(), entry.getKey());
-            }
-        });
+        return map(newArrayList(object.entrySet()), entry -> Tuple.create(entry.getValue(), entry.getKey()));
     }
 
     /*
@@ -2367,28 +2266,22 @@ public class U<T> {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> List<Tuple<K, V>> pick(final Map<K, V> object, final K ... keys) {
-        return without(map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<K, V>>() {
-            @Override
-            public Tuple<K, V> apply(Map.Entry<K, V> entry) {
-                if (Arrays.asList(keys).contains(entry.getKey())) {
-                    return Tuple.create(entry.getKey(), entry.getValue());
-                } else {
-                    return null;
-                }
+        return without(map(newArrayList(object.entrySet()), entry -> {
+            if (Arrays.asList(keys).contains(entry.getKey())) {
+                return Tuple.create(entry.getKey(), entry.getValue());
+            } else {
+                return null;
             }
         }), (Tuple<K, V>) null);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> List<Tuple<K, V>> pick(final Map<K, V> object, final Predicate<V> pred) {
-        return without(map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<K, V>>() {
-            @Override
-            public Tuple<K, V> apply(Map.Entry<K, V> entry) {
-                if (pred.test(object.get(entry.getKey()))) {
-                    return Tuple.create(entry.getKey(), entry.getValue());
-                } else {
-                    return null;
-                }
+        return without(map(newArrayList(object.entrySet()), entry -> {
+            if (pred.test(object.get(entry.getKey()))) {
+                return Tuple.create(entry.getKey(), entry.getValue());
+            } else {
+                return null;
             }
         }), (Tuple<K, V>) null);
     }
@@ -2398,28 +2291,22 @@ public class U<T> {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> List<Tuple<K, V>> omit(final Map<K, V> object, final K ... keys) {
-        return without(map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<K, V>>() {
-            @Override
-            public Tuple<K, V> apply(Map.Entry<K, V> entry) {
-                if (Arrays.asList(keys).contains(entry.getKey())) {
-                    return null;
-                } else {
-                    return Tuple.create(entry.getKey(), entry.getValue());
-                }
+        return without(map(newArrayList(object.entrySet()), entry -> {
+            if (Arrays.asList(keys).contains(entry.getKey())) {
+                return null;
+            } else {
+                return Tuple.create(entry.getKey(), entry.getValue());
             }
         }), (Tuple<K, V>) null);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> List<Tuple<K, V>> omit(final Map<K, V> object, final Predicate<V> pred) {
-        return without(map(newArrayList(object.entrySet()), new Function<Map.Entry<K, V>, Tuple<K, V>>() {
-            @Override
-            public Tuple<K, V> apply(Map.Entry<K, V> entry) {
-                if (pred.test(entry.getValue())) {
-                    return null;
-                } else {
-                    return Tuple.create(entry.getKey(), entry.getValue());
-                }
+        return without(map(newArrayList(object.entrySet()), entry -> {
+            if (pred.test(entry.getValue())) {
+                return null;
+            } else {
+                return Tuple.create(entry.getKey(), entry.getValue());
             }
         }), (Tuple<K, V>) null);
     }
@@ -2478,7 +2365,7 @@ public class U<T> {
      * Documented, #isEqual
      */
     public static boolean isEqual(final Object object, final Object other) {
-        return object == null ? other == null : object.equals(other);
+        return Objects.equals(object, other);
     }
 
     public static <K, V> boolean isEmpty(final Map<K, V> object) {
@@ -2581,39 +2468,25 @@ public class U<T> {
     }
 
     public static <E> Supplier<E> constant(final E value) {
-        return new Supplier<E>() {
-            public E get() {
-                return value;
-            }
-        };
+        return () -> value;
     }
 
     public static <K, V> Function<Map<K, V>, V> property(final K key) {
-        return new Function<Map<K, V>, V>() {
-            public V apply(final Map<K, V> object) {
-                return object.get(key);
-            }
-        };
+        return object -> object.get(key);
     }
 
     public static <K, V> Function<K, V> propertyOf(final Map<K, V> object) {
-        return new Function<K, V>() {
-            public V apply(final K key) {
-                return object.get(key);
-            }
-        };
+        return object::get;
     }
 
     public static <K, V> Predicate<Map<K, V>> matcher(final Map<K, V> object) {
-        return new Predicate<Map<K, V>>() {
-            public boolean test(final Map<K, V> item) {
-                for (final K key : keys(object)) {
-                    if (!item.containsKey(key) || !item.get(key).equals(object.get(key))) {
-                        return false;
-                    }
+        return item -> {
+            for (final K key : keys(object)) {
+                if (!item.containsKey(key) || !item.get(key).equals(object.get(key))) {
+                    return false;
                 }
-                return true;
             }
+            return true;
         };
     }
 
@@ -2705,7 +2578,7 @@ public class U<T> {
     }
 
     public static <K, V> Template<Map<K, V>> template(final String template) {
-        return new TemplateImpl<K, V>(template);
+        return new TemplateImpl<>(template);
     }
 
     public static String format(final String template, final Object ... params) {
@@ -2731,60 +2604,60 @@ public class U<T> {
     }
 
     public static <T> Iterable<T> iterate(final T seed, final UnaryOperator<T> unaryOperator) {
-        return new MyIterable<T>(seed, unaryOperator);
+        return new MyIterable<>(seed, unaryOperator);
     }
 
     /*
      * Documented, #chain
      */
     public static <T> Chain<T> chain(final List<T> list) {
-        return new U.Chain<T>(list);
+        return new U.Chain<>(list);
     }
 
     public static <T> Chain<T> chain(final Iterable<T> iterable) {
-        return new U.Chain<T>(newArrayList(iterable));
+        return new U.Chain<>(newArrayList(iterable));
     }
 
     public static <T> Chain<T> chain(final Iterable<T> iterable, int size) {
-        return new U.Chain<T>(newArrayList(iterable, size));
+        return new U.Chain<>(newArrayList(iterable, size));
     }
 
     @SuppressWarnings("unchecked")
     public static <T> Chain<T> chain(final T ... array) {
-        return new U.Chain<T>(Arrays.asList(array));
+        return new U.Chain<>(Arrays.asList(array));
     }
 
     public static Chain<Integer> chain(final int[] array) {
-        return new U.Chain<Integer>(newIntegerList(array));
+        return new U.Chain<>(newIntegerList(array));
     }
 
     public Chain<T> chain() {
-        return new U.Chain<T>(newArrayList(iterable));
+        return new U.Chain<>(newArrayList(iterable));
     }
 
     public static <T> Chain<T> of(final List<T> list) {
-        return new U.Chain<T>(list);
+        return new U.Chain<>(list);
     }
 
     public static <T> Chain<T> of(final Iterable<T> iterable) {
-        return new U.Chain<T>(newArrayList(iterable));
+        return new U.Chain<>(newArrayList(iterable));
     }
 
     public static <T> Chain<T> of(final Iterable<T> iterable, int size) {
-        return new U.Chain<T>(newArrayList(iterable, size));
+        return new U.Chain<>(newArrayList(iterable, size));
     }
 
     @SuppressWarnings("unchecked")
     public static <T> Chain<T> of(final T ... array) {
-        return new U.Chain<T>(Arrays.asList(array));
+        return new U.Chain<>(Arrays.asList(array));
     }
 
     public static Chain<Integer> of(final int[] array) {
-        return new U.Chain<Integer>(newIntegerList(array));
+        return new U.Chain<>(newIntegerList(array));
     }
 
     public Chain<T> of() {
-        return new U.Chain<T>(newArrayList(iterable));
+        return new U.Chain<>(newArrayList(iterable));
     }
 
     public static class Chain<T> {
@@ -2800,67 +2673,67 @@ public class U<T> {
         }
 
         public Chain<T> first() {
-            return new Chain<T>(U.first(list));
+            return new Chain<>(U.first(list));
         }
 
         public Chain<T> first(int n) {
-            return new Chain<T>(U.first(list, n));
+            return new Chain<>(U.first(list, n));
         }
 
         public Chain<T> first(final Predicate<T> pred) {
-            return new Chain<T>(U.first(list, pred));
+            return new Chain<>(U.first(list, pred));
         }
 
         public Chain<T> first(final Predicate<T> pred, int n) {
-            return new Chain<T>(U.first(list, pred, n));
+            return new Chain<>(U.first(list, pred, n));
         }
 
         public Chain<T> firstOrNull() {
-            return new Chain<T>(U.firstOrNull(list));
+            return new Chain<>(U.firstOrNull(list));
         }
 
         public Chain<T> firstOrNull(final Predicate<T> pred) {
-            return new Chain<T>(U.firstOrNull(list, pred));
+            return new Chain<>(U.firstOrNull(list, pred));
         }
 
         public Chain<T> initial() {
-            return new Chain<T>(U.initial(list));
+            return new Chain<>(U.initial(list));
         }
 
         public Chain<T> initial(int n) {
-            return new Chain<T>(U.initial(list, n));
+            return new Chain<>(U.initial(list, n));
         }
 
         public Chain<T> last() {
-            return new Chain<T>(U.last(list));
+            return new Chain<>(U.last(list));
         }
 
         public Chain<T> last(int n) {
-            return new Chain<T>(U.last(list, n));
+            return new Chain<>(U.last(list, n));
         }
 
         public Chain<T> lastOrNull() {
-            return new Chain<T>(U.lastOrNull(list));
+            return new Chain<>(U.lastOrNull(list));
         }
 
         public Chain<T> lastOrNull(final Predicate<T> pred) {
-            return new Chain<T>(U.lastOrNull(list, pred));
+            return new Chain<>(U.lastOrNull(list, pred));
         }
 
         public Chain<T> rest() {
-            return new Chain<T>(U.rest(list));
+            return new Chain<>(U.rest(list));
         }
 
         public Chain<T> rest(int n) {
-            return new Chain<T>(U.rest(list, n));
+            return new Chain<>(U.rest(list, n));
         }
 
         public Chain<T> compact() {
-            return new Chain<T>(U.compact(list));
+            return new Chain<>(U.compact(list));
         }
 
         public Chain<T> compact(final T falsyValue) {
-            return new Chain<T>(U.compact(list, falsyValue));
+            return new Chain<>(U.compact(list, falsyValue));
         }
 
         @SuppressWarnings("unchecked")
@@ -2869,324 +2742,324 @@ public class U<T> {
         }
 
         public <F> Chain<F> map(final Function<? super T, F> func) {
-            return new Chain<F>(U.map(list, func));
+            return new Chain<>(U.map(list, func));
         }
 
         public <F> Chain<F> mapIndexed(final BiFunction<Integer, ? super T, F> func) {
-            return new Chain<F>(U.mapIndexed(list, func));
+            return new Chain<>(U.mapIndexed(list, func));
         }
 
         public Chain<T> replace(final Predicate<T> pred, final T value) {
-            return new Chain<T>(U.replace(list, pred, value));
+            return new Chain<>(U.replace(list, pred, value));
         }
 
         public Chain<T> replaceIndexed(final PredicateIndexed<T> pred, final T value) {
-            return new Chain<T>(U.replaceIndexed(list, pred, value));
+            return new Chain<>(U.replaceIndexed(list, pred, value));
         }
 
         public Chain<T> filter(final Predicate<T> pred) {
-            return new Chain<T>(U.filter(list, pred));
+            return new Chain<>(U.filter(list, pred));
         }
 
         public Chain<T> filterIndexed(final PredicateIndexed<T> pred) {
-            return new Chain<T>(U.filterIndexed(list, pred));
+            return new Chain<>(U.filterIndexed(list, pred));
         }
 
         public Chain<T> reject(final Predicate<T> pred) {
-            return new Chain<T>(U.reject(list, pred));
+            return new Chain<>(U.reject(list, pred));
         }
 
         public Chain<T> rejectIndexed(final PredicateIndexed<T> pred) {
-            return new Chain<T>(U.rejectIndexed(list, pred));
+            return new Chain<>(U.rejectIndexed(list, pred));
         }
 
         public Chain<T> filterFalse(final Predicate<T> pred) {
-            return new Chain<T>(U.reject(list, pred));
+            return new Chain<>(U.reject(list, pred));
         }
 
         public <F> Chain<F> reduce(final BiFunction<F, T, F> func, final F zeroElem) {
-            return new Chain<F>(U.reduce(list, func, zeroElem));
+            return new Chain<>(U.reduce(list, func, zeroElem));
         }
 
         public Chain<Optional<T>> reduce(final BinaryOperator<T> func) {
-            return new Chain<Optional<T>>(U.reduce(list, func));
+            return new Chain<>(U.reduce(list, func));
         }
 
         public <F> Chain<F> reduceRight(final BiFunction<F, T, F> func, final F zeroElem) {
-            return new Chain<F>(U.reduceRight(list, func, zeroElem));
+            return new Chain<>(U.reduceRight(list, func, zeroElem));
         }
 
         public Chain<Optional<T>> reduceRight(final BinaryOperator<T> func) {
-            return new Chain<Optional<T>>(U.reduceRight(list, func));
+            return new Chain<>(U.reduceRight(list, func));
         }
 
         public Chain<Optional<T>> find(final Predicate<T> pred) {
-            return new Chain<Optional<T>>(U.find(list, pred));
+            return new Chain<>(U.find(list, pred));
         }
 
         public Chain<Optional<T>> findLast(final Predicate<T> pred) {
-            return new Chain<Optional<T>>(U.findLast(list, pred));
+            return new Chain<>(U.findLast(list, pred));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<Comparable> max() {
-            return new Chain<Comparable>(U.max((Collection) list));
+            return new Chain<>(U.max((Collection) list));
         }
 
         public <F extends Comparable<? super F>> Chain<T> max(final Function<T, F> func) {
-            return new Chain<T>(U.max(list, func));
+            return new Chain<>(U.max(list, func));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<Comparable> min() {
-            return new Chain<Comparable>(U.min((Collection) list));
+            return new Chain<>(U.min((Collection) list));
         }
 
         public <F extends Comparable<? super F>> Chain<T> min(final Function<T, F> func) {
-            return new Chain<T>(U.min(list, func));
+            return new Chain<>(U.min(list, func));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<Comparable> sort() {
-            return new Chain<Comparable>(U.sort((List<Comparable>) list));
+            return new Chain<>(U.sort((List<Comparable>) list));
         }
 
         @SuppressWarnings("unchecked")
         public <F extends Comparable<? super F>> Chain<F> sortWith(final Comparator<F> comparator) {
-            return new Chain<F>(U.sortWith((List<F>) list, comparator));
+            return new Chain<>(U.sortWith((List<F>) list, comparator));
         }
 
         public <F extends Comparable<? super F>> Chain<T> sortBy(final Function<T, F> func) {
-            return new Chain<T>(U.sortBy(list, func));
+            return new Chain<>(U.sortBy(list, func));
         }
 
         @SuppressWarnings("unchecked")
         public <K> Chain<Map<K, Comparable>> sortBy(final K key) {
-            return new Chain<Map<K, Comparable>>(U.sortBy((List<Map<K, Comparable>>) list, key));
+            return new Chain<>(U.sortBy((List<Map<K, Comparable>>) list, key));
         }
 
         public <F> Chain<Map<F, List<T>>> groupBy(final Function<T, F> func) {
-            return new Chain<Map<F, List<T>>>(U.groupBy(list, func));
+            return new Chain<>(U.groupBy(list, func));
         }
 
         public <F> Chain<Map<F, Optional<T>>> groupBy(final Function<T, F> func,
             final BinaryOperator<T> binaryOperator) {
-            return new Chain<Map<F, Optional<T>>>(U.groupBy(list, func, binaryOperator));
+            return new Chain<>(U.groupBy(list, func, binaryOperator));
         }
 
         public Chain<Map<Object, List<T>>> indexBy(final String property) {
-            return new Chain<Map<Object, List<T>>>(U.indexBy(list, property));
+            return new Chain<>(U.indexBy(list, property));
         }
 
         public <F> Chain<Map<F, Integer>> countBy(final Function<T, F> func) {
-            return new Chain<Map<F, Integer>>(U.countBy(list, func));
+            return new Chain<>(U.countBy(list, func));
         }
 
         public Chain<Map<T, Integer>> countBy() {
-            return new Chain<Map<T, Integer>>(U.countBy(list));
+            return new Chain<>(U.countBy(list));
         }
 
         public Chain<T> shuffle() {
-            return new Chain<T>(U.shuffle(list));
+            return new Chain<>(U.shuffle(list));
         }
 
         public Chain<T> sample() {
-            return new Chain<T>(U.sample(list));
+            return new Chain<>(U.sample(list));
         }
 
         public Chain<T> sample(final int howMany) {
-            return new Chain<T>(U.newArrayList(U.sample(list, howMany)));
+            return new Chain<>(U.newArrayList(U.sample(list, howMany)));
         }
 
         public Chain<T> tap(final Consumer<T> func) {
             U.each(list, func);
-            return new Chain<T>(list);
+            return new Chain<>(list);
         }
 
         public Chain<T> forEach(final Consumer<T> func) {
             U.each(list, func);
-            return new Chain<T>(list);
+            return new Chain<>(list);
         }
 
         public Chain<T> forEachRight(final Consumer<T> func) {
             U.eachRight(list, func);
-            return new Chain<T>(list);
+            return new Chain<>(list);
         }
 
         public Chain<Boolean> every(final Predicate<T> pred) {
-            return new Chain<Boolean>(U.every(list, pred));
+            return new Chain<>(U.every(list, pred));
         }
 
         public Chain<Boolean> some(final Predicate<T> pred) {
-            return new Chain<Boolean>(U.some(list, pred));
+            return new Chain<>(U.some(list, pred));
         }
 
         public Chain<Integer> count(final Predicate<T> pred) {
-            return new Chain<Integer>(U.count(list, pred));
+            return new Chain<>(U.count(list, pred));
         }
 
         public Chain<Boolean> contains(final T elem) {
-            return new Chain<Boolean>(U.contains(list, elem));
+            return new Chain<>(U.contains(list, elem));
         }
 
         public Chain<Boolean> containsWith(final T elem) {
-            return new Chain<Boolean>(U.containsWith(list, elem));
+            return new Chain<>(U.containsWith(list, elem));
         }
 
         public Chain<T> invoke(final String methodName, final List<Object> args) {
-            return new Chain<T>(U.invoke(list, methodName, args));
+            return new Chain<>(U.invoke(list, methodName, args));
         }
 
         public Chain<T> invoke(final String methodName) {
-            return new Chain<T>(U.invoke(list, methodName));
+            return new Chain<>(U.invoke(list, methodName));
         }
 
         public Chain<Object> pluck(final String propertyName) {
-            return new Chain<Object>(U.pluck(list, propertyName));
+            return new Chain<>(U.pluck(list, propertyName));
         }
 
         public <E> Chain<T> where(final List<Tuple<String, E>> properties) {
-            return new Chain<T>(U.where(list, properties));
+            return new Chain<>(U.where(list, properties));
         }
 
         public <E> Chain<Optional<T>> findWhere(final List<Tuple<String, E>> properties) {
-            return new Chain<Optional<T>>(U.findWhere(list, properties));
+            return new Chain<>(U.findWhere(list, properties));
         }
 
         public Chain<T> uniq() {
-            return new Chain<T>(U.uniq(list));
+            return new Chain<>(U.uniq(list));
         }
 
         public <F> Chain<T> uniq(final Function<T, F> func) {
-            return new Chain<T>(U.newArrayList(U.uniq(list, func)));
+            return new Chain<>(U.newArrayList(U.uniq(list, func)));
         }
 
         public Chain<T> distinct() {
-            return new Chain<T>(U.uniq(list));
+            return new Chain<>(U.uniq(list));
         }
 
         @SuppressWarnings("unchecked")
         public <F> Chain<F> distinctBy(final Function<T, F> func) {
-            return new Chain<F>(U.newArrayList((Iterable<F>) U.uniq(list, func)));
+            return new Chain<>(U.newArrayList((Iterable<F>) U.uniq(list, func)));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<T> union(final List<T> ... lists) {
-            return new Chain<T>(U.union(list, lists));
+            return new Chain<>(U.union(list, lists));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<T> intersection(final List<T> ... lists) {
-            return new Chain<T>(U.intersection(list, lists));
+            return new Chain<>(U.intersection(list, lists));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<T> difference(final List<T> ... lists) {
-            return new Chain<T>(U.difference(list, lists));
+            return new Chain<>(U.difference(list, lists));
         }
 
         public Chain<Integer> range(final int stop) {
-            return new Chain<Integer>(U.range(stop));
+            return new Chain<>(U.range(stop));
         }
 
         public Chain<Integer> range(final int start, final int stop) {
-            return new Chain<Integer>(U.range(start, stop));
+            return new Chain<>(U.range(start, stop));
         }
 
         public Chain<Integer> range(final int start, final int stop, final int step) {
-            return new Chain<Integer>(U.range(start, stop, step));
+            return new Chain<>(U.range(start, stop, step));
         }
 
         public Chain<List<T>> chunk(final int size) {
-            return new Chain<List<T>>(U.chunk(value(), size, size));
+            return new Chain<>(U.chunk(value(), size, size));
         }
 
         public Chain<List<T>> chunk(final int size, final int step) {
-            return new Chain<List<T>>(U.chunk(value(), size, step));
+            return new Chain<>(U.chunk(value(), size, step));
         }
 
         public Chain<List<T>> chunkFill(final int size, final T fillValue) {
-            return new Chain<List<T>>(U.chunkFill(value(), size, size, fillValue));
+            return new Chain<>(U.chunkFill(value(), size, size, fillValue));
         }
 
         public Chain<List<T>> chunkFill(final int size, final int step, final T fillValue) {
-            return new Chain<List<T>>(U.chunkFill(value(), size, step, fillValue));
+            return new Chain<>(U.chunkFill(value(), size, step, fillValue));
         }
 
         public Chain<T> cycle(final int times) {
-            return new Chain<T>(U.cycle(value(), times));
+            return new Chain<>(U.cycle(value(), times));
         }
 
         public Chain<T> interpose(final T element) {
-            return new Chain<T>(U.interpose(value(), element));
+            return new Chain<>(U.interpose(value(), element));
         }
 
         public Chain<T> interposeByList(final Iterable<T> interIter) {
-            return new Chain<T>(U.interposeByList(value(), interIter));
+            return new Chain<>(U.interposeByList(value(), interIter));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<T> concat(final List<T> ... lists) {
-            return new Chain<T>(U.concat(list, lists));
+            return new Chain<>(U.concat(list, lists));
         }
 
         public Chain<T> slice(final int start) {
-            return new Chain<T>(U.slice(list, start));
+            return new Chain<>(U.slice(list, start));
         }
 
         public Chain<T> slice(final int start, final int end) {
-            return new Chain<T>(U.slice(list, start, end));
+            return new Chain<>(U.slice(list, start, end));
         }
 
         public Chain<List<T>> splitAt(final int position) {
-            return new Chain<List<T>>(U.splitAt(list, position));
+            return new Chain<>(U.splitAt(list, position));
         }
 
         public Chain<T> takeSkipping(final int stepSize) {
-            return new Chain<T>(U.takeSkipping(list, stepSize));
+            return new Chain<>(U.takeSkipping(list, stepSize));
         }
 
         public Chain<T> reverse() {
-            return new Chain<T>(U.reverse(list));
+            return new Chain<>(U.reverse(list));
         }
 
         public Chain<String> join() {
-            return new Chain<String>(U.join(list));
+            return new Chain<>(U.join(list));
         }
 
         public Chain<String> join(final String separator) {
-            return new Chain<String>(U.join(list, separator));
+            return new Chain<>(U.join(list, separator));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<T> push(final T ... values) {
-            return new Chain<T>(U.push(value(), values));
+            return new Chain<>(U.push(value(), values));
         }
 
         public Chain<Tuple<T, List<T>>> pop() {
-            return new Chain<Tuple<T, List<T>>>(U.pop(value()));
+            return new Chain<>(U.pop(value()));
         }
 
         public Chain<Tuple<T, List<T>>> shift() {
-            return new Chain<Tuple<T, List<T>>>(U.shift(value()));
+            return new Chain<>(U.shift(value()));
         }
 
         @SuppressWarnings("unchecked")
         public Chain<T> unshift(final T ... values) {
-            return new Chain<T>(U.unshift(value(), values));
+            return new Chain<>(U.unshift(value(), values));
         }
 
         public Chain<T> skip(final int numberToSkip) {
-            return new Chain<T>(list.subList(numberToSkip, list.size()));
+            return new Chain<>(list.subList(numberToSkip, list.size()));
         }
 
         public Chain<T> limit(final int size) {
-            return new Chain<T>(U.first(list, size));
+            return new Chain<>(U.first(list, size));
         }
 
         @SuppressWarnings("unchecked")
         public <K, V> Chain<Map<K, V>> toMap() {
-            return new Chain<Map<K, V>>(U.toMap((Iterable<Map.Entry<K, V>>) list));
+            return new Chain<>(U.toMap((Iterable<Map.Entry<K, V>>) list));
         }
 
         public boolean isEmpty() {
@@ -3542,11 +3415,7 @@ public class U<T> {
         final java.util.concurrent.ScheduledExecutorService scheduler =
             java.util.concurrent.Executors.newSingleThreadScheduledExecutor();
         return scheduler.scheduleAtFixedRate(
-            new Runnable() {
-                public void run() {
-                    function.get();
-                }
-            }, delayMilliseconds, delayMilliseconds, java.util.concurrent.TimeUnit.MILLISECONDS);
+                function::get, delayMilliseconds, delayMilliseconds, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
     public static void clearInterval(java.util.concurrent.ScheduledFuture scheduledFuture) {
@@ -3666,15 +3535,15 @@ public class U<T> {
     }
 
     protected static <T> List<T> newArrayList() {
-        return new ArrayList<T>();
+        return new ArrayList<>();
     }
 
     protected static <T> List<T> newArrayList(final Iterable<T> iterable) {
         final List<T> result;
         if (iterable instanceof Collection) {
-            result = new ArrayList<T>((Collection<T>) iterable);
+            result = new ArrayList<>((Collection<T>) iterable);
         } else {
-            result = new ArrayList<T>();
+            result = new ArrayList<>();
             for (final T item : iterable) {
                 result.add(item);
             }
@@ -3683,13 +3552,13 @@ public class U<T> {
     }
 
     protected static <T> List<T> newArrayList(final T object) {
-        final List<T> result = new ArrayList<T>();
+        final List<T> result = new ArrayList<>();
         result.add(object);
         return result;
     }
 
     protected static <T> List<T> newArrayList(final Iterable<T> iterable, final int size) {
-        final List<T> result = new ArrayList<T>();
+        final List<T> result = new ArrayList<>();
         for (int index = 0; iterable.iterator().hasNext() && index < size; index += 1) {
             result.add(iterable.iterator().next());
         }
@@ -3697,7 +3566,7 @@ public class U<T> {
     }
 
     protected static List<Integer> newIntegerList(int ... array) {
-        final List<Integer> result = new ArrayList<Integer>(array.length);
+        final List<Integer> result = new ArrayList<>(array.length);
         for (final int item : array) {
             result.add(item);
         }
@@ -3705,15 +3574,15 @@ public class U<T> {
     }
 
     protected static <T> List<T> newArrayListWithExpectedSize(int size) {
-        return new ArrayList<T>((int) (CAPACITY_SIZE_5 + size + (size / 10)));
+        return new ArrayList<>((int) (CAPACITY_SIZE_5 + size + (size / 10)));
     }
 
     protected static <T> Set<T> newLinkedHashSet() {
-        return new LinkedHashSet<T>();
+        return new LinkedHashSet<>();
     }
 
     protected static <T> Set<T> newLinkedHashSet(Iterable<T> iterable) {
-        final Set<T> result = new LinkedHashSet<T>();
+        final Set<T> result = new LinkedHashSet<>();
         for (final T item : iterable) {
             result.add(item);
         }
@@ -3721,11 +3590,11 @@ public class U<T> {
     }
 
     protected static <T> Set<T> newLinkedHashSetWithExpectedSize(int size) {
-        return new LinkedHashSet<T>((int) Math.max(size * CAPACITY_COEFF_2, CAPACITY_SIZE_16));
+        return new LinkedHashSet<>((int) Math.max(size * CAPACITY_COEFF_2, CAPACITY_SIZE_16));
     }
 
     protected static <K, E> Map<K, E> newLinkedHashMap() {
-        return new LinkedHashMap<K, E>();
+        return new LinkedHashMap<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -3736,20 +3605,17 @@ public class U<T> {
         checkNotNull(pred1);
         checkNotNull(pred2);
         checkNotNullElements(Arrays.asList(rest));
-        return new Predicate<T>() {
-            @Override
-            public boolean test(T value) {
-                boolean result = pred1.test(value) && pred2.test(value);
-                if (!result) {
+        return value -> {
+            boolean result = pred1.test(value) && pred2.test(value);
+            if (!result) {
+                return false;
+            }
+            for (Predicate<? super T> predicate : rest) {
+                if (!predicate.test(value)) {
                     return false;
                 }
-                for (Predicate<? super T> predicate : rest) {
-                    if (!predicate.test(value)) {
-                        return false;
-                    }
-                }
-                return true;
             }
+            return true;
         };
     }
 
@@ -3761,25 +3627,22 @@ public class U<T> {
         checkNotNull(pred1);
         checkNotNull(pred2);
         checkNotNullElements(Arrays.asList(rest));
-        return new Predicate<T>() {
-            @Override
-            public boolean test(T value) {
-                boolean result = pred1.test(value) || pred2.test(value);
-                if (result) {
+        return value -> {
+            boolean result = pred1.test(value) || pred2.test(value);
+            if (result) {
+                return true;
+            }
+            for (Predicate<? super T> predicate : rest) {
+                if (predicate.test(value)) {
                     return true;
                 }
-                for (Predicate<? super T> predicate : rest) {
-                    if (predicate.test(value)) {
-                        return true;
-                    }
-                }
-                return false;
             }
+            return false;
         };
     }
 
     public static int minimumDays(int rows, int columns, List<List<Integer>> grid) {
-        Queue<int[]> queue = new LinkedList<int[]>();
+        Queue<int[]> queue = new LinkedList<>();
         int cnt = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -3823,13 +3686,13 @@ public class U<T> {
         int numReviews, List<String> reviews) {
         if (U.isNull(reviews) || reviews.isEmpty() || U.isNull(competitors) || competitors.isEmpty()
             || numReviews < 1 || numCompetitors < 1) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
-        List<String> topNCompetitorsList = new ArrayList<String>(topNCompetitors);
+        List<String> topNCompetitorsList = new ArrayList<>(topNCompetitors);
 
-        Set<String> competitorsSet = new HashSet<String>(competitors);
-        Map<String, Integer> topCompetitorsMap = new HashMap<String, Integer>();
+        Set<String> competitorsSet = new HashSet<>(competitors);
+        Map<String, Integer> topCompetitorsMap = new HashMap<>();
         List<Map.Entry<String, Integer>> list = getEntries(reviews, competitorsSet, topCompetitorsMap);
 
         for (Map.Entry<String, Integer> item : list) {
@@ -3848,7 +3711,7 @@ public class U<T> {
         // clean the reviews first: lowercase, remove special characters and split by spaces.
         for (String review : reviews) {
             String[] reviewArray = review.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "").split(" ");
-            Set<String> tempCompetitorSet = new HashSet<String>();
+            Set<String> tempCompetitorSet = new HashSet<>();
 
             for (String text : reviewArray) {
                 if (competitorsSet.contains(text) && !tempCompetitorSet.contains(text)) {
@@ -3866,8 +3729,8 @@ public class U<T> {
     }
 
     private static List<Map.Entry<String, Integer>> getEntries(Map<String, Integer> topCompetitorsMap) {
-        List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(topCompetitorsMap.entrySet());
-        Collections.sort(list, new ValueThenKeyComparator<String, Integer>());
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(topCompetitorsMap.entrySet());
+        Collections.sort(list, new ValueThenKeyComparator<>());
         return list;
     }
 
@@ -3887,7 +3750,7 @@ public class U<T> {
     public static void main(String ... args) {
         final String message = "Underscore-java11 is a java 11 port of Underscore.js.\n\n"
             + "In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.\n\n"
-            + "For docs, license, tests, and downloads, see: http://javadev.github.io/underscore-java";
+            + "For docs, license, tests, and downloads, see: https://javadev.github.io/underscore-java";
         System.out.println(message);
     }
 }

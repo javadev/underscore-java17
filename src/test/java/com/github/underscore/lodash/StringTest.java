@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,19 +26,19 @@ package com.github.underscore.lodash;
 import com.github.underscore.Tuple;
 import com.github.underscore.lodash.Json.JsonStringBuilder;
 import com.github.underscore.lodash.Xml.XmlStringBuilder;
-
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Underscore library unit test.
@@ -714,14 +714,14 @@ _.repeat('abc', 0);
         assertEquals("[\n  \"Hello\"\n]", builder.toString());
 
         builder = new JsonStringBuilder();
-        Json.JsonArray.writeJson(new Object[] { "Hello", Integer.valueOf(12), new int[] { 1, 2, 3} }, builder);
+        Json.JsonArray.writeJson(new Object[] { "Hello", 12, new int[] { 1, 2, 3} }, builder);
         assertEquals("[\n  \"Hello\",\n  12,\n  [\n    1,\n    2,\n    3\n  ]\n]", builder.toString());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void toJsonFromList() {
-        final List<String> testList = new ArrayList<String>();
+        final List<String> testList = new ArrayList<>();
         testList.add("First item");
         testList.add("Second item");
 
@@ -736,14 +736,14 @@ _.repeat('abc', 0);
 
     @Test
     public void toJsonFromMap() {
-        final Map<String, String> testMap = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap = new LinkedHashMap<>();
         testMap.put("First item", "1");
         testMap.put("Second item", "2");
 
-        final Map<String, String> testMap2 = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap2 = new LinkedHashMap<>();
         testMap2.put("", "1");
 
-        final Map<String, String> testMap3 = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap3 = new LinkedHashMap<>();
         testMap3.put("__FA", "1");
 
         assertEquals("{\n  \"First item\": \"1\",\n  \"Second item\": \"2\"\n}", U.toJson(testMap));
@@ -818,7 +818,7 @@ _.repeat('abc', 0);
     @Test
     public void testDecodeMap3() {
         // http://stackoverflow.com/questions/12155800/how-to-convert-hashmap-to-json-object-in-java
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("1", "a");
         map.put("2", "b");
         assertEquals("{\n  \"1\": \"a\",\n  \"2\": \"b\"\n}", U.toJson(map));
@@ -829,10 +829,10 @@ _.repeat('abc', 0);
     @SuppressWarnings("unchecked")
     @Test
     public void testDecodeTrueFalse() {
-        List<Object> array1 = new ArrayList<Object>();
+        List<Object> array1 = new ArrayList<>();
         array1.add("abc\u0010a/");
-        array1.add(Integer.valueOf(123));
-        array1.add(Double.valueOf(222.123));
+        array1.add(123);
+        array1.add(222.123);
         array1.add(Boolean.TRUE);
         array1.add(Boolean.FALSE);
         assertEquals("[\n  \"abc\\u0010a/\",\n  123,\n  222.123,\n  true,\n  false\n]", U.toJson(array1));
@@ -1295,7 +1295,7 @@ _.repeat('abc', 0);
             builder.toString());
 
         builder = new XmlStringBuilder();
-        Xml.XmlArray.writeXml(new Object[] { "Hello", Integer.valueOf(12), new int[] { 1, 2, 3} }, null, builder, false,
+        Xml.XmlArray.writeXml(new Object[] { "Hello", 12, new int[] { 1, 2, 3} }, null, builder, false,
             Collections.<String>emptySet());
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n  <element>Hello</element>\n"
             + "  <element number=\"true\">12</element>\n  <element>\n    <element>1</element>\n    "
@@ -1312,7 +1312,7 @@ _.repeat('abc', 0);
 
     @Test
     public void toXmlFromList() {
-        final List<String> testList = new ArrayList<String>();
+        final List<String> testList = new ArrayList<>();
         testList.add("First item");
         testList.add("Second item");
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n"
@@ -1320,7 +1320,7 @@ _.repeat('abc', 0);
             U.toXml(testList));
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n"
             + "  <element>First item</element>\n  <element>Second item</element>\n</root>",
-            new U<String>(testList).toXml());
+                new U<>(testList).toXml());
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n"
             + "  <element>First item</element>\n  <element>Second item</element>\n</root>",
             U.chain(testList).toXml().item());
@@ -1336,17 +1336,17 @@ _.repeat('abc', 0);
 
     @Test
     public void toXmlFromMap() {
-        final Map<String, String> testMap = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap = new LinkedHashMap<>();
         testMap.put("First item", "1");
         testMap.put("Second item", "2");
 
-        final Map<String, List<String>> testMap2 = new LinkedHashMap<String, List<String>>();
-        testMap2.put("item", new ArrayList<String>());
+        final Map<String, List<String>> testMap2 = new LinkedHashMap<>();
+        testMap2.put("item", new ArrayList<>());
 
-        final Map<String, String> testMap3 = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap3 = new LinkedHashMap<>();
         testMap3.put("", "1");
 
-        final Map<String, String> testMap4 = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap4 = new LinkedHashMap<>();
         testMap4.put("#comment", "1");
         testMap4.put("-a", "1");
         testMap4.put("b", "1");
@@ -1370,7 +1370,7 @@ _.repeat('abc', 0);
     @SuppressWarnings("unchecked")
     @Test
     public void toXmlAndFromXmlFromMap() {
-        final Map<String, String> testMap = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap = new LinkedHashMap<>();
         testMap.put("FirstItem", "1");
         testMap.put("SecondItem", "2");
 
@@ -3191,6 +3191,26 @@ _.repeat('abc', 0);
         assertEquals("\"[\\n\"\n + \"  null\\n\"\n + \"]\";", builder.toString());
     }
 
+    @Test
+    public void testJsonToXml() {
+        String json = "{\"name\":\"JSON\",\"integer\":1,\"double\":2.0,\"boolean\":true,\"nested\": {\"id\":42},"
+            + "\"array\":[1,2,3]}";
+        String xml = U.jsonToXml(json);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<root>\n"
+                + "  <name>JSON</name>\n"
+                + "  <integer number=\"true\">1</integer>\n"
+                + "  <double number=\"true\">2.0</double>\n"
+                + "  <boolean boolean=\"true\">true</boolean>\n"
+                + "  <nested>\n"
+                + "    <id number=\"true\">42</id>\n"
+                + "  </nested>\n"
+                + "  <array number=\"true\">1</array>\n"
+                + "  <array number=\"true\">2</array>\n"
+                + "  <array number=\"true\">3</array>\n"
+                + "</root>", xml);
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void testJsonJavaArrayCollection() {
@@ -3570,7 +3590,7 @@ _.repeat('abc', 0);
                 + " + \"]\";", builder.toString());
 
         builder = new JsonStringBuilder(JsonStringBuilder.Type.JAVA);
-        Json.JsonArray.writeJson(new Object[] { "Hello", Integer.valueOf(12), new int[] { 1, 2, 3} }, builder);
+        Json.JsonArray.writeJson(new Object[] { "Hello", 12, new int[] { 1, 2, 3} }, builder);
         assertEquals("\"[\\n\"\n"
                 + " + \"  \\\"Hello\\\",\\n\"\n"
                 + " + \"  12,\\n\"\n"
@@ -3585,7 +3605,7 @@ _.repeat('abc', 0);
     @SuppressWarnings("unchecked")
     @Test
     public void toJsonJavaFromList() {
-        final List<String> testList = new ArrayList<String>();
+        final List<String> testList = new ArrayList<>();
         testList.add("First item");
         testList.add("Second item");
 
@@ -3596,7 +3616,7 @@ _.repeat('abc', 0);
         assertEquals("\"[\\n\"\n"
                 + " + \"  \\\"First item\\\",\\n\"\n"
                 + " + \"  \\\"Second item\\\"\\n\"\n"
-                + " + \"]\";", new U<String>(testList).toJsonJavaString());
+                + " + \"]\";", new U<>(testList).toJsonJavaString());
         assertEquals("\"[\\n\"\n"
                 + " + \"  \\\"First item\\\",\\n\"\n"
                 + " + \"  \\\"Second item\\\"\\n\"\n"
@@ -3617,7 +3637,7 @@ _.repeat('abc', 0);
 
     @Test
     public void toJsonJavaFromMap() {
-        final Map<String, String> testMap = new LinkedHashMap<String, String>();
+        final Map<String, String> testMap = new LinkedHashMap<>();
         testMap.put("First item", "1");
         testMap.put("Second item", "2");
 
@@ -3672,9 +3692,9 @@ _.repeat('abc', 0);
     @Test
     public void main() {
         U.main(new String[] {});
-        new U<String>(new ArrayList<String>());
+        new U<>(new ArrayList<>());
         new U<String>("");
-        new U<Object>(Arrays.<Object>asList()).chain();
+        new U<>(Arrays.<Object>asList()).chain();
         new Json.JsonArray();
         new Json.JsonValue();
         new Json.JsonObject();
@@ -3698,45 +3718,30 @@ _.repeat('abc', 0);
         U.chain(new String[] {""}).rest();
         U.chain(new String[] {""}).rest(1);
         U.chain(new String[] {""}).flatten();
-        U.chain(new Integer[] {0}).map(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
-        U.chain(new String[] {""}).filter(new Predicate<String>() {
-            public boolean test(String str) { return true; } });
-        U.chain(new String[] {""}).reject(new Predicate<String>() {
-            public boolean test(String str) { return true; } });
-        U.chain(new String[] {""}).reduce(new BiFunction<String, String, String>() {
-            public String apply(String accum, String str) { return null; } }, "");
-        U.chain(new String[] {""}).reduceRight(new BiFunction<String, String, String>() {
-            public String apply(String accum, String str) { return null; } }, "");
-        U.chain(new String[] {""}).find(new Predicate<String>() {
-            public boolean test(String str) { return true; } });
-        U.chain(new String[] {""}).findLast(new Predicate<String>() {
-            public boolean test(String str) { return true; } });
+        U.chain(new Integer[] {0}).map(value -> value);
+        U.chain(new String[] {""}).filter(str -> true);
+        U.chain(new String[] {""}).reject(str -> true);
+        U.chain(new String[] {""}).reduce((accum, str) -> null, "");
+        U.chain(new String[] {""}).reduceRight((accum, str) -> null, "");
+        U.chain(new String[] {""}).find(str -> true);
+        U.chain(new String[] {""}).findLast(str -> true);
         U.chain(new Integer[] {0}).max();
-        U.chain(new Integer[] {0}).max(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).max(value -> value);
         U.chain(new Integer[] {0}).min();
-        U.chain(new Integer[] {0}).min(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).min(value -> value);
         U.chain(new Integer[] {0}).sort();
-        U.chain(new Integer[] {0}).sortBy(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).sortBy(value -> value);
         U.chain(new LinkedHashMap<Integer, Integer>().entrySet()).sortBy("");
-        U.chain(new Integer[] {0}).groupBy(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).groupBy(value -> value);
         U.chain(new Integer[] {0}).indexBy("");
-        U.chain(new Integer[] {0}).countBy(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).countBy(value -> value);
         U.chain(new Integer[] {0}).shuffle();
         U.chain(new Integer[] {0}).sample();
         U.chain(new Integer[] {0}).sample(1);
-        U.chain(new String[] {""}).tap(new Consumer<String>() {
-            public void accept(String str) {
-            } });
-        U.chain(new String[] {""}).every(new Predicate<String>() {
-            public boolean test(String str) { return true; } });
-        U.chain(new String[] {""}).some(new Predicate<String>() {
-            public boolean test(String str) { return true; } });
+        U.chain(new String[] {""}).tap(str -> {
+        });
+        U.chain(new String[] {""}).every(str -> true);
+        U.chain(new String[] {""}).some(str -> true);
         U.chain(new String[] {""}).contains("");
         U.chain(new String[] {""}).invoke("toString", Collections.emptyList());
         U.chain(new String[] {""}).invoke("toString");
@@ -3744,8 +3749,7 @@ _.repeat('abc', 0);
         U.chain(new String[] {""}).where(Collections.<Tuple<String, String>>emptyList());
         U.chain(new String[] {""}).findWhere(Collections.<Tuple<String, String>>emptyList());
         U.chain(new Integer[] {0}).uniq();
-        U.chain(new Integer[] {0}).uniq(new Function<Integer, Integer>() {
-            public Integer apply(Integer value) { return value; } });
+        U.chain(new Integer[] {0}).uniq(value -> value);
         U.chain(new String[] {""}).union();
         U.chain(new String[] {""}).intersection();
         U.chain(new String[] {""}).difference();

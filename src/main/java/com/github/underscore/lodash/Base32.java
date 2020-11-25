@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,12 @@
  */
 package com.github.underscore.lodash;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class Base32 {
 
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final Base32 INSTANCE = new Base32();
 
     private final char[] digits;
@@ -41,14 +40,14 @@ public final class Base32 {
         digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef".toCharArray();
         mask = digits.length - 1;
         shift = Integer.numberOfTrailingZeros(digits.length);
-        charMap = new HashMap<Character, Integer>();
+        charMap = new HashMap<>();
         for (int index = 0; index < digits.length; index += 1) {
             charMap.put(digits[index], index);
         }
     }
 
     public static String decode(final String encoded) {
-        return new String(INSTANCE.decodeInternal(encoded), UTF_8);
+        return new String(INSTANCE.decodeInternal(encoded), StandardCharsets.UTF_8);
     }
 
     private byte[] decodeInternal(final String encoded) {
@@ -77,7 +76,7 @@ public final class Base32 {
     }
 
     public static String encode(final String data) {
-        return INSTANCE.encodeInternal(data.getBytes(UTF_8));
+        return INSTANCE.encodeInternal(data.getBytes(StandardCharsets.UTF_8));
     }
 
     private String encodeInternal(final byte[] data) {

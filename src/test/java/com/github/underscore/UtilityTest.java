@@ -23,15 +23,19 @@
  */
 package com.github.underscore;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Underscore library unit test.
@@ -147,12 +151,8 @@ _.times(3, function(n){ genie.grantWishNumber(n); });
 */
     @Test
     public void times() {
-        final List<Integer> result = new ArrayList<Integer>();
-        U.times(3, new Runnable() {
-            public void run() {
-                result.add(1);
-            }
-        });
+        final List<Integer> result = new ArrayList<>();
+        U.times(3, () -> result.add(1));
         assertEquals("[1, 1, 1]", result.toString());
     }
 
@@ -168,11 +168,8 @@ _("fabio").capitalize();
     @Test
     @SuppressWarnings("unchecked")
     public void mixin() {
-        U.mixin("capitalize", new Function<String, String>() {
-            public String apply(final String string) {
-                return String.valueOf(string.charAt(0)).toUpperCase() + string.substring(1).toLowerCase();
-            }
-        });
+        U.mixin("capitalize", string
+            -> String.valueOf(string.charAt(0)).toUpperCase() + string.substring(1).toLowerCase());
         assertEquals("Fabio", new U("fabio").call("capitalize").get());
         assertFalse(new U("fabio").call("capitalize2").isPresent());
         assertFalse(new U(asList(1)).call("capitalize2").isPresent());
@@ -304,13 +301,13 @@ var fortmatted = _.format("hello: {}", "moe");
 
     @Test
     public void minimumDays() {
-        List<List<Integer>> ll = new ArrayList<List<Integer>>();
+        List<List<Integer>> ll = new ArrayList<>();
         ll.add(Arrays.asList(1, 1, 1, 1, 1));
         ll.add(Arrays.asList(1, 1, 1, 0, 1));
         ll.add(Arrays.asList(1, 0, 1, 1, 1));
         ll.add(Arrays.asList(1, 1, 1, 1, 1));
         assertEquals(1, U.minimumDays(4, 5, ll));
-        List<List<Integer>> ll2 = new ArrayList<List<Integer>>();
+        List<List<Integer>> ll2 = new ArrayList<>();
         ll2.add(Arrays.asList(0, 0, 0, 0, 0));
         ll2.add(Arrays.asList(0, 0, 0, 0, 0));
         ll2.add(Arrays.asList(0, 0, 0, 0, 0));
@@ -359,30 +356,13 @@ _.result(object, 'stuff');
     public void result() {
         Map<String, Object> object = new LinkedHashMap<String, Object>() { {
             put("cheese", "crumpets");
-            put("stuff", new Supplier<String>() { public String get() {
-                return "nonsense"; } });
+            put("stuff", (Supplier<String>) () -> "nonsense");
         } };
 
-        assertEquals("crumpets", U.result(object.entrySet(), new Predicate<Map.Entry<String, Object>>() {
-            public boolean test(Map.Entry<String, Object> item) {
-                return item.getKey().equals("cheese");
-            }
-        }));
-        assertEquals("nonsense", U.result(object.entrySet(), new Predicate<Map.Entry<String, Object>>() {
-            public boolean test(Map.Entry<String, Object> item) {
-                return item.getKey().equals("stuff");
-            }
-        }));
-        assertEquals("result1", U.result(asList("result1", "result2"), new Predicate<String>() {
-            public boolean test(String item) {
-                return item.equals("result1");
-            }
-        }));
-        assertEquals(null, U.result(asList("result1", "result2"), new Predicate<String>() {
-            public boolean test(String item) {
-                return item.equals("result3");
-            }
-        }));
+        assertEquals("crumpets", U.result(object.entrySet(), item -> item.getKey().equals("cheese")));
+        assertEquals("nonsense", U.result(object.entrySet(), item -> item.getKey().equals("stuff")));
+        assertEquals("result1", U.result(asList("result1", "result2"), item -> item.equals("result1")));
+        assertEquals(null, U.result(asList("result1", "result2"), item -> item.equals("result3")));
     }
 
 }
