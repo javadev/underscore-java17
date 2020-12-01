@@ -25,7 +25,7 @@ Include the following in your `pom.xml` for Maven:
   <dependency>
     <groupId>com.github.javadev</groupId>
     <artifactId>underscore11</artifactId>
-    <version>1.17</version>
+    <version>1.18</version>
   </dependency>
   ...
 </dependencies>
@@ -34,7 +34,7 @@ Include the following in your `pom.xml` for Maven:
 Gradle:
 
 ```groovy
-compile 'com.github.javadev:underscore11:1.17'
+compile 'com.github.javadev:underscore11:1.18'
 ```
 
 Underscore-java is a java port of [Underscore.js](http://underscorejs.org/).
@@ -113,6 +113,6 @@ Map<String, Object> value = U.objectBuilder()
 In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.
 
 For docs, license, tests, and downloads, see:
-http://javadev.github.io/underscore-java
+https://javadev.github.io/underscore-java
 
 Thanks to Jeremy Ashkenas and all contributors to Underscore.js.
