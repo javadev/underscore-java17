@@ -95,7 +95,8 @@ public class U<T> extends com.github.underscore.U<T> {
 
     public enum Mode {
         REPLACE_SELF_CLOSING_WITH_NULL,
-        REPLACE_SELF_CLOSING_WITH_EMPTY
+        REPLACE_SELF_CLOSING_WITH_EMPTY,
+        REPLACE_EMPTY_VALUE_WITH_NULL
     }
 
     public U(final Iterable<T> iterable) {
@@ -1521,9 +1522,15 @@ public class U<T> extends com.github.underscore.U<T> {
         return result;
     }
 
+    private enum OperationType {
+        GET,
+        SET,
+        REMOVE
+    }
+
     @SuppressWarnings("unchecked")
-    private static <T> T baseGetAndSet(final Map<String, Object> object, final String path,
-        final Optional<Object> value) {
+    private static <T> T baseGetOrSetOrRemove(final Map<String, Object> object, final String path,
+        final Object value, OperationType operationType) {
         final List<String> paths = stringToPath(path);
         int index = 0;
         final int length = paths.size();
@@ -1551,16 +1558,28 @@ public class U<T> extends com.github.underscore.U<T> {
             index += 1;
         }
         if (index > 0 && index == length) {
-            if (value.isPresent()) {
-                if (savedLocalObject instanceof Map) {
-                    ((Map) savedLocalObject).put(savedPath, value.get());
-                } else {
-                    ((List) savedLocalObject).set(Integer.parseInt(savedPath), value.get());
-                }
-            }
+            checkSetAndRemove(value, operationType, savedLocalObject, savedPath);
             return (T) localObject;
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void checkSetAndRemove(Object value, OperationType operationType, Object savedLocalObject,
+        String savedPath) {
+        if (operationType == OperationType.SET) {
+            if (savedLocalObject instanceof Map) {
+                ((Map) savedLocalObject).put(savedPath, value);
+            } else {
+                ((List) savedLocalObject).set(Integer.parseInt(savedPath), value);
+            }
+        } else if (operationType == OperationType.REMOVE) {
+            if (savedLocalObject instanceof Map) {
+                ((Map) savedLocalObject).remove(savedPath);
+            } else {
+                ((List) savedLocalObject).remove(Integer.parseInt(savedPath));
+            }
+        }
     }
 
     private static Map.Entry getMapEntry(Map map) {
@@ -1568,39 +1587,15 @@ public class U<T> extends com.github.underscore.U<T> {
     }
 
     public static <T> T get(final Map<String, Object> object, final String path) {
-        return baseGetAndSet(object, path, Optional.absent());
+        return baseGetOrSetOrRemove(object, path, null, OperationType.GET);
     }
 
     public static <T> T set(final Map<String, Object> object, final String path, Object value) {
-        return baseGetAndSet(object, path, Optional.of(value));
+        return baseGetOrSetOrRemove(object, path, value, OperationType.SET);
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> remove(final Map<String, Object> map, final String key) {
-        Map<String, Object> outMap = newLinkedHashMap();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (!entry.getKey().equals(key)) {
-                outMap.put(entry.getKey(), makeObjectForRemove(entry.getValue(), key));
-            }
-        }
-        return outMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Object makeObjectForRemove(Object value, final String key) {
-        final Object result;
-        if (value instanceof List) {
-            List<Object> values = newArrayList();
-            for (Object item : (List) value) {
-                values.add(item instanceof Map ? remove((Map<String, Object>) item, key) : item);
-            }
-            result = values;
-        } else if (value instanceof Map) {
-            result = remove((Map<String, Object>) value, key);
-        } else {
-            result = value;
-        }
-        return result;
+    public static <T> T remove(final Map<String, Object> object, final String path) {
+        return baseGetOrSetOrRemove(object, path, null, OperationType.REMOVE);
     }
 
     @SuppressWarnings("unchecked")
@@ -2267,6 +2262,8 @@ public class U<T> extends com.github.underscore.U<T> {
                 result = Json.toJson(replaceSelfClosingWithNull((Map) object), identStep);
             } else if (mode == Mode.REPLACE_SELF_CLOSING_WITH_EMPTY) {
                 result = Json.toJson(replaceSelfClosingWithEmpty((Map) object), identStep);
+            } else if (mode == Mode.REPLACE_EMPTY_VALUE_WITH_NULL) {
+                result = Json.toJson(replaceEmptyValueWithNull((Map) object), identStep);
             } else {
                 result = Json.toJson((Map) object, identStep);
             }
@@ -2416,6 +2413,36 @@ public class U<T> extends com.github.underscore.U<T> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> replaceEmptyValueWithNull(Map<String, Object> map) {
+        if (map.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            outMap.put(String.valueOf(entry.getKey()),
+                makeObjectEmptyValue(entry.getValue()));
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeObjectEmptyValue(Object value) {
+        final Object result;
+        if (value instanceof List) {
+            List<Object> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(item instanceof Map ? replaceEmptyValueWithNull((Map) item) : item);
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = replaceEmptyValueWithNull((Map) value);
+        } else {
+            result = value;
+        }
+        return result;
+    }
+
     public static long gcd(long value1, long value2) {
         if (value1 == 0) {
             return value2;
@@ -2453,6 +2480,16 @@ public class U<T> extends com.github.underscore.U<T> {
 
         public Builder set(final String path, final Object value) {
             U.set(data, path, value);
+            return this;
+        }
+
+        public Builder remove(final String key) {
+            U.remove(data, key);
+            return this;
+        }
+
+        public Builder clear() {
+            data.clear();
             return this;
         }
 
@@ -2519,6 +2556,16 @@ public class U<T> extends com.github.underscore.U<T> {
 
         public ArrayBuilder set(final int index, final Object value) {
             data.set(index, value);
+            return this;
+        }
+
+        public ArrayBuilder remove(final int index) {
+            data.remove(index);
+            return this;
+        }
+
+        public ArrayBuilder clear() {
+            data.clear();
             return this;
         }
 

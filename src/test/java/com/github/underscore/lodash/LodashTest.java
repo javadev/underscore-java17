@@ -602,6 +602,21 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         list.add(U.newArrayList());
         map2.put("list", list);
         U.replaceSelfClosingWithNull(map2);
+        assertEquals("{\n"
+                + "  \"a\": {\n"
+                + "    \"b\": [\n"
+                + "      null,\n"
+                + "      null\n"
+                + "    ]\n"
+                + "  },\n"
+                + "  \"#omit-xml-declaration\": \"yes\"\n"
+                + "}",
+            U.xmlToJson("<a><b></b><b></b></a>", U.Mode.REPLACE_EMPTY_VALUE_WITH_NULL));
+        Map<String, Object> map3 = U.newLinkedHashMap();
+        List<Object> list2 = U.newArrayList();
+        list2.add(U.newArrayList());
+        map3.put("list", list2);
+        U.replaceEmptyValueWithNull(map3);
     }
 
     @Test
@@ -616,8 +631,9 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         list.add(U.newLinkedHashMap());
         map2.put("list", list);
         U.remove(map2, "test");
-        map2.put("list", U.newLinkedHashMap());
+        map2.put("list2", U.newLinkedHashMap());
         U.remove(map2, "test");
+        U.remove(map2, "list.0");
     }
 
     @Test
@@ -798,6 +814,10 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         builder.set("1", "3");
         builder.toString();
         assertEquals("{1=3}", builder.build().toString());
+        builder.remove("1");
+        assertEquals("{}", builder.build().toString());
+        builder.clear();
+        assertEquals("{}", builder.build().toString());
         Map<String, Object> value = U.objectBuilder()
             .add("firstName", "John")
             .add("lastName", "Smith")
@@ -831,6 +851,10 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         builder.set(1, "3");
         builder.toString();
         assertEquals("[1, 3, 1, 2]", builder.build().toString());
+        builder.remove(1);
+        assertEquals("[1, 1, 2]", builder.build().toString());
+        builder.clear();
+        assertEquals("[]", builder.build().toString());
         Map<String, Object> value = U.objectBuilder()
             .add("firstName", "John")
             .add("lastName", "Smith")
