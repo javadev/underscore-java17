@@ -111,6 +111,7 @@
                   <option>-keep public class com.github.underscore.lodash.Xml$FromType { *; }</option>
                   <option>-keepclassmembers class * { *** newArrayList(); *** newLinkedHashSet(); *** newHashSet(java.lang.Iterable); *** newLinkedHashMap(); }</option>
                   <option>-dontnote com.github.underscore.*$ClassForName</option>
+                  <option>-dontnote com.github.underscore.lodash.*$OperationType</option>
               </options>
               <libs>
                   <lib>${java.home.openjdk11}/lib/jrt-fs.jar</lib>
