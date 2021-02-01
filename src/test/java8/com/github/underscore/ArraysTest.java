@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2019 Valentyn Kolesnikov
+ * Copyright 2015-2020 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,39 @@ _.head([5, 4, 3, 2, 1], 2);
         assertEquals("[5, 4]", resultListObj.toString());
         final int resultInt = U.head(new Integer[] {5, 4, 3, 2, 1});
         assertEquals(5, resultInt);
+    }
+
+/*
+_.singleOrNull([5, 4, 3, 2, 1]);
+=> null
+_.singleOrNull([5]);
+=> 5
+*/
+    @Test
+    public void singleOrNull() {
+        U<Integer> uWithMoreElement = new U<Integer>(asList(1, 2, 3));
+        U<Integer> uWithOneElement = new U<Integer>(asList(1));
+
+        final Integer result1 = U.singleOrNull(asList(1, 2, 3, 4));
+        assertEquals(result1, null);
+        final int result2 = U.singleOrNull(asList(1));
+        assertEquals(result2, 1);
+        final Integer result3 = U.singleOrNull(new ArrayList<Integer>());
+        assertEquals(result3, null);
+        final Integer result4 = U.singleOrNull(asList(1, 2, 3), number -> number % 2 == 1);
+        assertEquals(result4, null);
+        final int result5 = U.singleOrNull(asList(1, 2, 3), number -> number % 2 == 0);
+        assertEquals(result5, 2);
+        final Integer result6 = U.singleOrNull(asList(1, 2, 3), number -> number == 5);
+        assertEquals(result6, null);
+        final Integer result7 = uWithMoreElement.singleOrNull();
+        assertEquals(result7, null);
+        final Integer result8 = uWithOneElement.singleOrNull();
+        assertEquals(result8, Integer.valueOf(1));
+        final Integer result9 = uWithMoreElement.singleOrNull(item -> item % 2 == 0);
+        assertEquals(result9, Integer.valueOf(2));
+        final Integer result10 = uWithMoreElement.singleOrNull(item -> item % 2 == 1);
+        assertEquals(result10, null);
     }
 
 /*
@@ -619,22 +652,22 @@ _.range(0);
 */
     @Test
     public void range() {
-        final int[] result = U.range(10);
-        assertArrayEquals(new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, result);
+        final List<Integer> result = U.range(10);
+        assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", result.toString());
         final List<Integer> resultChain = U.chain("").range(10).value();
         assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", resultChain.toString());
-        final int[] result2 = U.range(1, 11);
-        assertArrayEquals(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, result2);
+        final List<Integer> result2 = U.range(1, 11);
+        assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", result2.toString());
         final List<Integer> result2Chain = U.chain("").range(1, 11).value();
         assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", result2Chain.toString());
-        final int[] result3 = U.range(0, 30, 5);
-        assertArrayEquals(new int[] {0, 5, 10, 15, 20, 25}, result3);
+        final List<Integer> result3 = U.range(0, 30, 5);
+        assertEquals("[0, 5, 10, 15, 20, 25]", result3.toString());
         final List<Integer> result3Chain = U.chain("").range(0, 30, 5).value();
         assertEquals("[0, 5, 10, 15, 20, 25]", result3Chain.toString());
-        final int[] result4 = U.range(0, -10, -1);
-        assertArrayEquals(new int[] {0, -1, -2, -3, -4, -5, -6, -7, -8, -9}, result4);
-        final int[] result5 = U.range(0);
-        assertArrayEquals(new int[] {}, result5);
+        final List<Integer> result4 = U.range(0, -10, -1);
+        assertEquals("[0, -1, -2, -3, -4, -5, -6, -7, -8, -9]", result4.toString());
+        final List<Integer> result5 = U.range(0);
+        assertEquals("[]", result5.toString());
     }
 
 /*
