@@ -42,16 +42,16 @@ Underscore-java is a java port of [Underscore.js](http://underscorejs.org/).
 ### Usage
 
 ```java
-U.chain(/* array | list | set | map | anything based on Iterable interface */)
+U.of(/* array | list | set | map | anything based on Iterable interface */)
     .filter(..)
     .map(..)
     ...
     .sortWith()
     .forEach(..);
-U.chain(value1, value2, value3)...
+U.of(value1, value2, value3)...
 U.range(0, 10)...
 
-U.chain(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 3}
+U.of(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 3}
     .filter(v -> v > 1)
     // 2, 3
     .map(v -> v + 1)
@@ -60,7 +60,7 @@ U.chain(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 
     // 4, 3
     .forEach(System.out::println);
     // 4, 3
-
+    
 U.formatXml("<a><b>data</b></a>");
     // <a>
     //    <b>data</b>
@@ -73,20 +73,21 @@ U.formatJson("{\"a\":{\"b\":\"data\"}}");
     //    }
     // }
 
-U.xmlToJson("<a><b>data</b></a>");
+U.xmlToJson("<a attr=\"c\"><b>data</b></a>");
     // {
     //   "a": {
+    //     "-attr": "c",
     //     "b": "data"
     //   },
     //   "#omit-xml-declaration": "yes"
     // }
 
-U.jsonToXml("{\"a\":{\"b\":\"data\"}}");
+U.jsonToXml("{\"a\":{\"-attr\":\"c\",\"b\":\"data\"}}");
     // <?xml version="1.0" encoding="UTF-8"?>
-    // <a>
+    // <a attr="c">
     //   <b>data</b>
     // </a>
-    
+
 Map<String, Object> value = U.objectBuilder()
     .add("firstName", "John")
     .add("lastName", "Smith")
