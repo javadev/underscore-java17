@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2020 Valentyn Kolesnikov
+ * Copyright 2015-2021 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -182,6 +182,10 @@ public class U<T> extends com.github.underscore.U<T> {
 
         public <F> Chain<F> map(final Function<? super T, F> func) {
             return new Chain<>(U.map(value(), func));
+        }
+
+        public <F> Chain<F> mapMulti(final BiConsumer<? super T, ? super Consumer<F>> mapper) {
+            return new Chain<>(U.mapMulti(value(), mapper));
         }
 
         public <F> Chain<F> mapIndexed(final BiFunction<Integer, ? super T, F> func) {

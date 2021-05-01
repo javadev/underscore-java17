@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2020 Valentyn Kolesnikov
+ * Copyright 2015-2021 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -170,7 +170,23 @@ _.map([1, 2, 3], function(num){ return num * 3; });
         assertEquals("[3, 6, 9]", result1.toString());
     }
 
-/*
+    @Test
+    public void mapMulti() {
+        List<Integer> result = U.mapMulti(asList("Java", "Python", "C#"), (str, consumer) -> {
+            for (int i = 0; i < str.length(); i++) {
+                consumer.accept(str.length());
+            }
+        });
+        assertEquals("[4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 2, 2]", result.toString());
+        List<Object> resultChain = U.chain(asList("Java", "Python", "C#")).mapMulti((str, consumer) -> {
+            for (int i = 0; i < str.length(); i++) {
+                consumer.accept(str.length());
+            }
+        }).value();
+        assertEquals("[4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 2, 2]", resultChain.toString());
+    }
+
+    /*
 _.map(_.range(3), function(num){ return (num + 1) * 3; });
 => [3, 6, 9]
 */

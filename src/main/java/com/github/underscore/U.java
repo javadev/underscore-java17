@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2020 Valentyn Kolesnikov
+ * Copyright 2015-2021 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -156,7 +156,8 @@ public class U<T> {
             final String escape = TEMPLATE_SETTINGS.get(ESCAPE);
             String result = template;
             for (final Map.Entry<K, V> element : value.entrySet()) {
-                final String value1 = String.valueOf(element.getValue()).replace("\\", "\\\\");
+                final String value1 = String.valueOf(element.getValue()).replace("\\", "\\\\")
+                        .replace("$", "\\$");
                 result = java.util.regex.Pattern.compile(interpolate.replace(ALL_SYMBOLS,
                     S_Q + element.getKey()
                     + E_S)).matcher(result).replaceAll(value1);
@@ -313,6 +314,16 @@ public class U<T> {
         final List<T> transformed = newArrayListWithExpectedSize(list.size());
         for (E element : list) {
             transformed.add(func.apply(element));
+        }
+        return transformed;
+    }
+
+    public static <T, E> List<T> mapMulti(final List<E> list,
+        final BiConsumer<? super E, ? super Consumer<T>> mapper) {
+        final List<T> transformed = newArrayListWithExpectedSize(list.size());
+        for (E element : list) {
+            Consumer<T> value = t -> transformed.add(t);
+            mapper.accept(element, value);
         }
         return transformed;
     }
@@ -2743,6 +2754,10 @@ public class U<T> {
 
         public <F> Chain<F> map(final Function<? super T, F> func) {
             return new Chain<>(U.map(list, func));
+        }
+
+        public <F> Chain<F> mapMulti(final BiConsumer<? super T, ? super Consumer<F>> mapper) {
+            return new Chain<>(U.mapMulti(list, mapper));
         }
 
         public <F> Chain<F> mapIndexed(final BiFunction<Integer, ? super T, F> func) {
