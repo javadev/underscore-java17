@@ -63,12 +63,13 @@
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.2.0</version>
           <configuration>
               <archive>
-                  <manifest>
-                      <mainClass>com.github.underscore.U</mainClass>
-                  </manifest>
+                  <manifestEntries>
+                       <Automatic-Module-Name>com.github.underscore</Automatic-Module-Name>
+                       <mainClass>com.github.underscore.U</mainClass>
+                  </manifestEntries>
               </archive>
           </configuration>
       </plugin>
@@ -106,7 +107,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.5</version>
+        <version>0.8.7</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -125,12 +126,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.9</version>
+        <version>3.1.2</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.7.1</version>
+        <version>3.9.1</version>
       </plugin>
     </plugins>
   </build>
@@ -139,7 +140,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.5</version>
+        <version>0.8.7</version>
         <configuration>
           <excludes>
             <exclude>**/U$BaseHttpSslSocketFactory*.class</exclude>
@@ -150,12 +151,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>2.18</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.5</version>
+        <version>3.1.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -169,7 +170,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.5</version>
+        <version>3.14.0</version>
             <configuration>
                 <targetJdk>1.8</targetJdk> 
                 <rulesets>
@@ -204,15 +205,15 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
-      <version>4.0.3</version>
+      <version>4.1.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
 </project>

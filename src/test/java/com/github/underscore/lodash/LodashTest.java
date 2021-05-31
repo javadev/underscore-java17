@@ -574,6 +574,25 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
                 + "}",
             U.xmlToJson("<a/>", U.Mode.REPLACE_SELF_CLOSING_WITH_NULL));
         assertEquals("{\n"
+                + "  \"c\": {\n"
+                + "    \"b\": null,\n"
+                + "    \"a\": null\n"
+                + "  },\n"
+                + "  \"#omit-xml-declaration\": \"yes\"\n"
+                + "}",
+            U.xmlToJson("<c><b></b><a/></c>", U.Mode.REPLACE_EMPTY_TAG_WITH_NULL));
+        assertEquals("{\n"
+                + "  \"c\": {\n"
+                + "    \"b\": [\n"
+                + "      \"\",\n"
+                + "      \"\"\n"
+                + "    ],\n"
+                + "    \"a\": \"\"\n"
+                + "  },\n"
+                + "  \"#omit-xml-declaration\": \"yes\"\n"
+                + "}",
+            U.xmlToJson("<c><b></b><b></b><a/></c>", U.Mode.REPLACE_EMPTY_TAG_WITH_EMPTY_STRING));
+        assertEquals("{\n"
                 + "  \"a\": \"\",\n"
                 + "  \"#omit-xml-declaration\": \"yes\"\n"
                 + "}",
@@ -618,6 +637,12 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         list2.add(U.newArrayList());
         map3.put("list", list2);
         U.replaceEmptyValueWithNull(map3);
+        U.replaceEmptyValueWithNull(null);
+        Map<String, Object> map4 = U.newLinkedHashMap();
+        List<Object> list3 = U.newArrayList();
+        list3.add(U.newArrayList());
+        map4.put("list", list3);
+        U.replaceEmptyValueWithEmptyString(map4);
     }
 
     @Test
@@ -826,6 +851,34 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
     }
 
     @Test
+    public void replaceEmptyStringWithEmptyValue() {
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<RootElm>\n"
+                + "  <author>\n"
+                + "    <DOB null=\"true\"/>\n"
+                + "    <value></value>\n"
+                + "  </author>\n"
+                + "</RootElm>", U.jsonToXml("{\n"
+                + "  \"RootElm\": {\n"
+                + "    \"author\": {\n"
+                + "      \"DOB\": null,\n"
+                + "      \"value\": \"\"\n"
+                + "    }\n"
+                + "  }\n"
+                + "}", U.Mode.REPLACE_EMPTY_STRING_WITH_EMPTY_VALUE));
+        Map<String, Object> map = U.newLinkedHashMap();
+        List<Object> list = U.newArrayList();
+        list.add(U.newLinkedHashMap());
+        map.put("list", list);
+        U.replaceEmptyStringWithEmptyValue(map);
+        Map<String, Object> map2 = U.newLinkedHashMap();
+        List<Object> list2 = U.newArrayList();
+        list2.add(U.newArrayList());
+        map2.put("list", list2);
+        U.replaceEmptyStringWithEmptyValue(map2);
+    }
+
+    @Test
     public void changeXmlEncoding() {
         assertEquals("<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<a>Test</a>",
             U.changeXmlEncoding("<?xml version=\"1.0\" encoding=\"UTF-8\"?><a>Test</a>", "windows-1251"));
@@ -900,6 +953,7 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         assertEquals("{}", builder.build().toString());
         builder.clear();
         assertEquals("{}", builder.build().toString());
+        builder.toChain();
         Map<String, Object> value = U.objectBuilder()
             .add("firstName", "John")
             .add("lastName", "Smith")
@@ -937,6 +991,7 @@ _.set({"a":[{"b":{"c":"d"}}]}, "a[0].b.c", "e");
         assertEquals("[1, 1, 2]", builder.build().toString());
         builder.clear();
         assertEquals("[]", builder.build().toString());
+        builder.toChain();
         Map<String, Object> value = U.objectBuilder()
             .add("firstName", "John")
             .add("lastName", "Smith")
