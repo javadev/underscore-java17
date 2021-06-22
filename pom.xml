@@ -66,10 +66,9 @@
           <version>3.2.0</version>
           <configuration>
               <archive>
-                  <manifestEntries>
-                       <Automatic-Module-Name>com.github.underscore</Automatic-Module-Name>
-                       <mainClass>com.github.underscore.U</mainClass>
-                  </manifestEntries>
+                  <manifest>
+                      <mainClass>com.github.underscore.U</mainClass>
+                  </manifest>
               </archive>
           </configuration>
       </plugin>

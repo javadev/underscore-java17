@@ -25,18 +25,17 @@ public final class Optional<T> {
     }
 
     public static <T> Optional<T> fromNullable(final T nullableReference) {
-        return nullableReference == null ? Optional.<T>absent()
-            : new Optional<>(nullableReference);
+        return nullableReference == null ? Optional.<T>empty() : new Optional<>(nullableReference);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Optional<T> absent() {
+    public static <T> Optional<T> empty() {
         return (Optional<T>) EMPTY;
     }
 
     public T get() {
         if (absent) {
-            throw new IllegalStateException("Optional.get() cannot be called on an absent value");
+            throw new IllegalStateException("Optional.get() cannot be called on an empty value");
         }
         return arg;
     }
@@ -67,7 +66,7 @@ public final class Optional<T> {
     public Optional<T> filter(Predicate<? super T> predicate) {
         U.checkNotNull(predicate);
         if (isPresent()) {
-            return predicate.test(arg) ? this : Optional.<T>absent();
+            return predicate.test(arg) ? this : Optional.<T>empty();
         } else {
             return this;
         }
@@ -78,7 +77,7 @@ public final class Optional<T> {
         if (isPresent()) {
             return Optional.fromNullable(mapper.apply(arg));
         } else {
-            return absent();
+            return empty();
         }
     }
 
@@ -88,6 +87,10 @@ public final class Optional<T> {
         } else {
             return arg;
         }
+    }
+
+    public java.util.Optional<T> toJavaOptional() {
+        return java.util.Optional.ofNullable(arg);
     }
 
     @Override
@@ -113,6 +116,6 @@ public final class Optional<T> {
 
     @Override
     public String toString() {
-        return absent ? "Optional.absent()" : "Optional.of(" + arg + ")";
+        return absent ? "Optional.empty" : "Optional[" + arg + "]";
     }
 }
