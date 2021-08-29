@@ -476,7 +476,7 @@ public class LodashTest {
         // Alberta\",\"attack\":2,\"armor\":7,\"agility\":3,\"endurance\":8}}",
         //            result.text());
         //        assertEquals("Sir. Russell Jones of Alberta",
-        //            (String) U.get((Map<String, Object>) result.json(), "knight.name"));
+        //            (String) Underscore.get((Map<String, Object>) result.json(), "knight.name"));
         U.Chain<?> resultChain =
                 U.chain(
                                 "https://support.oneskyapp.com/hc/en-us/article_attachments/202761627/example_1.json")
@@ -1064,6 +1064,31 @@ public class LodashTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void replaceFirstLevel() {
+        Map<String, Object> result = U.replaceFirstLevel((Map<String, Object>) U.fromXml("<a/>"));
+        assertEquals("{}", result.toString());
+        Map<String, Object> result2 =
+                U.replaceFirstLevel((Map<String, Object>) U.fromXml("<a><b>c</b></a>"));
+        assertEquals("{b=c}", result2.toString());
+        String result3 = U.xmlToJson("<a><b>c</b></a>", U.Mode.REMOVE_FIRST_LEVEL_XML_TO_JSON);
+        assertEquals("{\n  \"b\": \"c\"\n}", result3);
+        Map<String, Object> map = U.newLinkedHashMap();
+        List<Object> list = U.newArrayList();
+        list.add(U.newLinkedHashMap());
+        map.put("list", list);
+        U.replaceFirstLevel(map);
+        Map<String, Object> map2 = U.newLinkedHashMap();
+        List<Object> list2 = U.newArrayList();
+        list2.add(U.newArrayList());
+        map2.put("list", list2);
+        U.replaceFirstLevel(map2);
+        Map<String, Object> result4 = U.fromXml("<a/>");
+        ((Map<String, Object>) result4.get("a")).put("-self-closing", "false");
+        U.replaceFirstLevel(result4);
+    }
+
+    @Test
     public void objectBuilder() {
         U.Builder builder = U.objectBuilder().add("1", "2").add("2");
         builder.add(builder);
@@ -1499,5 +1524,31 @@ public class LodashTest {
                         + "  <id number=\"true\">12345</id>\n"
                         + "</customer>",
                 xml);
+    }
+
+    @Test
+    public void issue306() {
+        String json =
+                U.objectBuilder().add("firstName", "John").add("lastName", (Object) null).toJson();
+        assertEquals("{\n  \"firstName\": \"John\",\n" + "  \"lastName\": null\n" + "}", json);
+    }
+
+    @Test
+    public void issue308() {
+        String xml =
+                "<some_root>\n"
+                        + "  <ABC some_attribute=\"attribute\">\n"
+                        + "    <another_tag>some_value</another_tag>\n"
+                        + "  </ABC>\n"
+                        + "</some_root>";
+        Map<String, Object> data = U.fromXmlMap(xml);
+        U.set(data, "some_root.ABC.#text", U.get(data, "some_root.ABC.another_tag"));
+        U.remove(data, "some_root.ABC.another_tag");
+        String newXml = U.toXml(data);
+        assertEquals(
+                "<some_root>\n"
+                        + "  <ABC some_attribute=\"attribute\">some_value</ABC>\n"
+                        + "</some_root>",
+                newXml);
     }
 }
