@@ -84,7 +84,7 @@
               <options>
                   <option>-allowaccessmodification</option>
                   <option>-keepattributes Signature,InnerClasses</option>
-                  <option>-keep public class com.github.underscore.U { *; }</option>
+                  <option>-keep public class com.github.underscore.Underscore { *; }</option>
                   <option>-keep public class com.github.underscore.*$Chain { *; }</option>
                   <option>-keep public class com.github.underscore.Function3 { *; }</option>
                   <option>-keep public class com.github.underscore.MemoizeFunction { *; }</option>
