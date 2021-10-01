@@ -598,11 +598,6 @@ public class LodashTest {
         //            resultChain.item());
     }
 
-    @Test
-    public void noHostnameVerifier() {
-        new U.NoHostnameVerifier().verify("", (javax.net.ssl.SSLSession) null);
-    }
-
     @Test(expected = UnsupportedOperationException.class)
     public void fetchWrongUrl() {
         U.fetch("ttt");
@@ -786,6 +781,58 @@ public class LodashTest {
                         "{\"a\": \"b\", \"c\": \"d\"}",
                         U.Mode.FORCE_ATTRIBUTE_USAGE_AND_DEFINE_ROOT_NAME,
                         "json"));
+    }
+
+    @Test
+    public void forceAddRoot() {
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<root>\n"
+                        + "  <data array=\"true\">\n"
+                        + "    <a>b</a>\n"
+                        + "  </data>\n"
+                        + "</root>",
+                U.jsonToXml(
+                        "{\n"
+                                + "  \"data\": [\n"
+                                + "    {\n"
+                                + "      \"a\": \"b\"\n"
+                                + "    }\n"
+                                + "  ]\n"
+                                + "}",
+                        U.Mode.FORCE_ADD_ROOT_JSON_TO_XML));
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<newroot>\n"
+                        + "  <data array=\"true\">\n"
+                        + "    <a>b</a>\n"
+                        + "  </data>\n"
+                        + "</newroot>",
+                U.jsonToXml(
+                        "{\n"
+                                + "  \"data\": [\n"
+                                + "    {\n"
+                                + "      \"a\": \"b\"\n"
+                                + "    }\n"
+                                + "  ]\n"
+                                + "}",
+                        U.Mode.FORCE_ADD_ROOT_JSON_TO_XML, "newroot"));
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<root>\n"
+                        + "  <element array=\"true\">\n"
+                        + "    <a>b</a>\n"
+                        + "  </element>\n"
+                        + "</root>",
+                U.jsonToXml(
+                        "{\n"
+                                + "  \"root\": [\n"
+                                + "    {\n"
+                                + "      \"a\": \"b\"\n"
+                                + "    }\n"
+                                + "  ]\n"
+                                + "}",
+                        U.Mode.FORCE_ADD_ROOT_JSON_TO_XML));
     }
 
     @Test

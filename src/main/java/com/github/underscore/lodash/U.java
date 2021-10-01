@@ -63,6 +63,7 @@ public class U<T> extends Underscore<T> {
             new HashSet<>(Arrays.asList("GET", "POST", "PUT", "DELETE"));
     private static final int BUFFER_LENGTH_1024 = 1024;
     private static final int RESPONSE_CODE_400 = 400;
+    private static final String ROOT = "root";
     private static String upper = "[A-Z\\xc0-\\xd6\\xd8-\\xde\\u0400-\\u04FF]";
     private static String lower = "[a-z\\xdf-\\xf6\\xf8-\\xff]+";
     private static String selfClosing = "-self-closing";
@@ -115,7 +116,8 @@ public class U<T> extends Underscore<T> {
         FORCE_ATTRIBUTE_USAGE_AND_DEFINE_ROOT_NAME,
         REPLACE_NULL_WITH_EMPTY_VALUE,
         REPLACE_EMPTY_STRING_WITH_EMPTY_VALUE,
-        REMOVE_FIRST_LEVEL_XML_TO_JSON
+        REMOVE_FIRST_LEVEL_XML_TO_JSON,
+        FORCE_ADD_ROOT_JSON_TO_XML
     }
 
     public U(final Iterable<T> iterable) {
@@ -2036,12 +2038,6 @@ public class U<T> extends Underscore<T> {
         }
     }
 
-    static class NoHostnameVerifier implements javax.net.ssl.HostnameVerifier {
-        public boolean verify(String hostname, javax.net.ssl.SSLSession session) {
-            return true;
-        }
-    }
-
     private static void setupConnection(
             final java.net.HttpURLConnection connection,
             final String method,
@@ -2065,8 +2061,6 @@ public class U<T> extends Underscore<T> {
         if (connection instanceof javax.net.ssl.HttpsURLConnection) {
             ((javax.net.ssl.HttpsURLConnection) connection)
                     .setSSLSocketFactory(new BaseHttpSslSocketFactory());
-            ((javax.net.ssl.HttpsURLConnection) connection)
-                    .setHostnameVerifier(new NoHostnameVerifier());
         }
         if (headerFields != null) {
             for (final Map.Entry<String, List<String>> header : headerFields.entrySet()) {
@@ -2464,6 +2458,11 @@ public class U<T> extends Underscore<T> {
                                 replaceEmptyStringWithEmptyValue((Map) object),
                                 identStep,
                                 newRootName);
+            } else if (mode == Mode.FORCE_ADD_ROOT_JSON_TO_XML
+                    && !Xml.XmlValue.getMapKey(object).equals(ROOT)) {
+                final Map<String, Object> map = U.newLinkedHashMap();
+                map.put(Underscore.isNull(newRootName) ? ROOT : newRootName, object);
+                result = Xml.toXml(map, identStep);
             } else {
                 result = Xml.toXml((Map) object, identStep);
             }
