@@ -1,7 +1,7 @@
 underscore-java11
 =================
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.javadev/underscore11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.javadev/underscore11)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.javadev/underscore11.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.javadev%22%20AND%20a%3A%22underscore11%22)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/javadev/underscore-java11/blob/master/LICENSE.txt)
 [![Java CI](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml)
