@@ -4,6 +4,7 @@ underscore-java11
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.javadev/underscore11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.javadev/underscore11)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/javadev/underscore-java11/blob/master/LICENSE.txt)
 [![Java CI](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml)
 [![codecov](https://codecov.io/gh/javadev/underscore-java11/branch/master/graph/badge.svg)](https://codecov.io/gh/javadev/underscore-java11)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=alert_status)](https://sonarcloud.io/dashboard/index/javadev_underscore-java11)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=sqale_rating)](https://sonarcloud.io/dashboard/index/javadev_underscore-java11)
