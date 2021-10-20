@@ -35,7 +35,7 @@ Include the following in your `pom.xml` for Maven:
 Gradle:
 
 ```groovy
-compile 'com.github.javadev:underscore11:1.27'
+implementation 'com.github.javadev:underscore11:1.27'
 ```
 
 Underscore-java is a java port of [Underscore.js](http://underscorejs.org/).
