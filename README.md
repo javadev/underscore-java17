@@ -15,7 +15,7 @@ underscore-java11
 Requirements
 ============
 
-Java 11 and later.
+Java 11 and later or [Java 8](https://github.com/javadev/underscore-java).
 
 ## Installation
 
