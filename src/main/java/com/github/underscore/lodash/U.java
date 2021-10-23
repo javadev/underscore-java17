@@ -113,7 +113,6 @@ public class U<T> extends Underscore<T> {
         REPLACE_EMPTY_TAG_WITH_EMPTY_STRING,
         FORCE_ATTRIBUTE_USAGE,
         DEFINE_ROOT_NAME,
-        FORCE_ATTRIBUTE_USAGE_AND_DEFINE_ROOT_NAME,
         REPLACE_NULL_WITH_EMPTY_VALUE,
         REPLACE_EMPTY_STRING_WITH_EMPTY_VALUE,
         REMOVE_FIRST_LEVEL_XML_TO_JSON,
@@ -212,7 +211,6 @@ public class U<T> extends Underscore<T> {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public Chain flatten() {
             return new Chain<>(Underscore.flatten(value()));
         }
@@ -967,9 +965,7 @@ public class U<T> extends Underscore<T> {
     }
 
     public static <T> T[] fill(T[] array, T item) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = item;
-        }
+        Arrays.fill(array, item);
         return array;
     }
 
@@ -1764,7 +1760,6 @@ public class U<T> extends Underscore<T> {
         return baseGetOrSetOrRemove(object, path, null, OperationType.REMOVE);
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> rename(
             final Map<String, Object> map, final String oldKey, final String newKey) {
         Map<String, Object> outMap = newLinkedHashMap();
@@ -1843,7 +1838,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> update(
             final Map<String, Object> map1, final Map<String, Object> map2) {
         Map<String, Object> outMap = newLinkedHashMap();
@@ -2364,7 +2358,6 @@ public class U<T> extends Underscore<T> {
         return fromXmlMap(xml, Xml.FromType.FOR_CONVERT);
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> fromXmlMap(final String xml, final Xml.FromType fromType) {
         final Object object = Xml.fromXml(xml, fromType);
         return getStringObjectMap(object);
@@ -2412,7 +2405,6 @@ public class U<T> extends Underscore<T> {
         return Json.fromJson(getString().get());
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> fromJsonMap(final String string) {
         final Object object = Json.fromJson(string);
         return getStringObjectMap(object);
@@ -2445,11 +2437,9 @@ public class U<T> extends Underscore<T> {
         final String result;
         if (object instanceof Map) {
             if (mode == Mode.FORCE_ATTRIBUTE_USAGE) {
-                result = Xml.toXml(forceAttributeUsage((Map) object), identStep);
+                result = Xml.toXml(forceAttributeUsage((Map) object), identStep, newRootName);
             } else if (mode == Mode.DEFINE_ROOT_NAME) {
                 result = Xml.toXml((Map) object, identStep, newRootName);
-            } else if (mode == Mode.FORCE_ATTRIBUTE_USAGE_AND_DEFINE_ROOT_NAME) {
-                result = Xml.toXml(forceAttributeUsage((Map) object), identStep, newRootName);
             } else if (mode == Mode.REPLACE_NULL_WITH_EMPTY_VALUE) {
                 result = Xml.toXml(replaceNullWithEmptyValue((Map) object), identStep, newRootName);
             } else if (mode == Mode.REPLACE_EMPTY_STRING_WITH_EMPTY_VALUE) {
@@ -2461,7 +2451,7 @@ public class U<T> extends Underscore<T> {
             } else if (mode == Mode.FORCE_ADD_ROOT_JSON_TO_XML
                     && !Xml.XmlValue.getMapKey(object).equals(ROOT)) {
                 final Map<String, Object> map = U.newLinkedHashMap();
-                map.put(Underscore.isNull(newRootName) ? ROOT : newRootName, object);
+                map.put(newRootName, object);
                 result = Xml.toXml(map, identStep);
             } else {
                 result = Xml.toXml((Map) object, identStep);
@@ -2472,7 +2462,7 @@ public class U<T> extends Underscore<T> {
     }
 
     public static String jsonToXml(String json, Mode mode) {
-        return jsonToXml(json, Xml.XmlStringBuilder.Step.TWO_SPACES, mode, null);
+        return jsonToXml(json, Xml.XmlStringBuilder.Step.TWO_SPACES, mode, ROOT);
     }
 
     public static String jsonToXml(String json, Mode mode, String newRootName) {
@@ -2672,7 +2662,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> replaceEmptyValueWithNull(Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             return null;
@@ -2701,7 +2690,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Object replaceEmptyValueWithEmptyString(Map<String, Object> map) {
         if (map.isEmpty()) {
             return "";
@@ -2731,7 +2719,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> forceAttributeUsage(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -2763,7 +2750,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> replaceNullWithEmptyValue(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -2793,7 +2779,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> replaceEmptyStringWithEmptyValue(Map<String, Object> map) {
         Map<String, Object> outMap = newLinkedHashMap();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -2824,7 +2809,6 @@ public class U<T> extends Underscore<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> replaceFirstLevel(Map<String, Object> map) {
         return replaceFirstLevel(map, 0);
     }
@@ -2857,6 +2841,31 @@ public class U<T> extends Underscore<T> {
             result = values;
         } else if (value instanceof Map) {
             result = replaceFirstLevel((Map) value, level + 1);
+        } else {
+            result = value;
+        }
+        return result;
+    }
+
+    public static Map<String, Object> deepCopyMap(Map<String, Object> map) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            outMap.put(entry.getKey(), makeDeepCopyMap(entry.getValue()));
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeDeepCopyMap(Object value) {
+        final Object result;
+        if (value instanceof List) {
+            List<Object> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(item instanceof Map ? deepCopyMap((Map) item) : item);
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = deepCopyMap((Map) value);
         } else {
             result = value;
         }
@@ -2941,6 +2950,12 @@ public class U<T> extends Underscore<T> {
         public static Builder fromXml(final String xml) {
             final Builder builder = new Builder();
             builder.data.putAll(fromXmlMap(xml));
+            return builder;
+        }
+
+        public static Builder fromMap(final Map<String, Object> map) {
+            final Builder builder = new Builder();
+            deepCopyMap(map).forEach(builder.data::put);
             return builder;
         }
 

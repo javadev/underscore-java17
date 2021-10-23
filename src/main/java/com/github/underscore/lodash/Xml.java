@@ -194,11 +194,6 @@ public final class Xml {
         public XmlStringBuilderText(XmlStringBuilder.Step identStep, int ident) {
             super(identStep, ident);
         }
-
-        @Override
-        public String toString() {
-            return super.toString();
-        }
     }
 
     public static class XmlArray {
@@ -237,7 +232,6 @@ public final class Xml {
             }
         }
 
-        @SuppressWarnings("unchecked")
         private static void writeXml(
                 Collection<?> collection,
                 XmlStringBuilder builder,
@@ -1855,7 +1849,7 @@ public final class Xml {
     }
 
     public static String formatXml(String xml) {
-        return formatXml(xml, XmlStringBuilder.Step.THREE_SPACES);
+        return formatXml(xml, XmlStringBuilder.Step.TWO_SPACES);
     }
 
     @SuppressWarnings("unchecked")
