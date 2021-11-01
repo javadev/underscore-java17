@@ -5,7 +5,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore11</artifactId>
   <packaging>jar</packaging>
-  <version>1.27-SNAPSHOT</version>
+  <version>1.28-SNAPSHOT</version>
   <name>java 11 port of Underscore.js</name>
   <description>The java 11 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
@@ -205,13 +205,13 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <version>[4.13.2,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
-      <version>4.1.0</version>
+      <version>[4.1.1,)</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
