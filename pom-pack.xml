@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore11</artifactId>
   <packaging>jar</packaging>
@@ -9,14 +8,12 @@
   <name>java 11 port of Underscore.js</name>
   <description>The java 11 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
-
   <developers>
     <developer>
       <id>javadev</id>
       <name>Valentyn Kolesnikov</name>
     </developer>
   </developers>
-
   <licenses>
     <license>
       <name>The MIT License</name>
@@ -24,28 +21,23 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
   <scm>
     <connection>scm:git:git://github.com/javadev/underscore-java11.git</connection>
     <developerConnection>scm:git:git://github.com/javadev/underscore-java11.git</developerConnection>
     <url>https://github.com/javadev/underscore-java11</url>
   </scm>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.home.openjdk11>../../programs/jdk-10.0.2</java.home.openjdk11>
   </properties>
-
   <ciManagement>
-    <system>Travis CI</system>
-    <url>https://travis-ci.org/javadev/underscore-java11</url>
+    <system>GitHub Actions</system>
+    <url>https://github.com/javadev/underscore-java11/actions</url>
   </ciManagement>
-
   <issueManagement>
     <system>GitHub Issues</system>
     <url>https://github.com/javadev/underscore-java11/issues</url>
   </issueManagement>
-
   <build>
     <plugins>
       <plugin>
@@ -59,181 +51,183 @@
         </configuration>
       </plugin>
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.4</version>
-          <configuration>
-              <archive>
-                  <manifest>
-                      <mainClass>com.github.underscore.Underscore</mainClass>
-                  </manifest>
-              </archive>
-          </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.github.underscore.Underscore</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
       <plugin>
-          <groupId>com.github.dingxin</groupId>
-          <artifactId>proguard-maven-plugin</artifactId>
-          <version>1.0.3</version>
-          <executions>
-             <execution>
-                 <phase>package</phase>
-                 <goals><goal>proguard</goal></goals>
-             </execution>
-          </executions>
-          <configuration>
-              <options>
-                  <option>-allowaccessmodification</option>
-                  <option>-keepattributes Signature,InnerClasses</option>
-                  <option>-keep public class com.github.underscore.Underscore { *; }</option>
-                  <option>-keep public class com.github.underscore.*$Chain { *; }</option>
-                  <option>-keep public class com.github.underscore.Function3 { *; }</option>
-                  <option>-keep public class com.github.underscore.MemoizeFunction { *; }</option>
-                  <option>-keep public class com.github.underscore.Optional { *; }</option>
-                  <option>-keep public class com.github.underscore.PredicateIndexed { *; }</option>
-                  <option>-keep public class com.github.underscore.Template { *; }</option>
-                  <option>-keep public class com.github.underscore.Trie { *; }</option>
-                  <option>-keep public class com.github.underscore.Trie$TrieNode { *; }</option>
-                  <option>-keep public class com.github.underscore.Tuple { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Base32 { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Json { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.U { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Xml { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$Chain { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$ParseException { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$FetchResponse { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$LRUCache { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$Mode { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$Builder { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.*$ArrayBuilder { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Json$JsonStringBuilder$Step { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Xml$XmlStringBuilder$Step { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Xml$XmlStringBuilder { *; }</option>
-                  <option>-keep public class com.github.underscore.lodash.Xml$FromType { *; }</option>
-                  <option>-keepclassmembers class * { *** newArrayList(); *** newLinkedHashSet(); *** newHashSet(java.lang.Iterable); *** newLinkedHashMap(); }</option>
-                  <option>-dontnote com.github.underscore.*$ClassForName</option>
-                  <option>-dontnote com.github.underscore.lodash.*$OperationType</option>
-              </options>
-              <libs>
-                  <lib>${java.home.openjdk11}/lib/jrt-fs.jar</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.base.jmod(!.jar;!module-info.class)</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.compiler.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.corba.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.datatransfer.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.desktop.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.instrument.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.logging.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.management.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.management.rmi.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.naming.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.prefs.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.rmi.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.scripting.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.se.ee.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.se.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.security.jgss.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.security.sasl.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.smartcardio.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.sql.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.sql.rowset.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.transaction.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.xml.bind.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.xml.crypto.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.xml.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.xml.ws.annotation.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/java.xml.ws.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.accessibility.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.aot.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.attach.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.charsets.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.compiler.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.crypto.cryptoki.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.crypto.ec.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.crypto.mscapi.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.dynalink.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.editpad.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.hotspot.agent.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.httpserver.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.incubator.httpclient.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.ed.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.jvmstat.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.le.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.opt.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.ci.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.compiler.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.compiler.management.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jartool.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.javadoc.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jcmd.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jconsole.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jdeps.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jdi.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jdwp.agent.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jlink.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jshell.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jsobject.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.jstatd.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.localedata.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.management.agent.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.management.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.naming.dns.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.naming.rmi.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.net.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.pack.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.rmic.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.scripting.nashorn.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.scripting.nashorn.shell.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.sctp.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.security.auth.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.security.jgss.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.unsupported.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.xml.bind.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.xml.dom.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.xml.ws.jmod</lib>
-                  <lib>${java.home.openjdk11}/jmods/jdk.zipfs.jmod</lib>
-              </libs>
-          </configuration>
+        <groupId>com.github.dingxin</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>1.0.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <options>
+            <option>-allowaccessmodification</option>
+            <option>-keepattributes Signature,InnerClasses</option>
+            <option>-keep public class com.github.underscore.Underscore { *; }</option>
+            <option>-keep public class com.github.underscore.*$Chain { *; }</option>
+            <option>-keep public class com.github.underscore.Function3 { *; }</option>
+            <option>-keep public class com.github.underscore.MemoizeFunction { *; }</option>
+            <option>-keep public class com.github.underscore.Optional { *; }</option>
+            <option>-keep public class com.github.underscore.PredicateIndexed { *; }</option>
+            <option>-keep public class com.github.underscore.Template { *; }</option>
+            <option>-keep public class com.github.underscore.Trie { *; }</option>
+            <option>-keep public class com.github.underscore.Trie$TrieNode { *; }</option>
+            <option>-keep public class com.github.underscore.Tuple { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Base32 { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Json { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.U { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Xml { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$Chain { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$ParseException { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$FetchResponse { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$LRUCache { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$Mode { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$Builder { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.*$ArrayBuilder { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Json$JsonStringBuilder$Step { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Xml$XmlStringBuilder$Step { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Xml$XmlStringBuilder { *; }</option>
+            <option>-keep public class com.github.underscore.lodash.Xml$FromType { *; }</option>
+            <option>-keepclassmembers class * { *** newArrayList(); *** newLinkedHashSet(); *** newHashSet(java.lang.Iterable); *** newLinkedHashMap(); }</option>
+            <option>-dontnote com.github.underscore.*$ClassForName</option>
+            <option>-dontnote com.github.underscore.lodash.*$OperationType</option>
+          </options>
+          <libs>
+            <lib>${java.home.openjdk11}/lib/jrt-fs.jar</lib>
+            <lib>${java.home.openjdk11}/jmods/java.base.jmod(!.jar;!module-info.class)</lib>
+            <lib>${java.home.openjdk11}/jmods/java.compiler.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.corba.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.datatransfer.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.desktop.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.instrument.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.logging.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.management.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.management.rmi.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.naming.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.prefs.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.rmi.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.scripting.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.se.ee.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.se.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.security.jgss.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.security.sasl.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.smartcardio.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.sql.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.sql.rowset.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.transaction.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.xml.bind.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.xml.crypto.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.xml.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.xml.ws.annotation.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/java.xml.ws.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.accessibility.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.aot.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.attach.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.charsets.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.compiler.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.crypto.cryptoki.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.crypto.ec.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.crypto.mscapi.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.dynalink.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.editpad.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.hotspot.agent.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.httpserver.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.incubator.httpclient.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.ed.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.jvmstat.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.le.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.opt.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.ci.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.compiler.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.compiler.management.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jartool.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.javadoc.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jcmd.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jconsole.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jdeps.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jdi.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jdwp.agent.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jlink.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jshell.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jsobject.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.jstatd.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.localedata.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.management.agent.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.management.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.naming.dns.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.naming.rmi.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.net.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.pack.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.rmic.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.scripting.nashorn.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.scripting.nashorn.shell.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.sctp.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.security.auth.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.security.jgss.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.unsupported.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.xml.bind.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.xml.dom.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.xml.ws.jmod</lib>
+            <lib>${java.home.openjdk11}/jmods/jdk.zipfs.jmod</lib>
+          </libs>
+        </configuration>
       </plugin>
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.1</version>
-          <executions>
-              <execution>
-                  <id>attach-sources</id>
-                  <goals>
-                      <goal>jar</goal>
-                      <goal>test-jar</goal>
-                  </goals>
-              </execution>
-          </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.1.0</version>
-          <executions>
-              <execution>
-                  <id>attach-sources</id>
-                  <goals>
-                      <goal>jar</goal>
-                      <goal>test-jar</goal>
-                  </goals>
-              </execution>
-          </executions>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.4</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -251,5 +245,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 </project>
