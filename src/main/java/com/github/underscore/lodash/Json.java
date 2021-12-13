@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class Json {
+    private Json() {}
+
     private static final String NULL = "null";
     private static final String DIGIT = "digit";
 
@@ -149,6 +151,8 @@ public final class Json {
     }
 
     public static class JsonArray {
+        private JsonArray() {}
+
         public static void writeJson(Collection collection, JsonStringBuilder builder) {
             if (collection == null) {
                 builder.append(NULL);
@@ -336,6 +340,8 @@ public final class Json {
     }
 
     public static class JsonObject {
+        private JsonObject() {}
+
         public static void writeJson(Map map, JsonStringBuilder builder) {
             if (map == null) {
                 builder.append(NULL);
@@ -367,6 +373,8 @@ public final class Json {
     }
 
     public static class JsonValue {
+        private JsonValue() {}
+
         public static void writeJson(Object value, JsonStringBuilder builder) {
             if (value == null) {
                 builder.append(NULL);
@@ -394,7 +402,13 @@ public final class Json {
                 JsonObject.writeJson((Map) value, builder);
             } else if (value instanceof Collection) {
                 JsonArray.writeJson((Collection) value, builder);
-            } else if (value instanceof byte[]) {
+            } else {
+                doWriteJson(value, builder);
+            }
+        }
+
+        private static void doWriteJson(Object value, JsonStringBuilder builder) {
+            if (value instanceof byte[]) {
                 JsonArray.writeJson((byte[]) value, builder);
             } else if (value instanceof short[]) {
                 JsonArray.writeJson((short[]) value, builder);
@@ -713,7 +727,9 @@ public final class Json {
                 throw expected(DIGIT);
             }
             if (firstDigit != '0') {
-                while (readDigit()) {}
+                while (readDigit()) {
+                    // ignored
+                }
             }
             readFraction();
             readExponent();
@@ -744,7 +760,9 @@ public final class Json {
             if (!readDigit()) {
                 throw expected(DIGIT);
             }
-            while (readDigit()) {}
+            while (readDigit()) {
+                // ignored
+            }
             return true;
         }
 
@@ -758,7 +776,9 @@ public final class Json {
             if (!readDigit()) {
                 throw expected(DIGIT);
             }
-            while (readDigit()) {}
+            while (readDigit()) {
+                // ignored
+            }
             return true;
         }
 
