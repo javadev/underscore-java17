@@ -28,6 +28,7 @@ import com.github.underscore.Optional;
 import com.github.underscore.PredicateIndexed;
 import com.github.underscore.Tuple;
 import com.github.underscore.Underscore;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1934,8 +1935,16 @@ public class U<T> extends Underscore<T> {
             return Json.fromJson(text());
         }
 
+        public Map<String, Object> jsonMap() {
+            return fromJsonMap(text());
+        }
+
         public Object xml() {
             return Xml.fromXml(text());
+        }
+
+        public Map<String, Object> xmlMap() {
+            return fromXmlMap(text());
         }
     }
 
@@ -1948,11 +1957,28 @@ public class U<T> extends Underscore<T> {
         return fetch(url, null, null, DEFAULT_HEADER_FIELDS, connectTimeout, readTimeout);
     }
 
+    public static FetchResponse fetch(
+            final String url,
+            final Integer connectTimeout,
+            final Integer readTimeout,
+            final Integer retryCount,
+            final Integer timeBetweenRetry) {
+        return Fetch.fetch(
+                url,
+                null,
+                null,
+                DEFAULT_HEADER_FIELDS,
+                connectTimeout,
+                readTimeout,
+                retryCount,
+                timeBetweenRetry);
+    }
+
     public static FetchResponse fetch(final String url, final String method, final String body) {
         return fetch(url, method, body, DEFAULT_HEADER_FIELDS, null, null);
     }
 
-    private static class BaseHttpSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
+    public static class BaseHttpSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
         private javax.net.ssl.SSLContext getSslContext() {
             return createEasySslContext();
         }
@@ -2034,7 +2060,7 @@ public class U<T> extends Underscore<T> {
         }
     }
 
-    private static void setupConnection(
+    public static void setupConnection(
             final java.net.HttpURLConnection connection,
             final String method,
             final Map<String, List<String>> headerFields,
@@ -2081,7 +2107,7 @@ public class U<T> extends Underscore<T> {
                 connection.setDoOutput(true);
                 final java.io.DataOutputStream outputStream =
                         new java.io.DataOutputStream(connection.getOutputStream());
-                outputStream.writeBytes(body);
+                outputStream.write(body.getBytes(StandardCharsets.UTF_8));
                 outputStream.close();
             }
             final int responseCode = connection.getResponseCode();
@@ -2105,6 +2131,47 @@ public class U<T> extends Underscore<T> {
                     result);
         } catch (java.io.IOException ex) {
             throw new UnsupportedOperationException(ex);
+        }
+    }
+
+    public static class Fetch {
+        private Fetch() {}
+
+        @SuppressWarnings("java:S107")
+        public static FetchResponse fetch(
+                final String url,
+                final String method,
+                final String body,
+                final Map<String, List<String>> headerFields,
+                final Integer connectTimeout,
+                final Integer readTimeout,
+                final Integer retryCount,
+                final Integer timeBetweenRetry) {
+            if (nonNull(retryCount)
+                    && retryCount > 0
+                    && retryCount <= 10
+                    && nonNull(timeBetweenRetry)
+                    && timeBetweenRetry > 0) {
+                int localRetryCount = 0;
+                UnsupportedOperationException saveException;
+                do {
+                    try {
+                        return U.fetch(
+                                url, method, body, headerFields, connectTimeout, readTimeout);
+                    } catch (UnsupportedOperationException ex) {
+                        saveException = ex;
+                    }
+                    localRetryCount += 1;
+                    try {
+                        java.util.concurrent.TimeUnit.MILLISECONDS.sleep(timeBetweenRetry);
+                    } catch (InterruptedException ex) {
+                        saveException = new UnsupportedOperationException(ex);
+                        Thread.currentThread().interrupt();
+                    }
+                } while (localRetryCount <= retryCount);
+                throw saveException;
+            }
+            return U.fetch(url, method, body, headerFields, connectTimeout, readTimeout);
         }
     }
 
@@ -2325,6 +2392,10 @@ public class U<T> extends Underscore<T> {
 
     protected static <K, E> Map<K, E> newLinkedHashMap() {
         return Underscore.newLinkedHashMap();
+    }
+
+    public static <T> String join(final Iterable<T> iterable, final String separator) {
+        return Underscore.join(iterable, separator);
     }
 
     public static String toJson(Collection collection) {
@@ -2634,12 +2705,12 @@ public class U<T> extends Underscore<T> {
                     outMap = value;
                     break;
                 }
-                continue;
+            } else {
+                ((Map<String, Object>) outMap)
+                        .put(
+                                String.valueOf(entry.getKey()),
+                                makeObjectSelfClose(entry.getValue(), value));
             }
-            ((Map<String, Object>) outMap)
-                    .put(
-                            String.valueOf(entry.getKey()),
-                            makeObjectSelfClose(entry.getValue(), value));
         }
         return outMap;
     }
@@ -2974,6 +3045,16 @@ public class U<T> extends Underscore<T> {
             return this;
         }
 
+        public Builder add(final Map<String, Object> map) {
+            deepCopyMap(map).forEach(data::put);
+            return this;
+        }
+
+        public Builder addNull(final String key) {
+            data.put(key, null);
+            return this;
+        }
+
         @SuppressWarnings("unchecked")
         public Map<String, Object> build() {
             return (Map<String, Object>) ((LinkedHashMap) data).clone();
@@ -3028,6 +3109,11 @@ public class U<T> extends Underscore<T> {
 
         public ArrayBuilder add(final Object value) {
             data.add(value);
+            return this;
+        }
+
+        public ArrayBuilder addNull() {
+            data.add(null);
             return this;
         }
 
