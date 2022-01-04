@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.javadev</groupId>
-  <artifactId>underscore11</artifactId>
+  <artifactId>underscore17</artifactId>
   <packaging>jar</packaging>
   <version>1.30</version>
-  <name>java 11 port of Underscore.js</name>
+  <name>java 17 port of Underscore.js</name>
   <description>The java 11 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
   <developers>
@@ -28,7 +28,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.home.openjdk11>../../programs/jdk-11.0.2</java.home.openjdk11>
+    <java.home.openjdk17>../../programs/jdk-17.0.1</java.home.openjdk17>
   </properties>
   <ciManagement>
     <system>GitHub Actions</system>
@@ -45,8 +45,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>17</source>
+          <target>17</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
@@ -121,73 +121,68 @@
             <option>-dontnote com.github.underscore.lodash.*$OperationType</option>
           </options>
           <libs>
-            <lib>${java.home.openjdk11}/lib/jrt-fs.jar</lib>
-            <lib>${java.home.openjdk11}/jmods/java.base.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.compiler.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.datatransfer.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.desktop.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.instrument.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.logging.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.management.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.management.rmi.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.naming.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.prefs.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.rmi.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.scripting.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.se.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.security.jgss.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.security.sasl.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.smartcardio.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.sql.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.sql.rowset.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.xml.crypto.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/java.xml.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.accessibility.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.aot.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.attach.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.charsets.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.compiler.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.crypto.cryptoki.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.crypto.ec.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.crypto.mscapi.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.dynalink.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.editpad.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.hotspot.agent.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.httpserver.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.ed.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.jvmstat.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.le.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.opt.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.ci.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.compiler.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.internal.vm.compiler.management.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jartool.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.javadoc.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jcmd.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jconsole.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jdeps.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jdi.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jdwp.agent.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jlink.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jshell.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jsobject.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.jstatd.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.localedata.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.management.agent.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.management.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.naming.dns.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.naming.rmi.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.net.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.pack.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.rmic.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.scripting.nashorn.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.scripting.nashorn.shell.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.sctp.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.security.auth.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.security.jgss.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.unsupported.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.xml.dom.jmod</lib>
-            <lib>${java.home.openjdk11}/jmods/jdk.zipfs.jmod</lib>
+            <lib>${java.home.openjdk17}/lib/jrt-fs.jar</lib>
+            <lib>${java.home.openjdk17}/jmods/java.base.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.compiler.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.datatransfer.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.desktop.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.instrument.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.logging.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.management.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.management.rmi.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.naming.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.prefs.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.rmi.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.scripting.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.se.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.security.jgss.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.security.sasl.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.smartcardio.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.sql.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.sql.rowset.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.xml.crypto.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/java.xml.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.accessibility.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.attach.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.charsets.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.compiler.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.crypto.cryptoki.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.crypto.ec.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.crypto.mscapi.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.dynalink.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.editpad.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.hotspot.agent.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.httpserver.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.ed.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.jvmstat.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.le.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.opt.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.vm.ci.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.vm.compiler.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.internal.vm.compiler.management.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jartool.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.javadoc.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jcmd.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jconsole.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jdeps.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jdi.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jdwp.agent.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jlink.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jshell.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jsobject.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.jstatd.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.localedata.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.management.agent.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.management.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.naming.dns.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.naming.rmi.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.net.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.sctp.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.security.auth.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.security.jgss.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.unsupported.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.xml.dom.jmod</lib>
+            <lib>${java.home.openjdk17}/jmods/jdk.zipfs.jmod</lib>
           </libs>
         </configuration>
       </plugin>
