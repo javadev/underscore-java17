@@ -6,7 +6,7 @@
   <packaging>jar</packaging>
   <version>1.30</version>
   <name>java 17 port of Underscore.js</name>
-  <description>The java 11 port of Underscore.js</description>
+  <description>The java 17 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
   <developers>
     <developer>
