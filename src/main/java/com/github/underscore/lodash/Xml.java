@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("java:S3776")
+@SuppressWarnings({"java:S107", "java:S3740", "java:S3776", "java:S4276"})
 public final class Xml {
     private Xml() {}
 
@@ -1520,7 +1520,7 @@ public final class Xml {
                                     result.append(Base32.decode(nameToDecode.toString()));
                                 } catch (Base32.DecodingException ex) {
                                     result.append("__")
-                                            .append(nameToDecode.toString())
+                                            .append(nameToDecode)
                                             .append(lastChars);
                                 }
                                 i = j;
