@@ -82,5 +82,3 @@ jobs:
         run: mvn -B test jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=javadev-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=javadev_underscore-java
       - name: Build examples
         run: mvn -B -f examples/pom.xml package
-      - name: Build spring-boot
-        run: mvn -B -f spring-boot-example/pom.xml package
