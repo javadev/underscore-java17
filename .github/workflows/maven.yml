@@ -78,7 +78,7 @@ jobs:
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: 47bf1d4e7f3024336a676fcabe035025f05aef2d
-        run: mvn -B test jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=javadev-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=javadev_underscore-java
+          SONAR_TOKEN: 77e7b80c7f497f0861daa958b9a4320894af0948
+        run: mvn -B test jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=javadev-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=javadev_underscore-java11
       - name: Build examples
         run: mvn -B -f examples/pom.xml package
