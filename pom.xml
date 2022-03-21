@@ -56,6 +56,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M5</version>
+        <configuration>
+          <argLine>--add-opens=com.github.underscore/com.github.underscore=ALL-UNNAMED</argLine>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -71,7 +74,6 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Automatic-Module-Name>com.github.underscore</Automatic-Module-Name>
               <Main-Class>com.github.underscore.Underscore</Main-Class>
             </manifestEntries>
           </archive>
@@ -89,6 +91,7 @@
               <goal>check</goal>
             </goals>
             <configuration>
+              <excludes>**/module-info.java</excludes>
               <configLocation>${basedir}/checkstyle.xml</configLocation>
               <includeTestSourceDirectory>true</includeTestSourceDirectory>
               <failOnViolation>true</failOnViolation>
