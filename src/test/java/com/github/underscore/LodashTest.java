@@ -881,6 +881,56 @@ class LodashTest {
                                 + "  ]\n"
                                 + "}",
                         U.Mode.FORCE_ADD_ROOT_JSON_TO_XML));
+        Map<String, Object> map2 = U.newLinkedHashMap();
+        List<Object> list = U.newArrayList();
+        list.add(U.newArrayList());
+        list.add(U.newLinkedHashMap());
+        map2.put("list", list);
+        U.replaceNumberAndBooleanWithString(map2);
+        map2.put("list", U.newLinkedHashMap());
+        U.replaceNumberAndBooleanWithString(map2);
+    }
+
+    @Test
+    void forceRemoveArrayTrue() {
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<data>\n"
+                        + "  <a>b</a>\n"
+                        + "</data>",
+                U.jsonToXml(
+                        "{\n"
+                                + "  \"data\": [\n"
+                                + "    {\n"
+                                + "      \"a\": \"b\"\n"
+                                + "    }\n"
+                                + "  ]\n"
+                                + "}",
+                        U.Mode.FORCE_REMOVE_ARRAY_ATTRIBUTE_JSON_TO_XML));
+    }
+
+    @Test
+    void forceRemoveArrayTrueBooleanAndNumber() {
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<data>\n"
+                        + "  <a>b</a>\n"
+                        + "  <c>true</c>\n"
+                        + "  <d>1</d>\n"
+                        + "  <e></e>\n"
+                        + "</data>",
+                U.jsonToXml(
+                        "{\n"
+                                + "  \"data\": [\n"
+                                + "    {\n"
+                                + "      \"a\": \"b\",\n"
+                                + "      \"c\": true,\n"
+                                + "      \"d\": 1,\n"
+                                + "      \"e\": {}\n"
+                                + "    }\n"
+                                + "  ]\n"
+                                + "}",
+                        U.Mode.FORCE_REMOVE_ARRAY_BOOLEAN_NUMBER_ATTRIBUTES_JSON_TO_XML));
     }
 
     @Test

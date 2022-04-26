@@ -62,6 +62,7 @@ import java.util.zip.GZIPInputStream;
     "java:S4423",
     "java:S4830",
     "java:S5843",
+    "java:S5996",
     "java:S5998"
 })
 public class U<T> extends Underscore<T> {
@@ -134,7 +135,9 @@ public class U<T> extends Underscore<T> {
         REPLACE_NULL_WITH_EMPTY_VALUE,
         REPLACE_EMPTY_STRING_WITH_EMPTY_VALUE,
         REMOVE_FIRST_LEVEL_XML_TO_JSON,
-        FORCE_ADD_ROOT_JSON_TO_XML
+        FORCE_ADD_ROOT_JSON_TO_XML,
+        FORCE_REMOVE_ARRAY_ATTRIBUTE_JSON_TO_XML,
+        FORCE_REMOVE_ARRAY_BOOLEAN_NUMBER_ATTRIBUTES_JSON_TO_XML
     }
 
     public U(final Iterable<T> iterable) {
@@ -2573,6 +2576,15 @@ public class U<T> extends Underscore<T> {
                 final Map<String, Object> map = U.newLinkedHashMap();
                 map.put(newRootName, object);
                 result = Xml.toXml(map, identStep);
+            } else if (mode == Mode.FORCE_REMOVE_ARRAY_ATTRIBUTE_JSON_TO_XML) {
+                result = Xml.toXml((Map) object, identStep, newRootName, Xml.ArrayTrue.SKIP);
+            } else if (mode == Mode.FORCE_REMOVE_ARRAY_BOOLEAN_NUMBER_ATTRIBUTES_JSON_TO_XML) {
+                result =
+                        Xml.toXml(
+                                replaceNumberAndBooleanWithString((Map) object),
+                                identStep,
+                                newRootName,
+                                Xml.ArrayTrue.SKIP);
             } else {
                 result = Xml.toXml((Map) object, identStep);
             }
@@ -2931,6 +2943,36 @@ public class U<T> extends Underscore<T> {
             result = values;
         } else if (value instanceof Map) {
             result = replaceEmptyStringWithEmptyValue((Map) value);
+        } else {
+            result = value;
+        }
+        return result;
+    }
+
+    public static Map<String, Object> replaceNumberAndBooleanWithString(Map<String, Object> map) {
+        Map<String, Object> outMap = newLinkedHashMap();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            outMap.put(
+                    entry.getKey(),
+                    entry.getValue() instanceof Boolean || entry.getValue() instanceof Number
+                            ? String.valueOf(entry.getValue())
+                            : makeReplaceNumberAndBoolean(entry.getValue()));
+        }
+        return outMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object makeReplaceNumberAndBoolean(Object value) {
+        final Object result;
+        if (value instanceof List) {
+            List<Object> values = newArrayList();
+            for (Object item : (List) value) {
+                values.add(
+                        item instanceof Map ? replaceNumberAndBooleanWithString((Map) item) : item);
+            }
+            result = values;
+        } else if (value instanceof Map) {
+            result = replaceNumberAndBooleanWithString((Map) value);
         } else {
             result = value;
         }
