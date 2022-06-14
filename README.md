@@ -10,7 +10,7 @@ underscore-java11
 [![javadoc](https://javadoc.io/badge2/com.github.javadev/underscore11/javadoc.svg)](https://javadoc.io/doc/com.github.javadev/underscore11)
 [![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java11?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=5&branchName=main)
 ![Java Version](https://img.shields.io/badge/java-%3E%3D%2011-success)
-[![](https://img.shields.io/github/forks/javadev/underscore-java11?label=Fork)](https://github.com/javadev/underscore-java11/fork)
+[![](https://img.shields.io/github/forks/javadev/underscore-java11)](https://github.com/javadev/underscore-java11/fork)
 
 Requirements
 ============
