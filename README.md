@@ -5,6 +5,7 @@ underscore-java11
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/javadev/underscore-java11/blob/master/LICENSE.txt)
 [![Java CI](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml)
+[![Semgrep](https://github.com/javadev/underscore-java11/actions/workflows/semgrep.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/semgrep.yml)
 [![codecov](https://codecov.io/gh/javadev/underscore-java11/branch/master/graph/badge.svg)](https://codecov.io/gh/javadev/underscore-java11)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=javadev_underscore-java11)
 [![javadoc](https://javadoc.io/badge2/com.github.javadev/underscore11/javadoc.svg)](https://javadoc.io/doc/com.github.javadev/underscore11)
