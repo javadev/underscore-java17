@@ -4,7 +4,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore11</artifactId>
   <packaging>jar</packaging>
-  <version>1.37</version>
+  <version>1.38</version>
   <name>java 11 port of Underscore.js</name>
   <description>The java 11 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
