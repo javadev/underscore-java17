@@ -7,7 +7,7 @@
   <version>1.39</version>
   <name>java 17 port of Underscore.js</name>
   <description>The java 17 port of Underscore.js</description>
-  <url>https://github.com/javadev/underscore-java11</url>
+  <url>https://github.com/javadev/underscore-java17</url>
   <developers>
     <developer>
       <id>javadev</id>
@@ -22,20 +22,20 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:git://github.com/javadev/underscore-java11.git</connection>
-    <developerConnection>scm:git:git://github.com/javadev/underscore-java11.git</developerConnection>
-    <url>https://github.com/javadev/underscore-java11</url>
+    <connection>scm:git:git://github.com/javadev/underscore-java17.git</connection>
+    <developerConnection>scm:git:git://github.com/javadev/underscore-java17.git</developerConnection>
+    <url>https://github.com/javadev/underscore-java17</url>
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <ciManagement>
     <system>GitHub Actions</system>
-    <url>https://github.com/javadev/underscore-java11/actions</url>
+    <url>https://github.com/javadev/underscore-java17/actions</url>
   </ciManagement>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/javadev/underscore-java11/issues</url>
+    <url>https://github.com/javadev/underscore-java17/issues</url>
   </issueManagement>
   <build>
     <plugins>
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>[5.8.2,)</version>
+      <version>[5.9.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
