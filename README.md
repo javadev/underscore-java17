@@ -7,9 +7,9 @@ underscore-java17
 [![CodeQL](https://github.com/javadev/underscore-java17/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml)
 [![Semgrep](https://github.com/javadev/underscore-java17/actions/workflows/semgrep.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/semgrep.yml)
 [![codecov](https://codecov.io/gh/javadev/underscore-java17/branch/master/graph/badge.svg)](https://codecov.io/gh/javadev/underscore-java11)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java17&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=javadev_underscore-java17)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=javadev_underscore-java17)
 [![javadoc](https://javadoc.io/badge2/com.github.javadev/underscore17/javadoc.svg)](https://javadoc.io/doc/com.github.javadev/underscore17)
-[![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java17?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=5&branchName=main)
+[![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java11?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=5&branchName=main)
 ![Java Version](https://img.shields.io/badge/java-%3E%3D%2017-success)
 [![](https://img.shields.io/github/forks/javadev/underscore-java17)](https://github.com/javadev/underscore-java17/fork)
 
@@ -26,8 +26,8 @@ Include the following in your `pom.xml` for Maven:
 <dependencies>
   <dependency>
     <groupId>com.github.javadev</groupId>
-    <artifactId>underscore11</artifactId>
-    <version>1.38</version>
+    <artifactId>underscore17</artifactId>
+    <version>1.39</version>
   </dependency>
   ...
 </dependencies>
@@ -36,7 +36,7 @@ Include the following in your `pom.xml` for Maven:
 Gradle:
 
 ```groovy
-implementation 'com.github.javadev:underscore11:1.38'
+implementation 'com.github.javadev:underscore17:1.39'
 ```
 
 Underscore-java is a java port of [Underscore.js](http://underscorejs.org/).
