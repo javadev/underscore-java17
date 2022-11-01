@@ -4,7 +4,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore11</artifactId>
   <packaging>jar</packaging>
-  <version>1.39-SNAPSHOT</version>
+  <version>1.40-SNAPSHOT</version>
   <name>java 11 port of Underscore.js</name>
   <description>The java 11 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java11</url>
@@ -60,7 +60,7 @@
           <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>[5.8.2,)</version>
+            <version>[5.9.1,)</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -211,7 +211,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>[5.8.2,)</version>
+      <version>[5.9.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
