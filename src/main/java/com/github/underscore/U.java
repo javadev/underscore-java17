@@ -569,6 +569,11 @@ public class U<T> extends Underscore<T> {
             return new Chain<>(map());
         }
 
+        public Chain<Map<String, Object>> set(final List<String> paths, Object value) {
+            U.set(map(), paths, value);
+            return new Chain<>(map());
+        }
+
         @Override
         public Chain<T> reverse() {
             return new Chain<>(Underscore.reverse(value()));
@@ -1715,10 +1720,9 @@ public class U<T> extends Underscore<T> {
     @SuppressWarnings("unchecked")
     private static <T> T baseGetOrSetOrRemove(
             final Map<String, Object> object,
-            final String path,
+            final List<String> paths,
             final Object value,
             OperationType operationType) {
-        final List<String> paths = stringToPath(path);
         int index = 0;
         final int length = paths.size();
 
@@ -1774,15 +1778,28 @@ public class U<T> extends Underscore<T> {
     }
 
     public static <T> T get(final Map<String, Object> object, final String path) {
-        return baseGetOrSetOrRemove(object, path, null, OperationType.GET);
+        return get(object, stringToPath(path));
+    }
+
+    public static <T> T get(final Map<String, Object> object, final List<String> paths) {
+        return baseGetOrSetOrRemove(object, paths, null, OperationType.GET);
     }
 
     public static <T> T set(final Map<String, Object> object, final String path, Object value) {
-        return baseGetOrSetOrRemove(object, path, value, OperationType.SET);
+        return set(object, stringToPath(path), value);
+    }
+
+    public static <T> T set(
+            final Map<String, Object> object, final List<String> paths, Object value) {
+        return baseGetOrSetOrRemove(object, paths, value, OperationType.SET);
     }
 
     public static <T> T remove(final Map<String, Object> object, final String path) {
-        return baseGetOrSetOrRemove(object, path, null, OperationType.REMOVE);
+        return remove(object, stringToPath(path));
+    }
+
+    public static <T> T remove(final Map<String, Object> object, final List<String> paths) {
+        return baseGetOrSetOrRemove(object, paths, null, OperationType.REMOVE);
     }
 
     public static Map<String, Object> rename(
@@ -2658,6 +2675,43 @@ public class U<T> extends Underscore<T> {
         return xmlToJson(xml, Json.JsonStringBuilder.Step.TWO_SPACES, mode);
     }
 
+    public enum TextType {
+        JSON,
+        XML,
+        OTHER
+    }
+
+    public static TextType getTextType(String text) {
+        String trimmed = trim(text);
+        final TextType textType;
+        if (trimmed.startsWith("{") && trimmed.endsWith("}")
+                || trimmed.startsWith("[") && trimmed.endsWith("]")) {
+            textType = TextType.JSON;
+        } else if (trimmed.startsWith("<") && trimmed.endsWith(">")) {
+            textType = TextType.XML;
+        } else {
+            textType = TextType.OTHER;
+        }
+        return textType;
+    }
+
+    public static String formatJsonOrXml(String jsonOrXml, String identStep) {
+        TextType textType = getTextType(jsonOrXml);
+        final String result;
+        if (textType == TextType.JSON) {
+            result = formatJson(jsonOrXml, Json.JsonStringBuilder.Step.valueOf(identStep));
+        } else if (textType == TextType.XML) {
+            result = formatXml(jsonOrXml, Xml.XmlStringBuilder.Step.valueOf(identStep));
+        } else {
+            result = jsonOrXml;
+        }
+        return result;
+    }
+
+    public static String formatJsonOrXml(String jsonOrXml) {
+        return formatJsonOrXml(jsonOrXml, "TWO_SPACES");
+    }
+
     public static String formatJson(String json, Json.JsonStringBuilder.Step identStep) {
         return Json.formatJson(json, identStep);
     }
@@ -3119,13 +3173,27 @@ public class U<T> extends Underscore<T> {
             return U.get(data, path);
         }
 
+        public <T> T get(final List<String> paths) {
+            return U.get(data, paths);
+        }
+
         public Builder set(final String path, final Object value) {
             U.set(data, path, value);
             return this;
         }
 
+        public Builder set(final List<String> paths, final Object value) {
+            U.set(data, paths, value);
+            return this;
+        }
+
         public Builder remove(final String key) {
             U.remove(data, key);
+            return this;
+        }
+
+        public Builder remove(final List<String> keys) {
+            U.remove(data, keys);
             return this;
         }
 
@@ -3236,6 +3304,13 @@ public class U<T> extends Underscore<T> {
 
         public <T> T get(final String path) {
             return U.get(U.getStringObjectMap(data), "value." + path);
+        }
+
+        public <T> T get(final List<String> paths) {
+            List<String> newPaths = new ArrayList<>();
+            newPaths.add("value");
+            newPaths.addAll(paths);
+            return U.get(U.getStringObjectMap(data), newPaths);
         }
 
         public ArrayBuilder set(final int index, final Object value) {

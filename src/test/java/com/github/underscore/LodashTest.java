@@ -431,6 +431,9 @@ class LodashTest {
         Map<String, Object> map4 = U.newLinkedHashMap();
         map4.put("a", "b");
         assertNull(U.<String>set(map4, "a.b", "b"));
+        Map<String, Object> map5 = U.newLinkedHashMap();
+        map5.put("a", "b");
+        assertNull(U.chain(map5.entrySet()).set(asList("a", "b"), "b").value());
     }
 
     @Test
@@ -1042,6 +1045,37 @@ class LodashTest {
     }
 
     @Test
+    void getTextType() {
+        assertEquals(
+                U.TextType.OTHER,
+                U.getTextType("<root><element>1</element><element>2</element></root"));
+        assertEquals(
+                U.TextType.OTHER,
+                U.getTextType("root><element>1</element><element>2</element></root>"));
+        assertEquals(U.TextType.OTHER, U.getTextType("{\n  \"a\": {\n  }\n"));
+        assertEquals(U.TextType.OTHER, U.getTextType("\n  \"a\": {\n  }\n}"));
+        assertEquals(U.TextType.OTHER, U.getTextType("[\n  1.00\n"));
+        assertEquals(U.TextType.OTHER, U.getTextType("\n  1.00\n]"));
+    }
+
+    @Test
+    void formatJsonOrXml() {
+        assertEquals(
+                "<root>\n  <element>1</element>\n  <element>2</element>\n</root>",
+                U.formatJsonOrXml("<root><element>1</element><element>2</element></root>"));
+        assertEquals(
+                "<a>\n    <b></b>\n    <b></b>\n</a>",
+                U.formatJsonOrXml("<a>\n  <b></b>\n  <b></b>\n</a>", "FOUR_SPACES"));
+        assertEquals("{\n  \"a\": {\n  }\n}", U.formatJsonOrXml("{\n  \"a\": {\n  }\n}"));
+        assertEquals("[\n]", U.formatJsonOrXml("[]"));
+        assertEquals("[\n  1.00\n]", U.formatJsonOrXml("[1.00]"));
+        assertEquals(
+                "{\n    \"a\": {\n    }\n}",
+                U.formatJsonOrXml("{\n  \"a\": {\n  }\n}", "FOUR_SPACES"));
+        assertEquals("text", U.formatJsonOrXml("text", "FOUR_SPACES"));
+    }
+
+    @Test
     void formatXml() {
         assertEquals(
                 "<root>\n  <element>1</element>\n  <element>2</element>\n</root>",
@@ -1246,8 +1280,7 @@ class LodashTest {
                         "<?xml version=\"1.0\" encoding=\"UTF-8\"?><a>Test</a>",
                         Xml.XmlStringBuilder.Step.COMPACT,
                         "windows-1251"));
-        assertNull(
-                U.changeXmlEncoding(null, Xml.XmlStringBuilder.Step.COMPACT, "windows-1251"));
+        assertNull(U.changeXmlEncoding(null, Xml.XmlStringBuilder.Step.COMPACT, "windows-1251"));
     }
 
     @Test
@@ -1374,6 +1407,10 @@ class LodashTest {
         assertEquals("{1=3}", builder.build().toString());
         assertEquals("3", builder.<String>get("1"));
         builder.remove("1");
+        builder.set(asList("2"), "4");
+        assertEquals("{2=4}", builder.build().toString());
+        assertEquals("4", builder.<String>get(asList("2")));
+        builder.remove(asList("2"));
         assertEquals("{}", builder.build().toString());
         builder.clear();
         builder.isEmpty();
@@ -1419,6 +1456,7 @@ class LodashTest {
         builder.add(builder);
         builder.toJson();
         assertEquals("1", builder.<String>get("0"));
+        assertEquals("1", builder.<String>get(asList("0")));
         U.ArrayBuilder.fromJson("[]");
         builder.toXml();
         U.ArrayBuilder.fromXml(
