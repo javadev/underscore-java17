@@ -59,36 +59,83 @@ U.of(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 3}
     .map(v -> v + 1)
     // 3, 4
     .sortWith((a, b) -> b.compareTo(a))
-    // 4, 3
     .forEach(System.out::println);
     // 4, 3
     
-U.formatXml("<a><b>data</b></a>");
+U.of(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 3}
+    .mapMulti((num, consumer) -> {
+        for (int i = 0; i < num; i++) {
+            consumer.accept("a" + num);
+        }
+    })
+    .forEach(System.out::println);
+    // "a1", "a2", "a2", "a3", "a3", "a3"
+    
+U.formatXml("<a><b>data</b></a>", Xml.XmlStringBuilder.Step.TWO_SPACES);
     // <a>
-    //    <b>data</b>
+    //   <b>data</b>
     // </a>
 
-U.formatJson("{\"a\":{\"b\":\"data\"}}");
-    // {
-    //    "a": {
-    //      "b": "data"
-    //    }
-    // }
-
-U.xmlToJson("<a attr=\"c\"><b>data</b></a>");
+U.formatJson("{\"a\":{\"b\":\"data\"}}", Json.JsonStringBuilder.Step.TWO_SPACES);
     // {
     //   "a": {
-    //     "-attr": "c",
     //     "b": "data"
+    //   }
+    // }
+
+U.xmlToJson("<mydocument has=\"an attribute\">\n" +
+    "   <and>\n" +
+    "   <many>elements</many>\n" +
+    "    <many>more elements</many>\n" +
+    "   </and>\n" +
+    " <plus a=\"complex\">\n" +
+    "     element as well\n" +
+    "   </plus>\n" +
+    "</mydocument>", Json.JsonStringBuilder.Step.TWO_SPACES);
+
+    // {
+    //   "mydocument": {
+    //     "-has": "an attribute",
+    //     "and": {
+    //       "many": [
+    //         "elements",
+    //         "more elements"
+    //       ]
+    //     },
+    //     "plus": {
+    //       "-a": "complex",
+    //       "#text": "\n     element as well\n   "
+    //     }
     //   },
     //   "#omit-xml-declaration": "yes"
     // }
 
-U.jsonToXml("{\"a\":{\"-attr\":\"c\",\"b\":\"data\"}}");
-    // <?xml version="1.0" encoding="UTF-8"?>
-    // <a attr="c">
-    //   <b>data</b>
-    // </a>
+U.jsonToXml("{\n" +
+    "  \"mydocument\": {\n" +
+    "    \"-has\": \"an attribute\",\n" +
+    "    \"and\": {\n" +
+    "      \"many\": [\n" +
+    "        \"elements\",\n" +
+    "        \"more elements\"\n" +
+    "      ]\n" +
+    "    },\n" +
+    "    \"plus\": {\n" +
+    "      \"-a\": \"complex\",\n" +
+    "      \"#text\": \"\\n     element as well\\n   \"\n" +
+    "    }\n" +
+    "  },\n" +
+    "  \"#omit-xml-declaration\": \"yes\"\n" +
+    "}", Xml.XmlStringBuilder.Step.TWO_SPACES);
+
+    // <mydocument has="an attribute">
+    //   <and>
+    //     <many>elements</many>
+    //     <many>more elements</many>
+    //   </and>
+    //   <plus a="complex">
+    //      element as well
+    //    </plus>
+    // </mydocument>
 
 U.Builder builder = U.objectBuilder()
     .add("firstName", "John")
@@ -159,6 +206,80 @@ System.out.println(builder.toXml());
     <number>646 555-4567</number>
   </phoneNumber>
 </root>
+```
+
+```java
+String inventory =
+    "{\n"
+        + "  \"inventory\": {\n"
+        + "    \"#comment\": \"Test is test comment\",\n"
+        + "    \"book\": [\n"
+        + "      {\n"
+        + "        \"-year\": \"2000\",\n"
+        + "        \"title\": \"Snow Crash\",\n"
+        + "        \"author\": \"Neal Stephenson\",\n"
+        + "        \"publisher\": \"Spectra\",\n"
+        + "        \"isbn\": \"0553380958\",\n"
+        + "        \"price\": \"14.95\"\n"
+        + "      },\n"
+        + "      {\n"
+        + "        \"-year\": \"2005\",\n"
+        + "        \"title\": \"Burning Tower\",\n"
+        + "        \"author\": [\n"
+        + "          \"Larry Niven\",\n"
+        + "          \"Jerry Pournelle\"\n"
+        + "        ],\n"
+        + "        \"publisher\": \"Pocket\",\n"
+        + "        \"isbn\": \"0743416910\",\n"
+        + "        \"price\": \"5.99\"\n"
+        + "      },\n"
+        + "      {\n"
+        + "        \"-year\": \"1995\",\n"
+        + "        \"title\": \"Zodiac\",\n"
+        + "        \"author\": \"Neal Stephenson\",\n"
+        + "        \"publisher\": \"Spectra\",\n"
+        + "        \"isbn\": \"0553573862\",\n"
+        + "        \"price\": \"7.50\"\n"
+        + "      }\n"
+        + "    ]\n"
+        + "  }\n"
+        + "}";
+String title = U.selectToken(U.fromJsonMap(inventory), "//book[@year>2001]/title/text()");
+// "Burning Tower"
+
+String json =
+    "{\n"
+        + "  \"Stores\": [\n"
+        + "    \"Lambton Quay\",\n"
+        + "    \"Willis Street\"\n"
+        + "  ],\n"
+        + "  \"Manufacturers\": [\n"
+        + "    {\n"
+        + "      \"Name\": \"Acme Co\",\n"
+        + "      \"Products\": [\n"
+        + "        {\n"
+        + "          \"Name\": \"Anvil\",\n"
+        + "          \"Price\": 50\n"
+        + "        }\n"
+        + "      ]\n"
+        + "    },\n"
+        + "    {\n"
+        + "      \"Name\": \"Contoso\",\n"
+        + "      \"Products\": [\n"
+        + "        {\n"
+        + "          \"Name\": \"Elbow Grease\",\n"
+        + "          \"Price\": 99.95\n"
+        + "        },\n"
+        + "        {\n"
+        + "          \"Name\": \"Headlight Fluid\",\n"
+        + "          \"Price\": 4\n"
+        + "        }\n"
+        + "      ]\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}";
+List<String> names = U.selectTokens(U.fromJsonMap(json), "//Products[Price>=50]/Name/text()");
+// [Anvil, Elbow Grease]
 ```
 
 In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.
