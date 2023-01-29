@@ -27,7 +27,7 @@ Include the following in your `pom.xml` for Maven:
   <dependency>
     <groupId>com.github.javadev</groupId>
     <artifactId>underscore17</artifactId>
-    <version>1.42</version>
+    <version>1.43</version>
   </dependency>
   ...
 </dependencies>
@@ -36,7 +36,7 @@ Include the following in your `pom.xml` for Maven:
 Gradle:
 
 ```groovy
-implementation 'com.github.javadev:underscore17:1.42'
+implementation 'com.github.javadev:underscore17:1.43'
 ```
 
 Underscore-java is a java port of [Underscore.js](http://underscorejs.org/).
