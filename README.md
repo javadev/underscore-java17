@@ -6,7 +6,7 @@ underscore-java17
 [![Java CI](https://github.com/javadev/underscore-java17/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/javadev/underscore-java17/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml)
 [![Semgrep](https://github.com/javadev/underscore-java17/actions/workflows/semgrep.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/semgrep.yml)
-[![codecov](https://codecov.io/gh/javadev/underscore-java17/branch/master/graph/badge.svg)](https://codecov.io/gh/javadev/underscore-java17)
+[![codecov](https://codecov.io/gh/javadev/underscore-java/branch/master/graph/badge.svg)](https://codecov.io/gh/javadev/underscore-java)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=javadev_underscore-java11)
 [![javadoc](https://javadoc.io/badge2/com.github.javadev/underscore17/javadoc.svg)](https://javadoc.io/doc/com.github.javadev/underscore17)
 [![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java11?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=5&branchName=main)
