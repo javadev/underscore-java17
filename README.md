@@ -40,8 +40,6 @@ Gradle:
 implementation 'com.github.javadev:underscore17:1.43'
 ```
 
-Underscore-java is a java port of [Underscore.js](http://underscorejs.org/).
-
 ### Usage
 
 ```java
