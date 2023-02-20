@@ -71,7 +71,7 @@ U.of(1, 2, 3) // or java.util.Arrays.asList(1, 2, 3) or new Integer[] {1, 2, 3}
     })
     .forEach(System.out::println);
     // "a1", "a2", "a2", "a3", "a3", "a3"
-    
+
 U.formatXml("<a><b>data</b></a>", Xml.XmlStringBuilder.Step.TWO_SPACES);
     // <a>
     //   <b>data</b>
@@ -84,16 +84,17 @@ U.formatJson("{\"a\":{\"b\":\"data\"}}", Json.JsonStringBuilder.Step.TWO_SPACES)
     //   }
     // }
 
-U.xmlToJson("<mydocument has=\"an attribute\">\n" +
-    "   <and>\n" +
-    "   <many>elements</many>\n" +
-    "    <many>more elements</many>\n" +
-    "   </and>\n" +
-    " <plus a=\"complex\">\n" +
-    "     element as well\n" +
-    "   </plus>\n" +
-    "</mydocument>", Json.JsonStringBuilder.Step.TWO_SPACES);
-
+U.xmlToJson(
+        "<mydocument has=\"an attribute\">\n"
+                + "   <and>\n"
+                + "   <many>elements</many>\n"
+                + "    <many>more elements</many>\n"
+                + "   </and>\n"
+                + " <plus a=\"complex\">\n"
+                + "     element as well\n"
+                + "   </plus>\n"
+                + "</mydocument>",
+        Json.JsonStringBuilder.Step.TWO_SPACES);
     // {
     //   "mydocument": {
     //     "-has": "an attribute",
@@ -111,23 +112,24 @@ U.xmlToJson("<mydocument has=\"an attribute\">\n" +
     //   "#omit-xml-declaration": "yes"
     // }
 
-U.jsonToXml("{\n" +
-    "  \"mydocument\": {\n" +
-    "    \"-has\": \"an attribute\",\n" +
-    "    \"and\": {\n" +
-    "      \"many\": [\n" +
-    "        \"elements\",\n" +
-    "        \"more elements\"\n" +
-    "      ]\n" +
-    "    },\n" +
-    "    \"plus\": {\n" +
-    "      \"-a\": \"complex\",\n" +
-    "      \"#text\": \"\\n     element as well\\n   \"\n" +
-    "    }\n" +
-    "  },\n" +
-    "  \"#omit-xml-declaration\": \"yes\"\n" +
-    "}", Xml.XmlStringBuilder.Step.TWO_SPACES);
-
+U.jsonToXml(
+        "{\n"
+                + "  \"mydocument\": {\n"
+                + "    \"-has\": \"an attribute\",\n"
+                + "    \"and\": {\n"
+                + "      \"many\": [\n"
+                + "        \"elements\",\n"
+                + "        \"more elements\"\n"
+                + "      ]\n"
+                + "    },\n"
+                + "    \"plus\": {\n"
+                + "      \"-a\": \"complex\",\n"
+                + "      \"#text\": \"\\n     element as well\\n   \"\n"
+                + "    }\n"
+                + "  },\n"
+                + "  \"#omit-xml-declaration\": \"yes\"\n"
+                + "}",
+        Xml.XmlStringBuilder.Step.TWO_SPACES);
     // <mydocument has="an attribute">
     //   <and>
     //     <many>elements</many>
@@ -138,24 +140,32 @@ U.jsonToXml("{\n" +
     //    </plus>
     // </mydocument>
 
-U.Builder builder = U.objectBuilder()
-    .add("firstName", "John")
-    .add("lastName", "Smith")
-    .add("age", 25)
-    .add("address", U.arrayBuilder()
-        .add(U.objectBuilder()
-            .add("streetAddress", "21 2nd Street")
-            .add("city", "New York")
-            .addNull("cityId")
-            .add("state", "NY")
-            .add("postalCode", "10021")))
-    .add("phoneNumber", U.arrayBuilder()
-        .add(U.objectBuilder()
-            .add("type", "home")
-            .add("number", "212 555-1234"))
-        .add(U.objectBuilder()
-            .add("type", "fax")
-            .add("number", "646 555-4567")));
+U.Builder builder =
+        U.objectBuilder()
+                .add("firstName", "John")
+                .add("lastName", "Smith")
+                .add("age", 25)
+                .add(
+                        "address",
+                        U.arrayBuilder()
+                                .add(
+                                        U.objectBuilder()
+                                                .add("streetAddress", "21 2nd Street")
+                                                .add("city", "New York")
+                                                .addNull("cityId")
+                                                .add("state", "NY")
+                                                .add("postalCode", "10021")))
+                .add(
+                        "phoneNumber",
+                        U.arrayBuilder()
+                                .add(
+                                        U.objectBuilder()
+                                                .add("type", "home")
+                                                .add("number", "212 555-1234"))
+                                .add(
+                                        U.objectBuilder()
+                                                .add("type", "fax")
+                                                .add("number", "646 555-4567")));
 System.out.println(builder.toJson());
 System.out.println(builder.toXml());
 ```
@@ -282,6 +292,8 @@ String json =
 List<String> names = U.selectTokens(U.fromJsonMap(json), "//Products[Price>=50]/Name/text()");
 // [Anvil, Elbow Grease]
 ```
+
+Underscore-java is a java port of [Underscore.js](https://underscorejs.org/).
 
 In addition to porting Underscore's functionality, Underscore-java includes matching unit tests.
 
