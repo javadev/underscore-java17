@@ -458,12 +458,12 @@ public class U<T> extends Underscore<T> {
         }
 
         @Override
-        public <E> Chain<T> where(final List<Tuple<String, E>> properties) {
+        public <E> Chain<T> where(final List<Map.Entry<String, E>> properties) {
             return new Chain<>(Underscore.where(value(), properties));
         }
 
         @Override
-        public <E> Chain<Optional<T>> findWhere(final List<Tuple<String, E>> properties) {
+        public <E> Chain<Optional<T>> findWhere(final List<Map.Entry<String, E>> properties) {
             return new Chain<>(Underscore.findWhere(value(), properties));
         }
 
@@ -3248,21 +3248,6 @@ public class U<T> extends Underscore<T> {
             result = deepCopyMap((Map) value);
         } else {
             result = value;
-        }
-        return result;
-    }
-
-    public static long gcd(long value1, long value2) {
-        if (value1 == 0) {
-            return value2;
-        }
-        return gcd(value2 % value1, value1);
-    }
-
-    public static long findGcd(long... array) {
-        long result = array[0];
-        for (int index = 1; index < array.length; index += 1) {
-            result = gcd(array[index], result);
         }
         return result;
     }

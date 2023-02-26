@@ -3,9 +3,9 @@ underscore-java17
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.javadev/underscore17.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.javadev%22%20AND%20a%3A%22underscore17%22)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/javadev/underscore-java17/blob/main/LICENSE)
-[![Java CI](https://github.com/javadev/underscore-java17/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/maven.yml)
-[![CodeQL](https://github.com/javadev/underscore-java17/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/codeql-analysis.yml)
-[![Semgrep](https://github.com/javadev/underscore-java17/actions/workflows/semgrep.yml/badge.svg)](https://github.com/javadev/underscore-java11/actions/workflows/semgrep.yml)
+[![Java CI](https://github.com/javadev/underscore-java17/actions/workflows/maven.yml/badge.svg)](https://github.com/javadev/underscore-java17/actions/workflows/maven.yml)
+[![CodeQL](https://github.com/javadev/underscore-java17/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/javadev/underscore-java17/actions/workflows/codeql-analysis.yml)
+[![Semgrep](https://github.com/javadev/underscore-java17/actions/workflows/semgrep.yml/badge.svg)](https://github.com/javadev/underscore-java17/actions/workflows/semgrep.yml)
 [![Scorecard supply-chain security](https://github.com/javadev/underscore-java17/actions/workflows/scorecard.yml/badge.svg?branch=main)](https://github.com/javadev/underscore-java17/actions/workflows/scorecard.yml)
 [![codecov](https://codecov.io/gh/javadev/underscore-java/branch/master/graph/badge.svg)](https://codecov.io/gh/javadev/underscore-java)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=javadev_underscore-java11)
