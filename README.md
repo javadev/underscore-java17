@@ -10,7 +10,7 @@ underscore-java17
 [![codecov](https://codecov.io/gh/javadev/underscore-java17/branch/main/graph/badge.svg?token=Sl3Bfpo62j)](https://codecov.io/gh/javadev/underscore-java17)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=javadev_underscore-java11&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=javadev_underscore-java11)
 [![javadoc](https://javadoc.io/badge2/com.github.javadev/underscore17/javadoc.svg)](https://javadoc.io/doc/com.github.javadev/underscore17)
-[![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java11?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=5&branchName=main)
+[![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java17?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=6&branchName=main)
 ![Java Version](https://img.shields.io/badge/java-%3E%3D%2017-success)
 [![](https://img.shields.io/github/forks/javadev/underscore-java17)](https://github.com/javadev/underscore-java17/fork)
 
