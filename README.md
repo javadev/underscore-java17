@@ -28,7 +28,7 @@ Include the following in your `pom.xml` for Maven:
   <dependency>
     <groupId>com.github.javadev</groupId>
     <artifactId>underscore17</artifactId>
-    <version>1.44</version>
+    <version>1.45</version>
   </dependency>
   ...
 </dependencies>
@@ -37,7 +37,7 @@ Include the following in your `pom.xml` for Maven:
 Gradle:
 
 ```groovy
-implementation 'com.github.javadev:underscore17:1.44'
+implementation 'com.github.javadev:underscore17:1.45'
 ```
 
 ### Usage
@@ -83,16 +83,16 @@ U.formatJson("{\"a\":{\"b\":\"data\"}}", Json.JsonStringBuilder.Step.TWO_SPACES)
     // }
 
 U.xmlToJson(
-        "<mydocument has=\"an attribute\">\n"
-                + "   <and>\n"
-                + "   <many>elements</many>\n"
-                + "    <many>more elements</many>\n"
-                + "   </and>\n"
-                + " <plus a=\"complex\">\n"
-                + "     element as well\n"
-                + "   </plus>\n"
-                + "</mydocument>",
-        Json.JsonStringBuilder.Step.TWO_SPACES);
+    "<mydocument has=\"an attribute\">\n"
+        + "   <and>\n"
+        + "   <many>elements</many>\n"
+        + "    <many>more elements</many>\n"
+        + "   </and>\n"
+        + " <plus a=\"complex\">\n"
+        + "     element as well\n"
+        + "   </plus>\n"
+        + "</mydocument>",
+    Json.JsonStringBuilder.Step.TWO_SPACES);
     // {
     //   "mydocument": {
     //     "-has": "an attribute",
@@ -111,23 +111,23 @@ U.xmlToJson(
     // }
 
 U.jsonToXml(
-        "{\n"
-                + "  \"mydocument\": {\n"
-                + "    \"-has\": \"an attribute\",\n"
-                + "    \"and\": {\n"
-                + "      \"many\": [\n"
-                + "        \"elements\",\n"
-                + "        \"more elements\"\n"
-                + "      ]\n"
-                + "    },\n"
-                + "    \"plus\": {\n"
-                + "      \"-a\": \"complex\",\n"
-                + "      \"#text\": \"\\n     element as well\\n   \"\n"
-                + "    }\n"
-                + "  },\n"
-                + "  \"#omit-xml-declaration\": \"yes\"\n"
-                + "}",
-        Xml.XmlStringBuilder.Step.TWO_SPACES);
+    "{\n"
+        + "  \"mydocument\": {\n"
+        + "    \"-has\": \"an attribute\",\n"
+        + "    \"and\": {\n"
+        + "      \"many\": [\n"
+        + "        \"elements\",\n"
+        + "        \"more elements\"\n"
+        + "      ]\n"
+        + "    },\n"
+        + "    \"plus\": {\n"
+        + "      \"-a\": \"complex\",\n"
+        + "      \"#text\": \"\\n     element as well\\n   \"\n"
+        + "    }\n"
+        + "  },\n"
+        + "  \"#omit-xml-declaration\": \"yes\"\n"
+        + "}",
+    Xml.XmlStringBuilder.Step.TWO_SPACES);
     // <mydocument has="an attribute">
     //   <and>
     //     <many>elements</many>
