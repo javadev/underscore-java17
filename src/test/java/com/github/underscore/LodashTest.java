@@ -29,8 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -633,7 +635,7 @@ class LodashTest {
     }
 
     @Test
-    void downloadUrl() throws IOException {
+    void downloadUrl() throws IOException, URISyntaxException {
         try {
             long result =
                     U.downloadUrl(
@@ -763,13 +765,24 @@ class LodashTest {
 
     @Test
     void fetchWrongUrl() {
-        assertThrows(UnsupportedOperationException.class, () -> U.fetch("ttt"));
+        assertThrows(IllegalArgumentException.class, () -> U.fetch("ttt"));
     }
 
     @Test
     void fetchWrongUrlWithRetry() {
+        assertThrows(IllegalArgumentException.class, () -> U.fetch("ttt", 30000, 30000, 1, 100));
+    }
+
+    @Test
+    void fetchWrongUrl2() {
+        assertThrows(UnsupportedOperationException.class, () -> U.fetch("test://ttt"));
+    }
+
+    @Test
+    void fetchWrongUrlWithRetry2() {
         assertThrows(
-                UnsupportedOperationException.class, () -> U.fetch("ttt", 30000, 30000, 1, 100));
+                UnsupportedOperationException.class,
+                () -> U.fetch("test://ttt", 30000, 30000, 1, 100));
     }
 
     @Test
@@ -1002,6 +1015,20 @@ class LodashTest {
         map2.put("list2", U.newLinkedHashMap());
         U.remove(map2, "test");
         U.remove(map2, "list.0");
+    }
+
+    @Test
+    void updateMapValue() {
+        Map<String, Object> map = U.newLinkedHashMap();
+        map.put("-self-closing1", "true");
+        map.put("-self-closing2", "false");
+        U.update(map, "-self-closing1", "false");
+        U.update(map, "-self-closing3", "true");
+        U.update(map, asList("-self-closing1"), "false");
+        U.update(map, asList("-self-closing3"), "true");
+        assertTrue(U.toJson(map).startsWith("{\n"
+                    + "  \"-self-closing1\": \"true\",\n"
+                    + "  \"-self-closing2\": \"false\",\n"));
     }
 
     @Test
