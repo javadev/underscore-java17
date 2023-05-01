@@ -28,7 +28,7 @@ Include the following in your `pom.xml` for Maven:
   <dependency>
     <groupId>com.github.javadev</groupId>
     <artifactId>underscore17</artifactId>
-    <version>1.45</version>
+    <version>1.46</version>
   </dependency>
   ...
 </dependencies>
@@ -37,7 +37,7 @@ Include the following in your `pom.xml` for Maven:
 Gradle:
 
 ```groovy
-implementation 'com.github.javadev:underscore17:1.45'
+implementation 'com.github.javadev:underscore17:1.46'
 ```
 
 ### Usage
@@ -281,6 +281,35 @@ String json =
         + "}";
 List<String> names = U.selectTokens(U.fromJsonMap(json), "//Products[Price>=50]/Name/text()");
 // [Anvil, Elbow Grease]
+```
+Easily build XML documents using code structured like the final document.
+
+This code:
+
+```java
+XmlBuilder builder = XmlBuilder.create("Projects")
+    .e("underscore-java").a("language", "Java").a("scm", "SVN")
+        .e("Location").a("type", "URL")
+            .t("https://github.com/javadev/underscore-java/")
+        .up()
+    .up()
+    .e("JetS3t").a("language", "Java").a("scm", "CVS")
+        .e("Location").a("type", "URL")
+            .t("https://jets3t.s3.amazonaws.com/index.html");
+```
+
+Produces this XML document:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Projects>
+    <underscore-java language="Java" scm="SVN">
+        <Location type="URL">https://github.com/javadev/underscore-java/</Location>
+    </underscore-java>
+    <JetS3t language="Java" scm="CVS">
+        <Location type="URL">https://jets3t.s3.amazonaws.com/index.html</Location>
+    </JetS3t>
+</Projects>
 ```
 
 Underscore-java is a java port of [Underscore.js](https://underscorejs.org/).
