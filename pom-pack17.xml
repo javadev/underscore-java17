@@ -4,7 +4,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore17</artifactId>
   <packaging>jar</packaging>
-  <version>1.47</version>
+  <version>1.48</version>
   <name>java 17 port of Underscore.js</name>
   <description>The java 17 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java17</url>
@@ -28,7 +28,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.home.openjdk17>C:/Program Files/Java/jdk-17</java.home.openjdk17>
+    <java.home.openjdk17>C:/Users/valya/Documents/programs/jdk-17.0.1</java.home.openjdk17>
   </properties>
   <ciManagement>
     <system>GitHub Actions</system>
