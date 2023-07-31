@@ -282,7 +282,7 @@ String json =
 List<String> names = U.selectTokens(U.fromJsonMap(json), "//Products[Price>=50]/Name/text()");
 // [Anvil, Elbow Grease]
 ```
-Easily build XML documents using code structured like the final document.
+Simplify XML document creation by structuring your code like the final document.
 
 This code:
 
@@ -298,7 +298,7 @@ XmlBuilder builder = XmlBuilder.create("Projects")
             .t("https://jets3t.s3.amazonaws.com/index.html");
 ```
 
-Produces this XML document:
+Generates the following XML document:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
