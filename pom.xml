@@ -4,7 +4,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore17</artifactId>
   <packaging>jar</packaging>
-  <version>1.52-SNAPSHOT</version>
+  <version>1.53-SNAPSHOT</version>
   <name>java 17 port of Underscore.js</name>
   <description>The java 17 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java17</url>
@@ -60,14 +60,14 @@
           <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>[5.10.0,)</version>
+            <version>[5.10.1,)</version>
           </dependency>
         </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -111,7 +111,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.10</version>
+        <version>0.8.11</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -176,9 +176,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.21.2</version>
         <configuration>
-          <targetJdk>1.8</targetJdk>
+          <targetJdk>17</targetJdk>
           <rulesets>
             <ruleset>rulesets/java/basic.xml</ruleset>
             <ruleset>rulesets/java/design.xml</ruleset>
@@ -196,14 +196,14 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>3.0.5</version>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>4.8.1.0</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.0.0</version>
       </plugin>
     </plugins>
   </reporting>
@@ -211,13 +211,13 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>[5.10.0,)</version>
+      <version>[5.10.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
-      <version>[1.10.0,)</version>
+      <version>[1.10.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
