@@ -54,7 +54,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Underscore-java is a java port of Underscore.js.
+ * Underscore-java17 is a java port of Underscore.js.
  *
  * @author Valentyn Kolesnikov
  */
@@ -3814,7 +3814,7 @@ public class Underscore<T> {
 
     public static void main(String... args) {
         final String message =
-                "Underscore-java is a java port of Underscore.js.\n\n"
+                "Underscore-java17 is a java 17 port of Underscore.js.\n\n"
                         + "In addition to porting Underscore's functionality,"
                         + " Underscore-java includes matching unit tests.\n\n"
                         + "For docs, license, tests, and downloads, see: https://javadev.github.io/underscore-java";
