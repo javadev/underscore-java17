@@ -12,6 +12,7 @@ underscore-java17
 [![javadoc](https://javadoc.io/badge2/com.github.javadev/underscore17/javadoc.svg)](https://javadoc.io/doc/com.github.javadev/underscore17)
 [![Build Status](https://dev.azure.com/javadevazure/underscore-java/_apis/build/status/javadev.underscore-java17?branchName=main)](https://dev.azure.com/javadevazure/underscore-java/_build/latest?definitionId=6&branchName=main)
 ![Java Version](https://img.shields.io/badge/java-%3E%3D%2017-success)
+[![](https://img.shields.io/github/stars/javadev/underscore-java17?style=flat-square)](https://github.com/javadev/underscore-java17)
 [![](https://img.shields.io/github/forks/javadev/underscore-java17?style=flat-square)](https://github.com/javadev/underscore-java17/fork)
 
 Requirements
