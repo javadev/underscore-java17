@@ -4,7 +4,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore21</artifactId>
   <packaging>jar</packaging>
-  <version>1.60</version>
+  <version>1.61</version>
   <name>java 21 port of Underscore.js</name>
   <description>The java 21 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java17</url>
