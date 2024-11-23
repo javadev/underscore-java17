@@ -22,11 +22,6 @@ jobs:
     - name: Build with Maven
       run: mvn test jacoco:report --file pom.xml -B 
 
-    - uses: codecov/codecov-action@v3
-      with:
-        file: target/site/jacoco/jacoco.xml
-        name: codecov
-
   build-windows:
 
     runs-on: windows-latest
@@ -87,3 +82,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: 77e7b80c7f497f0861daa958b9a4320894af0948
         run: mvn -B test jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=javadev-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=javadev_underscore-java11
+
+      - uses: codecov/codecov-action@v5
+        with:
+          files: target/site/jacoco/jacoco.xml
+          name: codecov
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: 26562e18-0254-43a5-81a3-1eb721ea7e24
