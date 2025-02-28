@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2024 Valentyn Kolesnikov
+ * Copyright 2015-2025 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -659,7 +659,8 @@ class ArraysTest {
     void compact() {
         final List<?> result = Underscore.compact(asList(0, 1, false, 2, "", 3));
         assertEquals("[1, 2, 3]", result.toString());
-        final List<?> result2 = Underscore.compactList(Arrays.<Object>asList(0, 1, false, 2, "", 3), 1);
+        final List<?> result2 =
+                Underscore.compactList(Arrays.<Object>asList(0, 1, false, 2, "", 3), 1);
         assertEquals("[0, false, 2, , 3]", result2.toString());
         final List<?> result3 = Underscore.compact(asList(0, 1, null, 2, "", 3));
         assertEquals("[1, 2, 3]", result3.toString());

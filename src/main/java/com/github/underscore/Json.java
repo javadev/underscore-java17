@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2024 Valentyn Kolesnikov
+ * Copyright 2015-2025 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,9 @@ public final class Json {
         }
 
         public JsonStringBuilder fillSpaces() {
-            builder.append(String.valueOf(identStep == Step.TABS ? '\t' : ' ').repeat(Math.max(0, indent)));
+            builder.append(
+                    String.valueOf(identStep == Step.TABS ? '\t' : ' ')
+                            .repeat(Math.max(0, indent)));
             return this;
         }
 
