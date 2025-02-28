@@ -24,23 +24,23 @@ Java 17 and later, [Java 11](https://github.com/javadev/underscore-java) or [Kot
 
 ## Installation
 
-Include the following in your `pom.xml` for Maven:
+To configure your Maven project, add the following code to your pom.xml file:
 
-```
+```xml
 <dependencies>
   <dependency>
     <groupId>com.github.javadev</groupId>
     <artifactId>underscore17</artifactId>
-    <version>1.66</version>
+    <version>1.67</version>
   </dependency>
   ...
 </dependencies>
 ```
 
-Gradle:
+Gradle configuration:
 
 ```groovy
-implementation 'com.github.javadev:underscore17:1.66'
+implementation 'com.github.javadev:underscore17:1.67'
 ```
 
 ### Usage
@@ -91,7 +91,7 @@ U.xmlToJson(
         + "   <many>elements</many>\n"
         + "    <many>more elements</many>\n"
         + "   </and>\n"
-        + " <plus a=\"complex\">\n"
+        + "   <plus a=\"complex\">\n"
         + "     element as well\n"
         + "   </plus>\n"
         + "</mydocument>",
@@ -111,6 +111,45 @@ U.xmlToJson(
     //     }
     //   },
     //   "#omit-xml-declaration": "yes"
+    // }
+
+U.xmlToJsonMinimum(
+    "<data>\n"
+        + "    <string>Example Text</string>\n"
+        + "    <integer>42</integer>\n"
+        + "    <float>3.14</float>\n"
+        + "    <boolean>true</boolean>\n"
+        + "    <date>2025-02-26</date>\n"
+        + "    <time>14:30:00</time>\n"
+        + "    <datetime>2025-02-26T14:30:00Z</datetime>\n"
+        + "    <array>Item 1</array>\n"
+        + "    <array>Item 2</array>\n"
+        + "    <object>\n"
+        + "        <key1>Value 1</key1>\n"
+        + "        <key2>Value 2</key2>\n"
+        + "    </object>\n"
+        + "    <null/>\n"
+        + "</data>\n",
+    Json.JsonStringBuilder.Step.TWO_SPACES);
+    // {
+    //   "data": {
+    //     "string": "Example Text",
+    //     "integer": "42",
+    //     "float": "3.14",
+    //     "boolean": "true",
+    //     "date": "2025-02-26",
+    //     "time": "14:30:00",
+    //     "datetime": "2025-02-26T14:30:00Z",
+    //     "array": [
+    //       "Item 1",
+    //       "Item 2"
+    //     ],
+    //     "object": {
+    //       "key1": "Value 1",
+    //       "key2": "Value 2"
+    //     },
+    //     "null": ""
+    //   }
     // }
 
 U.jsonToXml(
@@ -140,6 +179,45 @@ U.jsonToXml(
     //      element as well
     //    </plus>
     // </mydocument>
+
+U.jsonToXmlMinimum(
+    "{\n"
+        + "  \"data\": {\n"
+        + "    \"string\": \"Example Text\",\n"
+        + "    \"integer\": \"42\",\n"
+        + "    \"float\": \"3.14\",\n"
+        + "    \"boolean\": \"true\",\n"
+        + "    \"date\": \"2025-02-26\",\n"
+        + "    \"time\": \"14:30:00\",\n"
+        + "    \"datetime\": \"2025-02-26T14:30:00Z\",\n"
+        + "    \"array\": [\n"
+        + "      \"Item 1\",\n"
+        + "      \"Item 2\"\n"
+        + "    ],\n"
+        + "    \"object\": {\n"
+        + "      \"key1\": \"Value 1\",\n"
+        + "      \"key2\": \"Value 2\"\n"
+        + "    },\n"
+        + "    \"null\": \"\"\n"
+        + "  }\n"
+        + "}",
+    Xml.XmlStringBuilder.Step.TWO_SPACES);
+    // <data>
+    //   <string>Example Text</string>
+    //   <integer>42</integer>
+    //   <float>3.14</float>
+    //   <boolean>true</boolean>
+    //   <date>2025-02-26</date>
+    //   <time>14:30:00</time>
+    //   <datetime>2025-02-26T14:30:00Z</datetime>
+    //   <array>Item 1</array>
+    //   <array>Item 2</array>
+    //   <object>
+    //     <key1>Value 1</key1>
+    //     <key2>Value 2</key2>
+    //   </object>
+    //   <null string="true"/>
+    // </data>
 
 U.Builder builder = U.objectBuilder()
     .add("firstName", "John")
@@ -212,79 +290,6 @@ System.out.println(builder.toXml());
 </root>
 ```
 
-```java
-String inventory =
-    "{\n"
-        + "  \"inventory\": {\n"
-        + "    \"#comment\": \"Test is test comment\",\n"
-        + "    \"book\": [\n"
-        + "      {\n"
-        + "        \"-year\": \"2000\",\n"
-        + "        \"title\": \"Snow Crash\",\n"
-        + "        \"author\": \"Neal Stephenson\",\n"
-        + "        \"publisher\": \"Spectra\",\n"
-        + "        \"isbn\": \"0553380958\",\n"
-        + "        \"price\": \"14.95\"\n"
-        + "      },\n"
-        + "      {\n"
-        + "        \"-year\": \"2005\",\n"
-        + "        \"title\": \"Burning Tower\",\n"
-        + "        \"author\": [\n"
-        + "          \"Larry Niven\",\n"
-        + "          \"Jerry Pournelle\"\n"
-        + "        ],\n"
-        + "        \"publisher\": \"Pocket\",\n"
-        + "        \"isbn\": \"0743416910\",\n"
-        + "        \"price\": \"5.99\"\n"
-        + "      },\n"
-        + "      {\n"
-        + "        \"-year\": \"1995\",\n"
-        + "        \"title\": \"Zodiac\",\n"
-        + "        \"author\": \"Neal Stephenson\",\n"
-        + "        \"publisher\": \"Spectra\",\n"
-        + "        \"isbn\": \"0553573862\",\n"
-        + "        \"price\": \"7.50\"\n"
-        + "      }\n"
-        + "    ]\n"
-        + "  }\n"
-        + "}";
-String title = U.selectToken(U.fromJsonMap(inventory), "//book[@year>2001]/title/text()");
-// "Burning Tower"
-
-String json =
-    "{\n"
-        + "  \"Stores\": [\n"
-        + "    \"Lambton Quay\",\n"
-        + "    \"Willis Street\"\n"
-        + "  ],\n"
-        + "  \"Manufacturers\": [\n"
-        + "    {\n"
-        + "      \"Name\": \"Acme Co\",\n"
-        + "      \"Products\": [\n"
-        + "        {\n"
-        + "          \"Name\": \"Anvil\",\n"
-        + "          \"Price\": 50\n"
-        + "        }\n"
-        + "      ]\n"
-        + "    },\n"
-        + "    {\n"
-        + "      \"Name\": \"Contoso\",\n"
-        + "      \"Products\": [\n"
-        + "        {\n"
-        + "          \"Name\": \"Elbow Grease\",\n"
-        + "          \"Price\": 99.95\n"
-        + "        },\n"
-        + "        {\n"
-        + "          \"Name\": \"Headlight Fluid\",\n"
-        + "          \"Price\": 4\n"
-        + "        }\n"
-        + "      ]\n"
-        + "    }\n"
-        + "  ]\n"
-        + "}";
-List<String> names = U.selectTokens(U.fromJsonMap(json), "//Products[Price>=50]/Name/text()");
-// [Anvil, Elbow Grease]
-```
 Simplify XML document creation by structuring your code like the final document.
 
 This code:
@@ -299,9 +304,11 @@ XmlBuilder builder = XmlBuilder.create("Projects")
     .e("JetS3t").a("language", "Java").a("scm", "CVS")
         .e("Location").a("type", "URL")
             .t("https://jets3t.s3.amazonaws.com/index.html");
+System.out.println(builder.toXml(Xml.XmlStringBuilder.Step.TWO_SPACES));
+System.out.println(builder.toJson(Json.JsonStringBuilder.Step.TWO_SPACES));
 ```
 
-Generates the following XML document:
+Generates the following XML and JSON documents:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -313,6 +320,28 @@ Generates the following XML document:
         <Location type="URL">https://jets3t.s3.amazonaws.com/index.html</Location>
     </JetS3t>
 </Projects>
+```
+```json
+{
+  "Projects": {
+    "underscore-java": {
+      "-language": "Java",
+      "-scm": "SVN",
+      "Location": {
+        "-type": "URL",
+        "#text": "https://github.com/javadev/underscore-java/"
+      }
+    },
+    "JetS3t": {
+      "-language": "Java",
+      "-scm": "CVS",
+      "Location": {
+        "-type": "URL",
+        "#text": "https://jets3t.s3.amazonaws.com/index.html"
+      }
+    }
+  }
+}
 ```
 
 Underscore-java is a java port of [Underscore.js](https://underscorejs.org/).

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2024 Valentyn Kolesnikov
+ * Copyright 2015-2025 Valentyn Kolesnikov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -2101,9 +2101,7 @@ public class Underscore<T> {
                 java.util.concurrent.Executors.newSingleThreadScheduledExecutor();
         try {
             return scheduler.schedule(
-                    function::get,
-                    delayMilliseconds,
-                    java.util.concurrent.TimeUnit.MILLISECONDS);
+                    function::get, delayMilliseconds, java.util.concurrent.TimeUnit.MILLISECONDS);
         } finally {
             scheduler.shutdown();
         }
@@ -3320,11 +3318,14 @@ public class Underscore<T> {
         return sb.toString();
     }
 
-    public static <T> String joinToString(final Iterable<T> iterable, final String separator,
-                                          final String prefix, final String postfix,
-                                          final int limit,
-                                          final String truncated,
-                                          final Function<T, String> transform) {
+    public static <T> String joinToString(
+            final Iterable<T> iterable,
+            final String separator,
+            final String prefix,
+            final String postfix,
+            final int limit,
+            final String truncated,
+            final Function<T, String> transform) {
         final StringBuilder sb = new StringBuilder();
         int index = 0;
         if (prefix != null) {
@@ -3345,7 +3346,8 @@ public class Underscore<T> {
         return sb.toString();
     }
 
-    private static void joinToStringPostfix(String postfix, int limit, String truncated, int index, StringBuilder sb) {
+    private static void joinToStringPostfix(
+            String postfix, int limit, String truncated, int index, StringBuilder sb) {
         if (limit >= 0 && index > limit) {
             sb.append(truncated == null ? "..." : truncated);
         }
