@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [17, 21, 23]
+        java: [17, 21, 23, 24]
 
     steps:
     - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        java: [17, 21, 23]
+        java: [17, 21, 23, 24]
 
     steps:
     - uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
     runs-on: macOS-latest
     strategy:
       matrix:
-        java: [17, 21, 23]
+        java: [17, 21, 23, 24]
 
     steps:
     - uses: actions/checkout@v4
