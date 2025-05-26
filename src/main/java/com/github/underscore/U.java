@@ -26,6 +26,8 @@ package com.github.underscore;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +35,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,6 +103,7 @@ public class U<T> extends Underscore<T> {
             java.util.regex.Pattern.compile(
                     UPPER + "+(?=" + UPPER + LOWER + ")|" + UPPER + "?" + LOWER + "|" + UPPER
                             + "+|\\d+");
+    private static final String ENCODING = "#encoding";
 
     static {
         String[] deburredLetters =
@@ -2779,6 +2783,173 @@ public class U<T> extends Underscore<T> {
 
     public static String xmlToJson(String xml, XmlToJsonMode mode) {
         return xmlToJson(xml, Json.JsonStringBuilder.Step.TWO_SPACES, mode);
+    }
+
+    public static void fileXmlToJson(
+            String xmlFileName, String jsonFileName, Json.JsonStringBuilder.Step identStep)
+            throws IOException {
+        final byte[] bytes = Files.readAllBytes(Paths.get(xmlFileName));
+        String xmlText = new String(removeBom(bytes), detectEncoding(bytes));
+        Files.write(
+                Paths.get(jsonFileName),
+                formatString(xmlToJson(xmlText, identStep), System.lineSeparator())
+                        .getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static void fileXmlToJson(String xmlFileName, String jsonFileName) throws IOException {
+        fileXmlToJson(xmlFileName, jsonFileName, Json.JsonStringBuilder.Step.TWO_SPACES);
+    }
+
+    public static void streamXmlToJson(
+            InputStream xmlInputStream,
+            OutputStream jsonOutputStream,
+            Json.JsonStringBuilder.Step indentStep)
+            throws IOException {
+        byte[] bytes = xmlInputStream.readAllBytes();
+        String encoding = detectEncoding(bytes);
+        String xmlText = new String(removeBom(bytes), encoding);
+        String jsonText = xmlToJson(xmlText, indentStep);
+        String formattedJson = formatString(jsonText, System.lineSeparator());
+        jsonOutputStream.write(formattedJson.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static void streamXmlToJson(InputStream xmlInputStream, OutputStream jsonOutputStream)
+            throws IOException {
+        streamXmlToJson(xmlInputStream, jsonOutputStream, Json.JsonStringBuilder.Step.TWO_SPACES);
+    }
+
+    public static void fileJsonToXml(
+            String jsonFileName, String xmlFileName, Xml.XmlStringBuilder.Step identStep)
+            throws IOException {
+        final byte[] bytes = Files.readAllBytes(Paths.get(jsonFileName));
+        String jsonText = new String(removeBom(bytes), detectEncoding(bytes));
+        Object result = U.fromJson(jsonText);
+        Path xmlFilePath = Paths.get(xmlFileName);
+        String lineSeparator = System.lineSeparator();
+        if (result instanceof Map) {
+            if (((Map) result).containsKey(ENCODING)) {
+                String encoding = String.valueOf(((Map) result).get(ENCODING));
+                Files.write(
+                        xmlFilePath,
+                        formatString(Xml.toXml((Map) result, identStep), lineSeparator)
+                                .getBytes(encoding));
+            } else {
+                Files.write(
+                        xmlFilePath,
+                        formatString(Xml.toXml((Map) result, identStep), lineSeparator)
+                                .getBytes(StandardCharsets.UTF_8));
+            }
+        } else {
+            Files.write(
+                    xmlFilePath,
+                    formatString(Xml.toXml((List) result, identStep), lineSeparator)
+                            .getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void fileJsonToXml(String jsonFileName, String xmlFileName) throws IOException {
+        fileJsonToXml(jsonFileName, xmlFileName, Xml.XmlStringBuilder.Step.TWO_SPACES);
+    }
+
+    public static void streamJsonToXml(
+            InputStream jsonInputStream,
+            OutputStream xmlOutputStream,
+            Xml.XmlStringBuilder.Step identStep)
+            throws IOException {
+        byte[] bytes = jsonInputStream.readAllBytes();
+        String jsonText = new String(removeBom(bytes), detectEncoding(bytes));
+        Object jsonObject = U.fromJson(jsonText);
+        String lineSeparator = System.lineSeparator();
+        String xml;
+        if (jsonObject instanceof Map) {
+            xml = formatString(Xml.toXml((Map<?, ?>) jsonObject, identStep), lineSeparator);
+            if (((Map) jsonObject).containsKey(ENCODING)) {
+                String encoding = String.valueOf(((Map) jsonObject).get(ENCODING));
+                xmlOutputStream.write(xml.getBytes(encoding));
+            } else {
+                xmlOutputStream.write(xml.getBytes(StandardCharsets.UTF_8));
+            }
+        } else {
+            xml = formatString(Xml.toXml((List<?>) jsonObject, identStep), lineSeparator);
+            xmlOutputStream.write(xml.getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void streamJsonToXml(InputStream jsonInputStream, OutputStream xmlOutputStream)
+            throws IOException {
+        streamJsonToXml(jsonInputStream, xmlOutputStream, Xml.XmlStringBuilder.Step.TWO_SPACES);
+    }
+
+    public static byte[] removeBom(byte[] bytes) {
+        if ((bytes.length >= 3) && (bytes[0] == -17) && (bytes[1] == -69) && (bytes[2] == -65)) {
+            return Arrays.copyOfRange(bytes, 3, bytes.length);
+        }
+        if ((bytes.length >= 2) && (bytes[0] == -1) && (bytes[1] == -2)) {
+            return Arrays.copyOfRange(bytes, 2, bytes.length);
+        }
+        if ((bytes.length >= 2) && (bytes[0] == -2) && (bytes[1] == -1)) {
+            return Arrays.copyOfRange(bytes, 2, bytes.length);
+        }
+        return bytes;
+    }
+
+    public static String detectEncoding(byte[] buffer) {
+        if (buffer.length < 4) {
+            return "UTF8";
+        }
+        String encoding = null;
+        int n =
+                ((buffer[0] & 0xFF) << 24)
+                        | ((buffer[1] & 0xFF) << 16)
+                        | ((buffer[2] & 0xFF) << 8)
+                        | (buffer[3] & 0xFF);
+        switch (n) {
+            case 0x0000FEFF:
+            case 0x0000003C:
+                encoding = "UTF_32BE";
+                break;
+            case 0x003C003F:
+                encoding = "UnicodeBigUnmarked";
+                break;
+            case 0xFFFE0000:
+            case 0x3C000000:
+                encoding = "UTF_32LE";
+                break;
+                // <?
+            case 0x3C003F00:
+                encoding = "UnicodeLittleUnmarked";
+                break;
+                // <?xm
+            case 0x3C3F786D:
+                encoding = "UTF8";
+                break;
+            default:
+                if ((n >>> 8) == 0xEFBBBF) {
+                    encoding = "UTF8";
+                    break;
+                }
+                if ((n >>> 24) == 0x3C) {
+                    break;
+                }
+                switch (n >>> 16) {
+                    case 0xFFFE:
+                        encoding = "UnicodeLittleUnmarked";
+                        break;
+                    case 0xFEFF:
+                        encoding = "UnicodeBigUnmarked";
+                        break;
+                    default:
+                        break;
+                }
+        }
+        return encoding == null ? "UTF8" : encoding;
+    }
+
+    public static String formatString(String data, String lineSeparator) {
+        if ("\n".equals(lineSeparator)) {
+            return data;
+        }
+        return data.replace("\n", lineSeparator);
     }
 
     public static String xmlOrJsonToJson(String xmlOrJson, Json.JsonStringBuilder.Step identStep) {
