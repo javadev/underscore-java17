@@ -4,7 +4,7 @@
   <groupId>com.github.javadev</groupId>
   <artifactId>underscore21</artifactId>
   <packaging>jar</packaging>
-  <version>1.70</version>
+  <version>1.71</version>
   <name>java 21 port of Underscore.js</name>
   <description>The java 21 port of Underscore.js</description>
   <url>https://github.com/javadev/underscore-java17</url>
@@ -119,6 +119,36 @@
             <phase>verify</phase>
             <goals>
               <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>generate-checksums</id>
+            <phase>verify</phase>
+            <configuration>
+              <target>
+                <checksum fileext=".md5" algorithm="MD5">
+                  <fileset dir="${project.build.directory}">
+                    <include name="*.jar"/>
+                    <include name="*.pom"/>
+                  </fileset>
+                </checksum>
+                <checksum fileext=".sha1" algorithm="SHA-1">
+                  <fileset dir="${project.build.directory}">
+                    <include name="*.jar"/>
+                    <include name="*.pom"/>
+                  </fileset>
+                </checksum>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
