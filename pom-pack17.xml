@@ -28,7 +28,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.home.openjdk17>C:/Users/valya/Documents/programs/jdk-17.0.1</java.home.openjdk17>
+    <java.home.openjdk17>C:/Users/valya/.jdks/corretto-17.0.16</java.home.openjdk17>
   </properties>
   <ciManagement>
     <system>GitHub Actions</system>
@@ -238,25 +238,25 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>[5.13.3,)</version>
+      <version>[5.14.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>[5.13.3,)</version>
+      <version>[5.14.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
-      <version>[1.13.3,)</version>
+      <version>[1.14.1,)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
-      <version>[4.2.0,)</version>
+      <version>[4.3.0,)</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
