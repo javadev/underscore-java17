@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2025 Valentyn Kolesnikov <0009-0003-9608-3364@orcid.org>
+ * Copyright 2015-2026 Valentyn Kolesnikov <0009-0003-9608-3364@orcid.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -712,8 +712,7 @@ class LodashTest {
     void fetchPut() {
         U.FetchResponse result =
                 U.fetch(
-                        "https://raw.githubusercontent.com/javadev/underscore-java/refs/heads/"
-                                + "main/src/test/resources/example.json",
+                        "https://www.w3schools.com/xml/note.xml",
                         "PUT",
                         "{"
                                 + "    \"dragon\": {"
@@ -723,11 +722,10 @@ class LodashTest {
                                 + "        \"fireBreath\": 10"
                                 + "    }"
                                 + "}");
-        assertEquals(403, result.getStatus());
+        assertEquals(404, result.getStatus());
         U.FetchResponse result2 =
                 U.fetch(
-                        "https://raw.githubusercontent.com/javadev/underscore-java/refs/heads/"
-                                + "main/src/test/resources/example.json",
+                        "https://www.w3schools.com/xml/note.xml",
                         "PUT",
                         "{"
                                 + "    \"dragon\": {"
@@ -740,7 +738,7 @@ class LodashTest {
                         null,
                         null,
                         null);
-        assertEquals(403, result2.getStatus());
+        assertEquals(404, result2.getStatus());
         U.Chain<String> resultChain =
                 U.chain(
                                 "http://support.oneskyapp.com/hc/en-us/article_attachments/202761627/example_1.json")

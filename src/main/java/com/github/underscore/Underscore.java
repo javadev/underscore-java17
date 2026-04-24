@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright 2015-2025 Valentyn Kolesnikov <0009-0003-9608-3364@orcid.org>
+ * Copyright 2015-2026 Valentyn Kolesnikov <0009-0003-9608-3364@orcid.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Underscore-java17 is a java port of Underscore.js.
+ * Underscore-java is a java port of Underscore.js.
  *
  * @author Valentyn Kolesnikov
  */
@@ -3850,14 +3850,14 @@ public class Underscore<T> {
 
     public static void main(String... args) {
         final String message =
-                "Underscore-java17 is a java 17 port of Underscore.js.\n\n"
+                "Underscore-java is a java port of Underscore.js.\n\n"
                         + "In addition to porting Underscore's functionality,"
                         + " Underscore-java includes matching unit tests.\n\n"
                         + "For docs, license, tests, and downloads, see: https://javadev.github.io/underscore-java";
         System.out.println(message);
     }
 
-    public static interface Function3<F1, F2, F3, T> {
+    public interface Function3<F1, F2, F3, T> {
         T apply(F1 arg1, F2 arg2, F3 arg3);
     }
 
@@ -3872,11 +3872,11 @@ public class Underscore<T> {
         }
     }
 
-    public static interface PredicateIndexed<T> {
+    public interface PredicateIndexed<T> {
         boolean test(int index, T arg);
     }
 
-    public static interface Template<T> extends Function<T, String> {
+    public interface Template<T> extends Function<T, String> {
         List<String> check(T arg);
     }
 }
