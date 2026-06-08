@@ -53,13 +53,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-/**
- * Underscore-java is a java port of Underscore.js.
- *
- * @author Valentyn Kolesnikov
- */
 @SuppressWarnings({
     "java:S106",
+    "java:S2119",
     "java:S2189",
     "java:S2272",
     "java:S2789",

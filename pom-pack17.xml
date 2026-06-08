@@ -28,7 +28,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.home.openjdk17>C:/Users/valya/.jdks/corretto-17.0.16</java.home.openjdk17>
+    <java.home.openjdk17>C:/Users/valya/Documents/programs/jdk-17.0.1</java.home.openjdk17>
   </properties>
   <ciManagement>
     <system>GitHub Actions</system>
