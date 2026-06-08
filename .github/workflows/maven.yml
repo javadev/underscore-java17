@@ -83,7 +83,7 @@ jobs:
           SONAR_TOKEN: 77e7b80c7f497f0861daa958b9a4320894af0948
         run: mvn -B test jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=javadev-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=javadev_underscore-java11
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v7
         with:
           files: target/site/jacoco/jacoco.xml
           name: codecov
