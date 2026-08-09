@@ -53,14 +53,21 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+/**
+ * Underscore-java17 is a java port of Underscore.js.
+ *
+ * @author Valentyn Kolesnikov
+ */
 @SuppressWarnings({
     "java:S106",
     "java:S2119",
+    "java:S2143",
     "java:S2189",
     "java:S2272",
     "java:S2789",
     "java:S3740",
-    "java:S5852"
+    "java:S5852",
+    "java:S8786"
 })
 public class Underscore<T> {
     private static final Map<String, Function<String, String>> FUNCTIONS = new LinkedHashMap<>();
@@ -3846,7 +3853,7 @@ public class Underscore<T> {
 
     public static void main(String... args) {
         final String message =
-                "Underscore-java is a java port of Underscore.js.\n\n"
+                "Underscore-java17 is a java port of Underscore.js.\n\n"
                         + "In addition to porting Underscore's functionality,"
                         + " Underscore-java includes matching unit tests.\n\n"
                         + "For docs, license, tests, and downloads, see: https://javadev.github.io/underscore-java";
